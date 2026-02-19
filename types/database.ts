@@ -28,6 +28,7 @@ export type ReceivedVia = 'gmail_watch' | 'email_submission' | 'manual_upload'
 
 export interface Broker {
   id: string
+  auth_user_id: string
   name: string
   email: string
   google_drive_folder_id: string | null

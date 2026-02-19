@@ -11,7 +11,7 @@ export default async function NewTransactionPage() {
   const { data: broker } = await supabase
     .from('brokers')
     .select('id')
-    .eq('auth_user_id' as never, user.id)
+    .eq('auth_user_id', user.id)
     .single()
 
   const { data: agents } = await supabase
