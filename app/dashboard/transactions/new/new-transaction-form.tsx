@@ -55,7 +55,7 @@ export default function NewTransactionForm({ brokerId, agents }: Props) {
         property_type: form.property_type,
         transaction_type: form.transaction_type,
         status: form.status,
-      })
+      } as any)
       .select('id')
       .single()
 

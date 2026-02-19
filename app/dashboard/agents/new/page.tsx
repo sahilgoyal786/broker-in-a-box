@@ -55,7 +55,7 @@ export default function NewAgentPage() {
         last_name: form.last_name,
         email: form.email,
         license_number: form.license_number || null,
-      })
+      } as any)
 
     setLoading(false)
 
