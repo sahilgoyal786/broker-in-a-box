@@ -22,11 +22,16 @@ export async function GET(request: Request) {
 
         if (!existingBroker) {
           // Create broker profile from Google identity
-          await supabase.from('brokers').insert({
+          const newBroker: {
+            auth_user_id: string
+            name: string
+            email: string
+          } = {
             auth_user_id: user.id,
             name: user.user_metadata?.full_name ?? user.email ?? 'Broker',
             email: user.email ?? '',
-          })
+          }
+          await supabase.from('brokers').insert(newBroker)
         }
       }
 
