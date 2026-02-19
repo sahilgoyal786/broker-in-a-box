@@ -29,7 +29,7 @@ export default function SettingsForm({ broker }: Props) {
 
     const { error } = await supabase
       .from('brokers')
-      .update({ name: brokerName })
+      .update({ name: brokerName } as any)
       .eq('id', broker.id)
 
     setSavingProfile(false)
@@ -46,7 +46,7 @@ export default function SettingsForm({ broker }: Props) {
 
     const { error } = await supabase
       .from('brokers')
-      .update({ gmail_transactions_email: gmailEmail || null })
+      .update({ gmail_transactions_email: gmailEmail || null } as any)
       .eq('id', broker.id)
 
     setSavingGmail(false)
