@@ -60,7 +60,7 @@ export default async function AgentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700">
-              {agents.map(agent => (
+              {agents.map((agent: any) => (
                 <tr key={agent.id} className="hover:bg-slate-700/40 transition-colors">
                   <td className="px-6 py-4">
                     <p className="text-white font-medium text-sm">

@@ -158,7 +158,7 @@ export default function NewTransactionForm({ brokerId, agents }: Props) {
             className={selectClass}
           >
             <option value="">— Unassigned —</option>
-            {agents.map(agent => (
+            {agents.map((agent: any) => (
               <option key={agent.id} value={agent.id}>
                 {agent.last_name}, {agent.first_name}
               </option>

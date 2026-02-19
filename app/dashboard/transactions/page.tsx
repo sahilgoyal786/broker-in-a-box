@@ -98,7 +98,7 @@ export default async function TransactionsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700">
-              {transactions.map((tx) => (
+              {transactions.map((tx: any) => (
                 <tr key={tx.id} className="hover:bg-slate-700/40 transition-colors">
                   <td className="px-6 py-4">
                     <Link href={`/dashboard/transactions/${tx.id}`} className="block">
