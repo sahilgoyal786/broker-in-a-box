@@ -143,7 +143,17 @@ export type Database = {
     Tables: {
       brokers: {
         Row: Broker
-        Insert: Omit<Broker, 'id' | 'created_at'> & { id?: string; created_at?: string }
+        Insert: Omit<Broker, 'id' | 'created_at' | 'google_drive_folder_id' | 'google_calendar_id' | 'gmail_transactions_email' | 'gmail_refresh_token' | 'drive_refresh_token' | 'calendar_refresh_token' | 'submission_address'> & {
+          id?: string
+          created_at?: string
+          google_drive_folder_id?: string | null
+          google_calendar_id?: string | null
+          gmail_transactions_email?: string | null
+          gmail_refresh_token?: string | null
+          drive_refresh_token?: string | null
+          calendar_refresh_token?: string | null
+          submission_address?: string | null
+        }
         Update: Partial<Omit<Broker, 'id'>>
       }
       agents: {
