@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     .select('id, client_last_name, client_first_name, property_address, property_type, transaction_type, status, created_at')
     .eq('broker_id', broker?.id ?? '')
     .order('created_at', { ascending: false })
-    .limit(5)
+    .limit(5) as any
 
   const stats = [
     { label: 'Total Transactions', value: totalTx ?? 0, icon: FileText, color: 'text-blue-400' },

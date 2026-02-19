@@ -16,7 +16,7 @@ export default async function AgentsPage() {
     .from('agents')
     .select('id, first_name, last_name, email, license_number')
     .eq('broker_id', broker?.id ?? '')
-    .order('last_name', { ascending: true })
+    .order('last_name', { ascending: true }) as any
 
   return (
     <div className="p-8">

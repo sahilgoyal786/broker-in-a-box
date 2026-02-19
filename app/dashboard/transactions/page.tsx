@@ -26,7 +26,7 @@ export default async function TransactionsPage() {
       updated_at
     `)
     .eq('broker_id', broker?.id ?? '')
-    .order('updated_at', { ascending: false })
+    .order('updated_at', { ascending: false }) as any
 
   const statusColors: Record<string, string> = {
     active: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',

@@ -18,7 +18,7 @@ export default async function NewTransactionPage() {
     .from('agents')
     .select('id, first_name, last_name')
     .eq('broker_id', broker?.id ?? '')
-    .order('last_name', { ascending: true })
+    .order('last_name', { ascending: true }) as any
 
   return (
     <div className="p-8 max-w-2xl">

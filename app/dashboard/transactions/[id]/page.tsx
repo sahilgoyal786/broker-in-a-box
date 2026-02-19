@@ -57,7 +57,7 @@ export default async function TransactionDetailPage({
     .from('transactions')
     .select('*')
     .eq('id', id)
-    .single()
+    .single() as any
 
   if (txError || !transaction) {
     notFound()
@@ -70,7 +70,7 @@ export default async function TransactionDetailPage({
     .eq('property_type', transaction.property_type)
     .eq('transaction_type', transaction.transaction_type)
     .is('broker_id', null)
-    .single()
+    .single() as any
 
   // Fetch template forms
   const { data: forms } = template
@@ -78,7 +78,7 @@ export default async function TransactionDetailPage({
         .from('template_forms')
         .select('*')
         .eq('template_id', template.id)
-        .order('sort_order', { ascending: true })
+        .order('sort_order', { ascending: true }) as any
     : { data: [] }
 
   // Fetch all documents for this transaction
@@ -86,14 +86,14 @@ export default async function TransactionDetailPage({
     .from('transaction_documents')
     .select('*')
     .eq('transaction_id', id)
-    .order('received_at', { ascending: false })
+    .order('received_at', { ascending: false }) as any
 
   // Fetch deadlines
   const { data: deadlines } = await supabase
     .from('transaction_deadlines')
     .select('*')
     .eq('transaction_id', id)
-    .order('deadline_date', { ascending: true })
+    .order('deadline_date', { ascending: true }) as any
 
   // Build doc map (form_identifier → document)
   const docMap = new Map<string, TransactionDocument>()
