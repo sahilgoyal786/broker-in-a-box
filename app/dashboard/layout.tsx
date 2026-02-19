@@ -18,7 +18,7 @@ export default async function DashboardLayout({
     .from('brokers')
     .select('id, name, email')
     .eq('auth_user_id', user.id)
-    .single()
+    .single() as any
 
   const navItems = [
     { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },

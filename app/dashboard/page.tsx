@@ -10,7 +10,7 @@ export default async function DashboardPage() {
     .from('brokers')
     .select('id, name')
     .eq('auth_user_id', user!.id)
-    .single()
+    .single() as any
 
   // Stats
   const [{ count: totalTx }, { count: activeTx }, { count: underContract }] = await Promise.all([

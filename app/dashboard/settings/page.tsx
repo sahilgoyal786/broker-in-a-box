@@ -12,7 +12,7 @@ export default async function SettingsPage() {
     .from('brokers')
     .select('id, name, email, gmail_transactions_email, gmail_refresh_token')
     .eq('auth_user_id', user.id)
-    .single()
+    .single() as any
 
   if (!broker) redirect('/auth/login')
 

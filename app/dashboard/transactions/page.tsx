@@ -10,7 +10,7 @@ export default async function TransactionsPage() {
     .from('brokers')
     .select('id')
     .eq('auth_user_id', user!.id)
-    .single()
+    .single() as any
 
   const { data: transactions } = await supabase
     .from('transactions')
