@@ -39,7 +39,7 @@ export default function NewAgentPage() {
       .from('brokers')
       .select('id')
       .eq('auth_user_id', user.id)
-      .single()
+      .single() as any
 
     if (brokerError || !broker) {
       setError('Could not find broker account')
