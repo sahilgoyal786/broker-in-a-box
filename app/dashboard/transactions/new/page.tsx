@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import NewTransactionForm from './new-transaction-form'
 
-export default async function NewTransactionPage() {
+export default async function NewTransactionPage({ searchParams }: { searchParams: Promise<{ agency?: string }> }) {
+  const params = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -20,6 +21,18 @@ export default async function NewTransactionPage() {
     .eq('broker_id', broker?.id ?? '')
     .order('last_name', { ascending: true }) as any
 
+  // Optionally load agency agreement if provided
+  let agency = null
+  if (params.agency) {
+    const { data } = await supabase
+      .from('agency_agreements')
+      .select('*')
+      .eq('id', params.agency)
+      .eq('broker_id', broker?.id ?? '')
+      .single() as any
+    agency = data
+  }
+
   return (
     <div className="p-8 max-w-2xl">
       <div className="mb-8">
@@ -33,6 +46,7 @@ export default async function NewTransactionPage() {
       <NewTransactionForm
         brokerId={broker?.id ?? ''}
         agents={agents ?? []}
+        agency={agency}
       />
     </div>
   )

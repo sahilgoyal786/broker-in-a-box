@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, FileText, Users, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User, GraduationCap } from 'lucide-react'
+import { getUserContext } from '@/lib/supabase/get-user-role'
 
 export default async function DashboardLayout({
   children,
@@ -13,19 +14,37 @@ export default async function DashboardLayout({
 
   if (!user) redirect('/')
 
-  // Get broker record
+  // Get user context (role and name)
+  const userContext = await getUserContext()
+  if (!userContext) redirect('/')
+
   const { data: broker } = await supabase
     .from('brokers')
     .select('id, name, email')
     .eq('auth_user_id', user.id)
     .single() as any
+    
+  // Get agent name if user is an agent
+  const { data: agent } = userContext.role === 'agent' ? await supabase
+    .from('agents')
+    .select('first_name, last_name')
+    .eq('id', userContext.agentId)
+    .single() as any : { data: null }
+    
+  const displayName = userContext.role === 'broker' 
+    ? (broker?.name ?? user.email)
+    : agent 
+      ? `${agent.first_name} ${agent.last_name}`
+      : user.email
 
   const navItems = [
-    { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-    { href: '/dashboard/transactions', label: 'Transactions', icon: FileText },
-    { href: '/dashboard/agents', label: 'Agents', icon: Users },
-    { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-  ]
+    { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, roles: ['broker', 'agent'] },
+    { href: '/dashboard/agencies', label: 'Agency Agreements', icon: FileText, roles: ['broker', 'agent'] },
+    { href: '/dashboard/transactions', label: 'Transactions', icon: FileText, roles: ['broker', 'agent'] },
+    { href: '/dashboard/agents', label: 'Agents', icon: Users, roles: ['broker'] },  // Broker only
+    { href: '/dashboard/ce-compliance', label: 'CE Compliance', icon: GraduationCap, roles: ['broker'] },  // Broker only
+    { href: '/dashboard/settings', label: 'Settings', icon: Settings, roles: ['broker', 'agent'] },
+  ].filter(item => item.roles.includes(userContext.role))
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
@@ -34,12 +53,22 @@ export default async function DashboardLayout({
         {/* Logo */}
         <div className="p-6 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-              <FileText className="w-4 h-4 text-white" />
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              userContext.role === 'broker' ? 'bg-blue-600' : 'bg-purple-600'
+            }`}>
+              {userContext.role === 'broker' ? (
+                <Shield className="w-4 h-4 text-white" />
+              ) : (
+                <User className="w-4 h-4 text-white" />
+              )}
             </div>
             <div>
-              <p className="text-white font-semibold text-sm">Broker in a Box</p>
-              <p className="text-slate-500 text-xs truncate max-w-[140px]">{broker?.name ?? user.email}</p>
+              <p className="text-white font-semibold text-sm">{displayName}</p>
+              <p className={`text-xs truncate max-w-[140px] ${
+                userContext.role === 'broker' ? 'text-blue-400' : 'text-purple-400'
+              }`}>
+                {userContext.role === 'broker' ? 'Broker' : 'Agent'}
+              </p>
             </div>
           </div>
         </div>

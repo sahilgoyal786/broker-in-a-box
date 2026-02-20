@@ -16,11 +16,15 @@ export default async function TransactionsPage() {
     .from('transactions')
     .select(`
       id,
-      client_last_name,
-      client_first_name,
+      buyer_first_name,
+      buyer_last_name,
+      seller_first_name,
+      seller_last_name,
       property_address,
+      property_city,
       property_type,
       transaction_type,
+      agency_role,
       status,
       created_at,
       updated_at
@@ -29,6 +33,7 @@ export default async function TransactionsPage() {
     .order('updated_at', { ascending: false }) as any
 
   const statusColors: Record<string, string> = {
+    pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
     active: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
     under_contract: 'bg-green-500/20 text-green-400 border-green-500/30',
     closed: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
@@ -36,12 +41,14 @@ export default async function TransactionsPage() {
   }
 
   const txTypeLabels: Record<string, string> = {
-    listing: 'Listing',
-    buyer_agency: 'Buyer Agency',
-    seller_purchase: 'Seller / Purchase',
-    buyer_purchase: 'Buyer / Purchase',
-    unrepresented_buyer: 'Unrepresented Buyer',
-    fsbo_purchase: 'FSBO Purchase',
+    purchase: 'Purchase',
+    lease: 'Lease',
+  }
+
+  const roleLabels: Record<string, string> = {
+    listing_agent: 'Listing Agent',
+    buyer_agent: "Buyer's Agent",
+    dual_agency: 'Dual Agency',
   }
 
   const propTypeLabels: Record<string, string> = {
@@ -103,18 +110,29 @@ export default async function TransactionsPage() {
                   <td className="px-6 py-4">
                     <Link href={`/dashboard/transactions/${tx.id}`} className="block">
                       <p className="text-white font-medium text-sm">
-                        {tx.client_last_name}, {tx.client_first_name}
+                        {tx.buyer_last_name}, {tx.buyer_first_name}
                       </p>
+                      {tx.seller_first_name && (
+                        <p className="text-slate-500 text-xs mt-0.5">
+                          Seller: {tx.seller_first_name} {tx.seller_last_name}
+                        </p>
+                      )}
                     </Link>
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-slate-300 text-sm">
                       {tx.property_address ?? <span className="text-slate-500 italic">No address</span>}
                     </p>
-                    <p className="text-slate-500 text-xs mt-0.5">{propTypeLabels[tx.property_type]}</p>
+                    <p className="text-slate-500 text-xs mt-0.5">
+                      {tx.property_city && `${tx.property_city} · `}
+                      {propTypeLabels[tx.property_type]}
+                    </p>
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-slate-300 text-sm">{txTypeLabels[tx.transaction_type]}</p>
+                    {tx.agency_role && (
+                      <p className="text-slate-500 text-xs mt-0.5">{roleLabels[tx.agency_role]}</p>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex text-xs px-2.5 py-1 rounded-full border font-medium ${statusColors[tx.status]}`}>

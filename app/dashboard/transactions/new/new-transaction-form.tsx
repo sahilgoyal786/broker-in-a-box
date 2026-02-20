@@ -3,124 +3,174 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import type { PropertyType, TransactionType, TransactionStatus } from '@/types/database'
-import Link from 'next/link'
 
-interface Agent {
-  id: string
-  first_name: string
-  last_name: string
-}
-
-interface Props {
-  brokerId: string
-  agents: Agent[]
-}
-
-export default function NewTransactionForm({ brokerId, agents }: Props) {
+export default function NewTransactionForm({ brokerId, agents, agency }: any) {
   const router = useRouter()
-  const supabase = createClient()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
-  const [form, setForm] = useState({
-    client_first_name: '',
-    client_last_name: '',
-    property_address: '',
-    property_type: 'residential' as PropertyType,
-    transaction_type: 'buyer_agency' as TransactionType,
-    agent_id: '',
-    status: 'active' as TransactionStatus,
-  })
+  // Pre-fill from agency if provided
+  const initialData = agency ? {
+    agency_agreement_id: agency.id,
+    agent_id: agency.agent_id,
+    property_address: agency.property_address || '',
+    property_city: agency.property_city || '',
+    property_state: agency.property_state || 'UT',
+    property_zip: agency.property_zip || '',
+    property_type: agency.property_type || 'residential',
+    // Seller from listing, buyer from buyer agency
+    seller_first_name: agency.agreement_type === 'listing_agreement' ? agency.client_first_name : '',
+    seller_last_name: agency.agreement_type === 'listing_agreement' ? agency.client_last_name : '',
+    seller_email: agency.agreement_type === 'listing_agreement' ? agency.client_email : '',
+    seller_phone: agency.agreement_type === 'listing_agreement' ? agency.client_phone : '',
+    buyer_first_name: agency.agreement_type === 'buyer_agency_agreement' ? agency.client_first_name : '',
+    buyer_last_name: agency.agreement_type === 'buyer_agency_agreement' ? agency.client_last_name : '',
+    buyer_email: agency.agreement_type === 'buyer_agency_agreement' ? agency.client_email : '',
+    buyer_phone: agency.agreement_type === 'buyer_agency_agreement' ? agency.client_phone : '',
+    agency_role: agency.agreement_type === 'listing_agreement' ? 'listing_agent' : 'buyer_agent',
+  } : {}
 
-  const inputClass =
-    'w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2.5 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-  const labelClass = 'block text-slate-400 text-sm mb-1.5'
-  const selectClass =
-    'w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    setError(null)
 
-    const { data, error: insertError } = await supabase
+    const formData = new FormData(e.currentTarget)
+    const supabase = createClient()
+
+    const data: any = {
+      broker_id: brokerId,
+      agent_id: formData.get('agent_id'),
+      agency_agreement_id: formData.get('agency_agreement_id') || null,
+      transaction_type: formData.get('transaction_type'),
+      property_type: formData.get('property_type'),
+      agency_role: formData.get('agency_role'),
+      property_address: formData.get('property_address'),
+      property_city: formData.get('property_city'),
+      property_state: formData.get('property_state'),
+      property_zip: formData.get('property_zip'),
+      buyer_first_name: formData.get('buyer_first_name'),
+      buyer_last_name: formData.get('buyer_last_name'),
+      buyer_email: formData.get('buyer_email') || null,
+      buyer_phone: formData.get('buyer_phone') || null,
+      seller_first_name: formData.get('seller_first_name') || null,
+      seller_last_name: formData.get('seller_last_name') || null,
+      seller_email: formData.get('seller_email') || null,
+      seller_phone: formData.get('seller_phone') || null,
+      purchase_price: formData.get('purchase_price') || null,
+      contract_date: formData.get('contract_date'),
+      anticipated_closing_date: formData.get('anticipated_closing_date') || null,
+      status: 'pending'
+    }
+
+    const { data: transaction, error } = await supabase
       .from('transactions')
-      .insert({
-        broker_id: brokerId,
-        agent_id: form.agent_id || null,
-        client_first_name: form.client_first_name,
-        client_last_name: form.client_last_name,
-        property_address: form.property_address || null,
-        property_type: form.property_type,
-        transaction_type: form.transaction_type,
-        status: form.status,
-      } as any)
-      .select('id')
-      .single()
+      .insert(data)
+      .select()
+      .single() as any
 
-    setLoading(false)
-
-    if (insertError) {
-      setError(insertError.message)
+    if (error) {
+      alert('Error creating transaction: ' + error.message)
+      setLoading(false)
       return
     }
 
-    router.push(`/dashboard/transactions/${data.id}`)
+    router.push(`/dashboard/transactions/${transaction.id}`)
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <input type="hidden" name="agency_agreement_id" value={initialData.agency_agreement_id || ''} />
 
-        {/* Client name */}
-        <div className="grid grid-cols-2 gap-4">
+      {agency && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-900">
+            Creating transaction from <strong>{agency.agreement_type === 'listing_agreement' ? 'Listing Agreement' : 'Buyer Agency Agreement'}</strong> for {agency.client_first_name} {agency.client_last_name}
+          </p>
+        </div>
+      )}
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Transaction Type</h2>
+        
+        <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className={labelClass}>Client First Name *</label>
-            <input
-              type="text"
-              required
-              value={form.client_first_name}
-              onChange={e => setForm(f => ({ ...f, client_first_name: e.target.value }))}
-              placeholder="Jane"
-              className={inputClass}
-            />
+            <label className="block text-sm font-medium mb-2">Transaction</label>
+            <select name="transaction_type" className="w-full px-3 py-2 border rounded-lg" required defaultValue="purchase">
+              <option value="purchase">Purchase</option>
+              <option value="lease">Lease</option>
+            </select>
           </div>
+
           <div>
-            <label className={labelClass}>Client Last Name *</label>
-            <input
-              type="text"
-              required
-              value={form.client_last_name}
-              onChange={e => setForm(f => ({ ...f, client_last_name: e.target.value }))}
-              placeholder="Smith"
-              className={inputClass}
-            />
+            <label className="block text-sm font-medium mb-2">Your Role</label>
+            <select name="agency_role" className="w-full px-3 py-2 border rounded-lg" required defaultValue={initialData.agency_role || 'buyer_agent'}>
+              <option value="listing_agent">Listing Agent (Seller)</option>
+              <option value="buyer_agent">Buyer's Agent</option>
+              <option value="dual_agency">Dual Agency</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Agent</label>
+            <select name="agent_id" className="w-full px-3 py-2 border rounded-lg" required defaultValue={initialData.agent_id || ''}>
+              <option value="">Select agent...</option>
+              {agents.map((agent: any) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.first_name} {agent.last_name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
+      </div>
 
-        {/* Property address */}
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Property</h2>
+        
         <div>
-          <label className={labelClass}>Property Address <span className="text-slate-600">(optional)</span></label>
+          <label className="block text-sm font-medium mb-2">Address</label>
           <input
             type="text"
-            value={form.property_address}
-            onChange={e => setForm(f => ({ ...f, property_address: e.target.value }))}
-            placeholder="123 Main St, Salt Lake City, UT 84101"
-            className={inputClass}
+            name="property_address"
+            className="w-full px-3 py-2 border rounded-lg"
+            required
+            defaultValue={initialData.property_address || ''}
           />
-          <p className="text-slate-600 text-xs mt-1.5">Leave blank for buyer representation where address isn&apos;t set yet.</p>
         </div>
 
-        {/* Property type */}
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">City</label>
+            <input
+              type="text"
+              name="property_city"
+              className="w-full px-3 py-2 border rounded-lg"
+              required
+              defaultValue={initialData.property_city || ''}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">State</label>
+            <input
+              type="text"
+              name="property_state"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.property_state || 'UT'}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">ZIP</label>
+            <input
+              type="text"
+              name="property_zip"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.property_zip || ''}
+            />
+          </div>
+        </div>
+
         <div>
-          <label className={labelClass}>Property Type *</label>
-          <select
-            required
-            value={form.property_type}
-            onChange={e => setForm(f => ({ ...f, property_type: e.target.value as PropertyType }))}
-            className={selectClass}
-          >
+          <label className="block text-sm font-medium mb-2">Property Type</label>
+          <select name="property_type" className="w-full px-3 py-2 border rounded-lg" required defaultValue={initialData.property_type || 'residential'}>
             <option value="residential">Residential</option>
             <option value="vacant_land">Vacant Land</option>
             <option value="mobile_home">Mobile Home</option>
@@ -130,79 +180,150 @@ export default function NewTransactionForm({ brokerId, agents }: Props) {
             <option value="residential_lease">Residential Lease</option>
           </select>
         </div>
-
-        {/* Transaction type */}
-        <div>
-          <label className={labelClass}>Transaction Type *</label>
-          <select
-            required
-            value={form.transaction_type}
-            onChange={e => setForm(f => ({ ...f, transaction_type: e.target.value as TransactionType }))}
-            className={selectClass}
-          >
-            <option value="listing">Listing</option>
-            <option value="buyer_agency">Buyer Agency</option>
-            <option value="seller_purchase">Seller / Purchase</option>
-            <option value="buyer_purchase">Buyer / Purchase</option>
-            <option value="unrepresented_buyer">Unrepresented Buyer</option>
-            <option value="fsbo_purchase">FSBO Purchase</option>
-          </select>
-        </div>
-
-        {/* Agent */}
-        <div>
-          <label className={labelClass}>Agent <span className="text-slate-600">(optional)</span></label>
-          <select
-            value={form.agent_id}
-            onChange={e => setForm(f => ({ ...f, agent_id: e.target.value }))}
-            className={selectClass}
-          >
-            <option value="">— Unassigned —</option>
-            {agents.map((agent: any) => (
-              <option key={agent.id} value={agent.id}>
-                {agent.last_name}, {agent.first_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Status */}
-        <div>
-          <label className={labelClass}>Status *</label>
-          <select
-            required
-            value={form.status}
-            onChange={e => setForm(f => ({ ...f, status: e.target.value as TransactionStatus }))}
-            className={selectClass}
-          >
-            <option value="active">Active</option>
-            <option value="under_contract">Under Contract</option>
-            <option value="closed">Closed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-
-        {error && (
-          <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
-            {error}
-          </div>
-        )}
       </div>
 
-      <div className="flex items-center gap-4 mt-6">
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Buyer</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">First Name</label>
+            <input
+              type="text"
+              name="buyer_first_name"
+              className="w-full px-3 py-2 border rounded-lg"
+              required
+              defaultValue={initialData.buyer_first_name || ''}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Last Name</label>
+            <input
+              type="text"
+              name="buyer_last_name"
+              className="w-full px-3 py-2 border rounded-lg"
+              required
+              defaultValue={initialData.buyer_last_name || ''}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Email</label>
+            <input
+              type="email"
+              name="buyer_email"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.buyer_email || ''}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Phone</label>
+            <input
+              type="tel"
+              name="buyer_phone"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.buyer_phone || ''}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Seller</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">First Name</label>
+            <input
+              type="text"
+              name="seller_first_name"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.seller_first_name || ''}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Last Name</label>
+            <input
+              type="text"
+              name="seller_last_name"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.seller_last_name || ''}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Email</label>
+            <input
+              type="email"
+              name="seller_email"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.seller_email || ''}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Phone</label>
+            <input
+              type="tel"
+              name="seller_phone"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={initialData.seller_phone || ''}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Dates & Financials</h2>
+        
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Contract Date</label>
+            <input
+              type="date"
+              name="contract_date"
+              className="w-full px-3 py-2 border rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Anticipated Closing</label>
+            <input
+              type="date"
+              name="anticipated_closing_date"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Purchase Price</label>
+            <input
+              type="number"
+              name="purchase_price"
+              step="0.01"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-4">
         <button
           type="submit"
           disabled={loading}
-          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:text-blue-400 text-white font-semibold rounded-xl transition-colors text-sm"
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
-          {loading ? 'Creating…' : 'Create Transaction'}
+          {loading ? 'Creating...' : 'Create Transaction'}
         </button>
-        <Link
-          href="/dashboard/transactions"
-          className="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors text-sm"
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="px-6 py-2 border rounded-lg hover:bg-gray-50"
         >
           Cancel
-        </Link>
+        </button>
       </div>
     </form>
   )

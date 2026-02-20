@@ -1,0 +1,5 @@
+First,MI,Last,Email,Phone,Date of Birth,Gender,Address,City,State,Zip,Payment Method,Entity Name,SSN Last 4,EIN,Primary Board,License #,License Expiration,Original License Date,Current Company,Listings at Hire,Hire Date
+John,A,Smith,john.smith@test.com,801-555-1234,1985-06-15,Male,123 Main St,Salt Lake City,UT,84101,Person,,5678,,Wasatch Front Regional MLS,12345678,2026-03-31,2010-03-15,ABC Realty,3,2024-01-15
+Mary,L,Johnson,mary.j@test.com,801-555-5678,1978-12-20,Female,456 Oak Ave,Provo,UT,84601,Entity,Johnson Real Estate LLC,,12-3456789,Wasatch Front Regional MLS,87654321,2028-12-31,2005-08-20,XYZ Brokers,5,2023-06-01
+Sarah,,Williams,sarah.w@test.com,801-555-9012,1990-03-10,Female,789 Pine Rd,Sandy,UT,84070,Person,,1234,,Wasatch Front Regional MLS,11223344,2026-03-15,2015-01-10,DEF Homes,0,2025-11-01
+Mike,T,Davis,mike.davis@test.com,801-555-3456,1982-07-25,Male,321 Elm Dr,Orem,UT,84057,Person,,9876,,Wasatch Front Regional MLS,55667788,2024-12-31,2008-04-12,GHI Properties,2,2020-03-15

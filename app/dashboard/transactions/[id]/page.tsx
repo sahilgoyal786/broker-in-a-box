@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { TransactionDocument, TrackingType, TransactionStatus } from '@/types/database'
 import { ArrowLeft, CheckCircle, Circle, AlertCircle } from 'lucide-react'
+import StatusUpdater from './status-updater'
+import { getUserContext } from '@/lib/supabase/get-user-role'
 
 const statusColors: Record<TransactionStatus, string> = {
   active: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
@@ -51,6 +53,10 @@ export default async function TransactionDetailPage({
 }) {
   const { id } = await params
   const supabase = await createClient()
+  
+  // Get user role
+  const userContext = await getUserContext()
+  if (!userContext) notFound()
 
   // Fetch transaction
   const { data: transaction, error: txError } = await supabase
@@ -60,6 +66,11 @@ export default async function TransactionDetailPage({
     .single() as any
 
   if (txError || !transaction) {
+    notFound()
+  }
+  
+  // Wall of confidentiality: Agents can only access their own transactions
+  if (userContext.role === 'agent' && transaction.agent_id !== userContext.agentId) {
     notFound()
   }
 
@@ -136,13 +147,11 @@ export default async function TransactionDetailPage({
               </span>
             </div>
           </div>
-          <button
-            disabled
-            className="px-4 py-2 bg-slate-700 text-slate-400 text-sm rounded-lg cursor-not-allowed"
-            title="Edit coming soon"
-          >
-            Edit
-          </button>
+          <StatusUpdater 
+            transactionId={transaction.id} 
+            currentStatus={transaction.status} 
+            userRole={userContext.role}
+          />
         </div>
       </div>
 

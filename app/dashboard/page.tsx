@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { FileText, CheckCircle, Clock, AlertCircle } from 'lucide-react'
+import { FileText, CheckCircle, Clock, AlertCircle, Users, GraduationCap } from 'lucide-react'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -13,34 +13,96 @@ export default async function DashboardPage() {
     .single() as any
 
   // Stats
-  const [{ count: totalTx }, { count: activeTx }, { count: underContract }] = await Promise.all([
+  const [
+    { count: listingsUnderContract },
+    { count: buyersUnderContract },
+    { count: listingsClosed },
+    { count: buyersClosed }
+  ] = await Promise.all([
+    // Listings pending (includes CTP review and cancellation review - still pending until approved)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
-      .eq('broker_id', broker?.id ?? ''),
+      .eq('broker_id', broker?.id ?? '')
+      .eq('agency_role', 'listing_agent')
+      .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation']),
+    // Buyers pending (includes CTP review and cancellation review - still pending until approved)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
-      .eq('broker_id', broker?.id ?? '').eq('status', 'active'),
+      .eq('broker_id', broker?.id ?? '')
+      .eq('agency_role', 'buyer_agent')
+      .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation']),
+    // Listings closed (only when office marks it closed)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
-      .eq('broker_id', broker?.id ?? '').eq('status', 'under_contract'),
+      .eq('broker_id', broker?.id ?? '')
+      .eq('agency_role', 'listing_agent')
+      .eq('status', 'closed'),
+    // Buyers closed (only when office marks it closed)
+    supabase.from('transactions').select('*', { count: 'exact', head: true })
+      .eq('broker_id', broker?.id ?? '')
+      .eq('agency_role', 'buyer_agent')
+      .eq('status', 'closed'),
   ])
 
-  // Recent transactions
+  // Active listings = listing agreements with NO active transaction
+  const { data: allListingAgreements } = await supabase
+    .from('agency_agreements')
+    .select('id')
+    .eq('broker_id', broker?.id ?? '')
+    .eq('agreement_type', 'listing_agreement')
+    .eq('status', 'active') as any
+
+  const { data: listingsWithDeals } = await supabase
+    .from('transactions')
+    .select('agency_agreement_id')
+    .eq('broker_id', broker?.id ?? '')
+    .eq('agency_role', 'listing_agent')
+    .neq('status', 'cancelled')
+    .not('agency_agreement_id', 'is', null) as any
+
+  const listingsWithDealsSet = new Set(listingsWithDeals?.map((t: any) => t.agency_agreement_id) ?? [])
+  const activeListings = allListingAgreements?.filter((a: any) => !listingsWithDealsSet.has(a.id)).length ?? 0
+
+  // CE Compliance - count agents needing attention
+  const { data: allAgents } = await supabase
+    .from('agents')
+    .select('id, license_expiration, mandatory_course_completed')
+    .eq('broker_id', broker?.id ?? '')
+    .eq('status', 'active') as any
+
+  const ceNeedsAttention = allAgents?.filter((agent: any) => {
+    if (!agent.mandatory_course_completed) return true
+    if (agent.license_expiration) {
+      const daysUntil = Math.ceil((new Date(agent.license_expiration).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+      if (daysUntil < 60) return true
+    }
+    return false
+  }).length ?? 0
+
+  // Recent transactions (exclude cancelled and closed)
   const { data: recentTransactions } = await supabase
     .from('transactions')
-    .select('id, client_last_name, client_first_name, property_address, property_type, transaction_type, status, created_at')
+    .select('id, buyer_first_name, buyer_last_name, seller_first_name, seller_last_name, property_address, property_city, property_type, transaction_type, agency_role, status, created_at')
     .eq('broker_id', broker?.id ?? '')
+    .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
     .order('created_at', { ascending: false })
     .limit(5) as any
 
   const stats = [
-    { label: 'Total Transactions', value: totalTx ?? 0, icon: FileText, color: 'text-blue-400' },
-    { label: 'Active', value: activeTx ?? 0, icon: Clock, color: 'text-yellow-400' },
-    { label: 'Under Contract', value: underContract ?? 0, icon: CheckCircle, color: 'text-green-400' },
+    { label: 'Active Listings', value: activeListings ?? 0, icon: FileText, color: 'text-blue-400', href: '/dashboard/agencies' },
+    { label: 'Listings Pending', value: listingsUnderContract ?? 0, icon: Clock, color: 'text-yellow-400', href: '/dashboard/transactions' },
+    { label: 'Buyers Pending', value: buyersUnderContract ?? 0, icon: Clock, color: 'text-purple-400', href: '/dashboard/transactions' },
+    { label: 'CE Alerts', value: ceNeedsAttention, icon: GraduationCap, color: ceNeedsAttention > 0 ? 'text-red-400' : 'text-green-400', href: '/dashboard/ce-compliance' },
+    { label: 'Listings Closed', value: listingsClosed ?? 0, icon: CheckCircle, color: 'text-green-400', href: '/dashboard/transactions' },
+    { label: 'Buyers Closed', value: buyersClosed ?? 0, icon: CheckCircle, color: 'text-green-400', href: '/dashboard/transactions' },
   ]
 
   const statusColors: Record<string, string> = {
     active: 'bg-yellow-500/20 text-yellow-400',
-    under_contract: 'bg-green-500/20 text-green-400',
-    closed: 'bg-slate-500/20 text-slate-400',
+    under_contract: 'bg-yellow-500/20 text-yellow-400',
+    pending: 'bg-yellow-500/20 text-yellow-400',
+    pending_closure: 'bg-blue-500/20 text-blue-400',
+    pending_cancellation: 'bg-orange-500/20 text-orange-400',
+    closed: 'bg-green-500/20 text-green-400',
     cancelled: 'bg-red-500/20 text-red-400',
+    expired: 'bg-slate-500/20 text-slate-400',
   }
 
   return (
@@ -51,22 +113,22 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {stats.map(({ label, value, icon: Icon, color, href }) => (
+          <Link key={label} href={href} className="bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-slate-600 transition-colors">
             <div className="flex items-center justify-between mb-3">
               <p className="text-slate-400 text-sm">{label}</p>
               <Icon className={`w-5 h-5 ${color}`} />
             </div>
             <p className="text-3xl font-bold text-white">{value}</p>
-          </div>
+          </Link>
         ))}
       </div>
 
-      {/* Recent Transactions */}
+      {/* Active Deals */}
       <div className="bg-slate-800 rounded-xl border border-slate-700">
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <h2 className="text-white font-semibold">Recent Transactions</h2>
+          <h2 className="text-white font-semibold">Active Deals (Pending & Under Contract)</h2>
           <Link
             href="/dashboard/transactions"
             className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
@@ -78,37 +140,39 @@ export default async function DashboardPage() {
         {!recentTransactions || recentTransactions.length === 0 ? (
           <div className="p-12 text-center">
             <AlertCircle className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400">No transactions yet</p>
-            <Link
-              href="/dashboard/transactions/new"
-              className="mt-4 inline-block text-blue-400 hover:text-blue-300 text-sm"
-            >
-              Create your first transaction →
-            </Link>
+            <p className="text-slate-400">No active deals</p>
+            <p className="text-slate-500 text-sm mt-2">Deals in pending or under contract status will appear here</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-700">
-            {recentTransactions.map((tx: any) => (
-              <Link
-                key={tx.id}
-                href={`/dashboard/transactions/${tx.id}`}
-                className="flex items-center justify-between p-4 hover:bg-slate-700/50 transition-colors"
-              >
-                <div>
-                  <p className="text-white font-medium text-sm">
-                    {tx.client_last_name}, {tx.client_first_name}
-                  </p>
-                  <p className="text-slate-400 text-xs mt-0.5">
-                    {tx.property_address ?? 'No address yet'} ·{' '}
-                    {tx.property_type.replace('_', ' ')} ·{' '}
-                    {tx.transaction_type.replace('_', ' ')}
-                  </p>
-                </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColors[tx.status]}`}>
-                  {tx.status.replace('_', ' ')}
-                </span>
-              </Link>
-            ))}
+            {recentTransactions.map((tx: any) => {
+              // Client = whoever we represent
+              const clientFirstName = tx.agency_role === 'listing_agent' ? tx.seller_first_name : tx.buyer_first_name
+              const clientLastName = tx.agency_role === 'listing_agent' ? tx.seller_last_name : tx.buyer_last_name
+              const roleLabel = tx.agency_role === 'listing_agent' ? 'Listing' : tx.agency_role === 'buyer_agent' ? 'Buyer' : 'Dual'
+              
+              return (
+                <Link
+                  key={tx.id}
+                  href={`/dashboard/transactions/${tx.id}`}
+                  className="flex items-center justify-between p-4 hover:bg-slate-700/50 transition-colors"
+                >
+                  <div>
+                    <p className="text-white font-medium text-sm">
+                      {clientLastName}, {clientFirstName}
+                    </p>
+                    <p className="text-slate-400 text-xs mt-0.5">
+                      {tx.property_address ?? 'No address'} {tx.property_city && `· ${tx.property_city}`} · {roleLabel} Side
+                    </p>
+                  </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColors[tx.status]}`}>
+                    {tx.status === 'pending_closure' ? 'CTP Review' :
+                     tx.status === 'pending_cancellation' ? 'Cancel Review' :
+                     tx.status?.replace(/_/g, ' ')}
+                  </span>
+                </Link>
+              )
+            })}
           </div>
         )}
       </div>

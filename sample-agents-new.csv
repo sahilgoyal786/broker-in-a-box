@@ -1,0 +1,5 @@
+First,MI,Last,Email,Phone,Date of Birth,Gender,Address,City,State,Zip,Payment Method,Entity Name,SSN Last 4,EIN,Primary Board,License #,License Expiration,Original License Date,Current Company,Listings at Hire,Hire Date
+Robert,J,Anderson,robert.anderson@example.com,801-555-7890,1980-04-12,Male,100 Park Ave,Salt Lake City,UT,84102,Person,,4321,,Wasatch Front Regional MLS,99887766,2027-06-30,2012-05-10,First Choice Realty,4,2024-02-01
+Jennifer,M,Martinez,jennifer.m@example.com,801-555-2345,1975-11-08,Female,200 Valley Dr,Lehi,UT,84043,Entity,Martinez Properties Inc,,98-7654321,Wasatch Front Regional MLS,55443322,2026-09-30,2003-07-15,Premier Homes,7,2023-09-15
+David,K,Thompson,david.t@example.com,801-555-6789,1988-02-28,Male,300 Mountain View,Draper,UT,84020,Person,,7890,,Wasatch Front Regional MLS,11229988,2026-12-31,2018-03-20,Summit Realty,1,2025-08-10
+Lisa,A,Brown,lisa.brown@example.com,801-555-4567,1983-09-05,Female,400 Sunset Blvd,South Jordan,UT,84095,Entity,Brown Real Estate Group LLC,,11-2233445,Wasatch Front Regional MLS,33445566,2027-03-31,2009-11-12,Excellence Realty,6,2022-04-20
