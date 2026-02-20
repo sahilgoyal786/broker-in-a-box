@@ -3,7 +3,6 @@ import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Mail, Phone, Calendar, User, Shield, TrendingUp } from 'lucide-react'
-import RenewLicenseButton from '../renew-license-button'
 import DeactivateButton from './deactivate-button'
 
 export default async function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -106,16 +105,11 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
             )}
           </div>
         </div>
-        <div className="flex gap-3">
-          {agent.license_expiration && (isExpiring || isExpired) && (
-            <RenewLicenseButton agentId={agent.id} currentExpiration={agent.license_expiration} />
-          )}
-          <DeactivateButton 
-            agentId={agent.id} 
-            agentName={`${agent.first_name} ${agent.last_name}`}
-            isActive={agent.active ?? true}
-          />
-        </div>
+        <DeactivateButton 
+          agentId={agent.id} 
+          agentName={`${agent.first_name} ${agent.last_name}`}
+          isActive={agent.active ?? true}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
