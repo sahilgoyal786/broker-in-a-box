@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Users, Upload, AlertTriangle } from 'lucide-react'
+import { Plus, Users, Upload } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
+import AgentsTable from './agents-table'
 
 export default async function AgentsPage() {
   const userContext = await getUserContext()
@@ -116,91 +117,7 @@ export default async function AgentsPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-700">
-                <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Name</th>
-                <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Email</th>
-                <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Core</th>
-                <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Elective</th>
-                <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Mandatory</th>
-                <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Expires</th>
-                <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Active Listings</th>
-                <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Pending Sales</th>
-                <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Closed</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-700">
-              {agentsWithStats.map((agent: any) => {
-                const isExpiring = agent.daysUntilExpiration !== null && agent.daysUntilExpiration <= 45 && agent.daysUntilExpiration >= 0
-                const isExpired = agent.daysUntilExpiration !== null && agent.daysUntilExpiration < 0
-                
-                return (
-                  <tr key={agent.id} className="hover:bg-slate-700/40 transition-colors">
-                    <td className="px-6 py-4">
-                      <Link 
-                        href={`/dashboard/agents/${agent.id}`}
-                        className="text-white font-medium text-sm hover:text-blue-400 transition-colors"
-                      >
-                        {agent.last_name}, {agent.first_name}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-slate-300 text-sm">{agent.email}</p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <p className="text-slate-300 text-sm font-medium">{agent.ce_hours_core ?? 0}</p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <p className="text-slate-300 text-sm font-medium">{agent.ce_hours_other ?? 0}</p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      {agent.mandatory_course_completed ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">YES</span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400">NO</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      {agent.license_expiration ? (
-                        <div className="flex items-center gap-2">
-                          {(isExpiring || isExpired) && <AlertTriangle className="w-4 h-4 text-orange-400" />}
-                          <div>
-                            <p className={`text-sm font-medium ${
-                              isExpired ? 'text-red-400' :
-                              isExpiring ? 'text-orange-400' :
-                              'text-slate-300'
-                            }`}>
-                              {new Date(agent.license_expiration).toLocaleDateString()}
-                            </p>
-                            {isExpiring && agent.daysUntilExpiration > 0 && (
-                              <p className="text-xs text-orange-300">{agent.daysUntilExpiration} days</p>
-                            )}
-                            {isExpired && (
-                              <p className="text-xs text-red-300">EXPIRED</p>
-                            )}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-slate-600 italic text-sm">Not set</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-blue-400 font-semibold text-lg">{agent.activeListings}</span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-yellow-400 font-semibold text-lg">{agent.pendingSales}</span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-green-400 font-semibold text-lg">{agent.closedDeals}</span>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
+        <AgentsTable agents={agentsWithStats} />
       )}
     </div>
   )

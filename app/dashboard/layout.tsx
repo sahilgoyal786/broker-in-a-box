@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User, GraduationCap } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 
 export default async function DashboardLayout({
@@ -42,7 +42,6 @@ export default async function DashboardLayout({
     { href: '/dashboard/agencies', label: 'Agency Agreements', icon: FileText, roles: ['broker', 'agent'] },
     { href: '/dashboard/transactions', label: 'Transactions', icon: FileText, roles: ['broker', 'agent'] },
     { href: '/dashboard/agents', label: 'Agents', icon: Users, roles: ['broker'] },  // Broker only
-    { href: '/dashboard/ce-compliance', label: 'CE Compliance', icon: GraduationCap, roles: ['broker'] },  // Broker only
     { href: '/dashboard/settings', label: 'Settings', icon: Settings, roles: ['broker', 'agent'] },
   ].filter(item => item.roles.includes(userContext.role))
 
