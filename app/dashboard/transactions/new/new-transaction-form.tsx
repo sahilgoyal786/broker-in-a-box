@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 export default function NewTransactionForm({ brokerId, agents, agency, currentAgentId, isAgent }: any) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [showLimitedAgency, setShowLimitedAgency] = useState(false)
 
   // Pre-fill from agency if provided
   const initialData = agency ? {
@@ -43,6 +44,7 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
       transaction_type: formData.get('transaction_type'),
       property_type: formData.get('property_type'),
       agency_role: formData.get('agency_role'),
+      limited_agency_disclosure_received: formData.get('limited_agency_disclosure_received') === 'on',
       property_address: formData.get('property_address'),
       property_city: formData.get('property_city'),
       property_state: formData.get('property_state'),
@@ -116,10 +118,17 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
 
           <div>
             <label className="block text-sm font-medium mb-2">Your Role</label>
-            <select name="agency_role" className="w-full px-3 py-2 border rounded-lg" required defaultValue={initialData.agency_role || 'buyer_agent'}>
+            <select 
+              name="agency_role" 
+              id="agency_role"
+              className="w-full px-3 py-2 border rounded-lg" 
+              required 
+              defaultValue={initialData.agency_role || 'buyer_agent'}
+              onChange={(e) => setShowLimitedAgency(e.target.value === 'limited_agency')}
+            >
               <option value="listing_agent">Listing Agent (Seller)</option>
               <option value="buyer_agent">Buyer's Agent</option>
-              <option value="dual_agency">Dual Agency</option>
+              <option value="limited_agency">Limited Agency (Dual)</option>
             </select>
           </div>
 
@@ -144,6 +153,23 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
             )}
           </div>
         </div>
+
+        {/* Limited Agency Disclosure - Only shows when Limited Agency is selected */}
+        {showLimitedAgency && (
+          <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+            <label className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                name="limited_agency_disclosure_received"
+                className="mt-1"
+              />
+              <div>
+                <span className="text-sm font-medium text-orange-900">Limited Agency Disclosure and Agreement Received</span>
+                <p className="text-xs text-orange-700 mt-1">Required when representing both buyer and seller in the same transaction</p>
+              </div>
+            </label>
+          </div>
+        )}
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
