@@ -60,6 +60,25 @@ export default async function DashboardPage() {
   const listingsWithDealsSet = new Set(listingsWithDeals?.map((t: any) => t.agency_agreement_id) ?? [])
   const activeListings = allListingAgreements?.filter((a: any) => !listingsWithDealsSet.has(a.id)).length ?? 0
 
+  // Active buyer brokers = buyer agency agreements with NO active transaction
+  const { data: allBuyerAgreements } = await supabase
+    .from('agency_agreements')
+    .select('id')
+    .eq('broker_id', broker?.id ?? '')
+    .eq('agreement_type', 'buyer_agency_agreement')
+    .eq('status', 'active') as any
+
+  const { data: buyersWithDeals } = await supabase
+    .from('transactions')
+    .select('agency_agreement_id')
+    .eq('broker_id', broker?.id ?? '')
+    .eq('agency_role', 'buyer_agent')
+    .neq('status', 'cancelled')
+    .not('agency_agreement_id', 'is', null) as any
+
+  const buyersWithDealsSet = new Set(buyersWithDeals?.map((t: any) => t.agency_agreement_id) ?? [])
+  const activeBuyerBrokers = allBuyerAgreements?.filter((a: any) => !buyersWithDealsSet.has(a.id)).length ?? 0
+
   // CE Compliance - count agents needing attention
   const { data: allAgents } = await supabase
     .from('agents')
@@ -92,7 +111,17 @@ export default async function DashboardPage() {
 
   const stats = [
     // Row 1: Active pipeline
-    { label: 'Active Listings', value: activeListings ?? 0, icon: FileText, color: 'text-blue-400', href: '/dashboard/agencies' },
+    { 
+      label: 'Active Agreements', 
+      icon: FileText, 
+      color: 'text-blue-400', 
+      href: '/dashboard/agencies',
+      split: true,
+      rows: [
+        { label: 'Listings', value: activeListings ?? 0 },
+        { label: 'Buyer Brokers', value: activeBuyerBrokers ?? 0 }
+      ]
+    },
     { label: 'Listings Pending', value: listingsUnderContract ?? 0, icon: Clock, color: 'text-yellow-400', href: '/dashboard/transactions' },
     { label: 'Buyers Pending', value: buyersUnderContract ?? 0, icon: Clock, color: 'text-purple-400', href: '/dashboard/transactions' },
     { label: 'Totals Pending', value: totalsPending, icon: FileText, color: 'text-orange-400', href: '/dashboard/transactions', highlighted: true },
@@ -124,23 +153,41 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map(({ label, value, icon: Icon, color, href, highlighted }) => (
-          <Link 
-            key={label} 
-            href={href} 
-            className={`rounded-xl p-6 border transition-colors ${
-              highlighted 
-                ? 'bg-slate-700 border-slate-600 hover:border-slate-500 ring-1 ring-slate-600' 
-                : 'bg-slate-800 border-slate-700 hover:border-slate-600'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <p className={`text-sm font-medium ${highlighted ? 'text-slate-200' : 'text-slate-400'}`}>{label}</p>
-              <Icon className={`w-5 h-5 ${color}`} />
-            </div>
-            <p className="text-3xl font-bold text-white">{value}</p>
-          </Link>
-        ))}
+        {stats.map((stat: any) => {
+          const { label, value, icon: Icon, color, href, highlighted, split, rows } = stat
+          
+          return (
+            <Link 
+              key={label} 
+              href={href} 
+              className={`rounded-xl p-6 border transition-colors ${
+                highlighted 
+                  ? 'bg-slate-700 border-slate-600 hover:border-slate-500 ring-1 ring-slate-600' 
+                  : 'bg-slate-800 border-slate-700 hover:border-slate-600'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <p className={`text-sm font-medium ${highlighted ? 'text-slate-200' : 'text-slate-400'}`}>{label}</p>
+                <Icon className={`w-5 h-5 ${color}`} />
+              </div>
+              
+              {split && rows ? (
+                // Split card with two rows
+                <div className="space-y-2">
+                  {rows.map((row: any, idx: number) => (
+                    <div key={idx} className="flex items-baseline justify-between">
+                      <span className="text-sm text-slate-400">{row.label}</span>
+                      <span className="text-2xl font-bold text-white">{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                // Regular single value card
+                <p className="text-3xl font-bold text-white">{value}</p>
+              )}
+            </Link>
+          )
+        })}
       </div>
 
       {/* Active Deals */}
