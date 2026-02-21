@@ -442,6 +442,36 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
           </div>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium mb-2">Where is the Earnest Money?</label>
+          <select 
+            name="earnest_money_location" 
+            className="w-full px-3 py-2 border rounded-lg"
+            value={earnestMoneyLocation}
+            onChange={(e) => setEarnestMoneyLocation(e.target.value)}
+          >
+            <option value="">Select location...</option>
+            <option value="buyer_title_company">Buyer Title Company</option>
+            <option value="seller_title_company">Seller Title Company</option>
+            <option value="buyer_broker">Buyer's Broker</option>
+            <option value="listing_broker">Listing Broker</option>
+            <option value="other">Other</option>
+          </select>
+          <p className="text-xs text-slate-500 mt-1">Where the earnest money deposit is being held</p>
+        </div>
+
+        {earnestMoneyLocation === 'other' && (
+          <div>
+            <label className="block text-sm font-medium mb-2">Please Specify Location</label>
+            <input
+              type="text"
+              name="earnest_money_location_other"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Specify where earnest money is held"
+            />
+          </div>
+        )}
+
         <h3 className="text-sm font-semibold text-slate-700 mt-6 mb-3">Seller's Title Company</h3>
         
         <div>
@@ -525,38 +555,6 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
             />
           </div>
         </div>
-
-        <h3 className="text-sm font-semibold text-slate-700 mt-6 mb-3">Earnest Money Holder</h3>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Where is the Earnest Money?</label>
-          <select 
-            name="earnest_money_location" 
-            className="w-full px-3 py-2 border rounded-lg"
-            value={earnestMoneyLocation}
-            onChange={(e) => setEarnestMoneyLocation(e.target.value)}
-          >
-            <option value="">Select location...</option>
-            <option value="buyer_title_company">Buyer Title Company</option>
-            <option value="seller_title_company">Seller Title Company</option>
-            <option value="buyer_broker">Buyer's Broker</option>
-            <option value="listing_broker">Listing Broker</option>
-            <option value="other">Other</option>
-          </select>
-          <p className="text-xs text-slate-500 mt-1">Where the earnest money deposit is being held</p>
-        </div>
-
-        {earnestMoneyLocation === 'other' && (
-          <div>
-            <label className="block text-sm font-medium mb-2">Please Specify Location</label>
-            <input
-              type="text"
-              name="earnest_money_location_other"
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Specify where earnest money is held"
-            />
-          </div>
-        )}
 
         <h3 className="text-sm font-semibold text-slate-700 mt-6 mb-3">Section 24 Deadlines</h3>
         
