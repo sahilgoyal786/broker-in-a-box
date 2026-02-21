@@ -56,8 +56,11 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
       seller_email: formData.get('seller_email') || null,
       seller_phone: formData.get('seller_phone') || null,
       purchase_price: formData.get('purchase_price') || null,
-      contract_date: formData.get('contract_date'),
-      anticipated_closing_date: formData.get('anticipated_closing_date') || null,
+      offer_reference_date: formData.get('offer_reference_date'),
+      seller_disclosure_deadline: formData.get('seller_disclosure_deadline') || null,
+      due_diligence_deadline: formData.get('due_diligence_deadline') || null,
+      finance_appraisal_deadline: formData.get('finance_appraisal_deadline') || null,
+      settlement_deadline: formData.get('settlement_deadline'),
       status: 'pending'
     }
 
@@ -286,25 +289,20 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
-        <h2 className="text-lg font-semibold border-b pb-2">Dates & Financials</h2>
+        <h2 className="text-lg font-semibold border-b pb-2">REPC Dates</h2>
         
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Contract Date</label>
+            <label className="block text-sm font-medium mb-2">
+              Offer Reference Date <span className="text-red-500">*</span>
+            </label>
             <input
               type="date"
-              name="contract_date"
+              name="offer_reference_date"
               className="w-full px-3 py-2 border rounded-lg"
               required
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Anticipated Closing</label>
-            <input
-              type="date"
-              name="anticipated_closing_date"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
+            <p className="text-xs text-slate-500 mt-1">REPC front page</p>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Purchase Price</label>
@@ -313,7 +311,52 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               name="purchase_price"
               step="0.01"
               className="w-full px-3 py-2 border rounded-lg"
+              placeholder="$"
             />
+          </div>
+        </div>
+
+        <h3 className="text-sm font-semibold text-slate-700 mt-6 mb-3">Section 24 Deadlines</h3>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Seller Disclosure Deadline</label>
+            <input
+              type="date"
+              name="seller_disclosure_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24.1</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Due Diligence Deadline</label>
+            <input
+              type="date"
+              name="due_diligence_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24.2</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Finance & Appraisal Deadline</label>
+            <input
+              type="date"
+              name="finance_appraisal_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24.3</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Settlement Deadline <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="settlement_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+              required
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24.4</p>
           </div>
         </div>
       </div>
