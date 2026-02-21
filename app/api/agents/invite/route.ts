@@ -88,7 +88,7 @@ export async function POST(request: Request) {
           htmlBody: emailTemplate.html,
           textBody: emailTemplate.text,
           fromName: broker.name,
-          fromEmail: 'onboarding@resend.dev' // Use Resend's verified domain
+          fromEmail: 'noreply@aubrey.net' // Use verified aubrey.net domain
         })
 
         invites.push({
