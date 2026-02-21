@@ -1,18 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus, FileText } from 'lucide-react'
+import { getUserContext } from '@/lib/supabase/get-user-role'
+import { redirect } from 'next/navigation'
 
 export default async function TransactionsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) redirect('/auth/login')
 
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('id')
-    .eq('auth_user_id', user!.id)
-    .single() as any
+  const userContext = await getUserContext()
+  if (!userContext) redirect('/auth/login')
 
-  const { data: transactions } = await supabase
+  // Build query based on role
+  let query = supabase
     .from('transactions')
     .select(`
       id,
@@ -29,8 +31,24 @@ export default async function TransactionsPage() {
       created_at,
       updated_at
     `)
-    .eq('broker_id', broker?.id ?? '')
-    .order('updated_at', { ascending: false }) as any
+    .order('updated_at', { ascending: false })
+
+  if (userContext.role === 'broker') {
+    // Brokers see all transactions for their brokerage
+    const { data: broker } = await supabase
+      .from('brokers')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .single() as any
+    
+    if (!broker) redirect('/auth/login')
+    query = query.eq('broker_id', broker.id)
+  } else {
+    // Agents see only their own transactions
+    query = query.eq('agent_id', userContext.agentId!)
+  }
+
+  const { data: transactions } = await query as any
 
   const statusColors: Record<string, string> = {
     pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
@@ -68,13 +86,15 @@ export default async function TransactionsPage() {
           <h1 className="text-2xl font-bold text-white">Transactions</h1>
           <p className="text-slate-400 mt-1">{transactions?.length ?? 0} total</p>
         </div>
-        <Link
-          href="/dashboard/transactions/new"
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          New Transaction
-        </Link>
+        {userContext.role === 'broker' && (
+          <Link
+            href="/dashboard/transactions/new"
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            New Transaction
+          </Link>
+        )}
       </div>
 
       {!transactions || transactions.length === 0 ? (

@@ -39,7 +39,7 @@ export default async function DashboardLayout({
 
   const navItems = [
     { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, roles: ['broker', 'agent'] },
-    { href: '/dashboard/agencies', label: 'Agency Agreements', icon: FileText, roles: ['broker'] },  // Broker only
+    { href: '/dashboard/agencies', label: 'Agency Agreements', icon: FileText, roles: ['broker', 'agent'] },
     { href: '/dashboard/transactions', label: 'Transactions', icon: FileText, roles: ['broker', 'agent'] },
     { href: '/dashboard/agents', label: 'Agents', icon: Users, roles: ['broker'] },  // Broker only
     { href: '/dashboard/settings', label: 'Settings', icon: Settings, roles: ['broker'] },  // Broker only

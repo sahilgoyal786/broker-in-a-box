@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getUserContext } from '@/lib/supabase/get-user-role'
 
 export default async function AgenciesPage() {
   const supabase = await createClient()
@@ -9,34 +10,48 @@ export default async function AgenciesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .single() as any
+  const userContext = await getUserContext()
+  if (!userContext) redirect('/auth/login')
 
-  if (!broker) redirect('/auth/login')
-
-  const { data: agencies } = await supabase
+  // Build query based on role
+  let query = supabase
     .from('agency_agreements')
     .select(`
       *,
       agent:agents(first_name, last_name)
     `)
-    .eq('broker_id', broker.id)
-    .order('created_at', { ascending: false }) as any
+    .order('created_at', { ascending: false })
+
+  if (userContext.role === 'broker') {
+    // Brokers see all agreements for their brokerage
+    const { data: broker } = await supabase
+      .from('brokers')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .single() as any
+    
+    if (!broker) redirect('/auth/login')
+    query = query.eq('broker_id', broker.id)
+  } else {
+    // Agents see only their own agreements
+    query = query.eq('agent_id', userContext.agentId!)
+  }
+
+  const { data: agencies } = await query as any
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Agency Agreements</h1>
-        <Link
-          href="/dashboard/agencies/new"
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Agency Agreement
-        </Link>
+        {userContext.role === 'broker' && (
+          <Link
+            href="/dashboard/agencies/new"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Agency Agreement
+          </Link>
+        )}
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
