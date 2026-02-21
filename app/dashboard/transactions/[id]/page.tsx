@@ -316,38 +316,21 @@ export default async function TransactionDetailPage({
             </div>
           </div>
 
-          {/* Earnest Money Details */}
-          <div className="mt-6 pt-6 border-t border-slate-700">
-            <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Earnest Money Holder</h3>
-            <div className="grid grid-cols-2 gap-4">
+          {/* Earnest Money Location */}
+          {transaction.earnest_money_location && (
+            <div className="mt-6 pt-6 border-t border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Earnest Money Location</h3>
               <div>
-                <span className="text-slate-400 text-xs">Location:</span>
-                <p className="text-white text-sm mt-1">
-                  {transaction.earnest_money_location === 'buyer_title_company' ? 'Buyer Title Company' :
-                   transaction.earnest_money_location === 'seller_title_company' ? 'Seller Title Company' :
+                <p className="text-white text-sm">
+                  {transaction.earnest_money_location === 'buyer_title_company' ? "Buyer's Title Company" :
+                   transaction.earnest_money_location === 'seller_title_company' ? "Seller's Title Company" :
                    transaction.earnest_money_location === 'buyer_broker' ? "Buyer's Broker" :
                    transaction.earnest_money_location === 'listing_broker' ? 'Listing Broker' :
                    transaction.earnest_money_location === 'other' ? (transaction.earnest_money_location_other || 'Other') : '—'}
                 </p>
               </div>
-              <div>
-                <span className="text-slate-400 text-xs">Held By:</span>
-                <p className="text-white text-sm mt-1">{transaction.earnest_money_held_by || '—'}</p>
-              </div>
-              <div>
-                <span className="text-slate-400 text-xs">Contact:</span>
-                <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_name || '—'}</p>
-              </div>
-              <div>
-                <span className="text-slate-400 text-xs">Email:</span>
-                <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_email || '—'}</p>
-              </div>
-              <div>
-                <span className="text-slate-400 text-xs">Phone:</span>
-                <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_phone || '—'}</p>
-              </div>
             </div>
-          </div>
+          )}
 
           {/* Section 24 Deadlines */}
           <div className="mt-6 pt-6 border-t border-slate-700">

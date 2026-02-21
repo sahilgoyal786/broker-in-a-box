@@ -46,10 +46,6 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       earnest_money_amount: formData.get('earnest_money_amount') || null,
       earnest_money_location: formData.get('earnest_money_location') || null,
       earnest_money_location_other: formData.get('earnest_money_location_other') || null,
-      earnest_money_held_by: formData.get('earnest_money_held_by') || null,
-      earnest_money_contact_name: formData.get('earnest_money_contact_name') || null,
-      earnest_money_contact_email: formData.get('earnest_money_contact_email') || null,
-      earnest_money_contact_phone: formData.get('earnest_money_contact_phone') || null,
       seller_title_company: formData.get('seller_title_company') || null,
       seller_title_contact_name: formData.get('seller_title_contact_name') || null,
       seller_title_contact_email: formData.get('seller_title_contact_email') || null,
@@ -547,51 +543,6 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
             />
           </div>
         )}
-
-        <div>
-          <label className={labelClass}>Held By (Company/Brokerage Name)</label>
-          <input
-            type="text"
-            name="earnest_money_held_by"
-            className={inputClass}
-            placeholder="e.g., First American Title, Smith Realty"
-            defaultValue={transaction.earnest_money_held_by || ''}
-          />
-          <p className="text-xs text-slate-500 mt-1">Name of title company or brokerage</p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className={labelClass}>Contact Person</label>
-            <input
-              type="text"
-              name="earnest_money_contact_name"
-              className={inputClass}
-              placeholder="Contact name"
-              defaultValue={transaction.earnest_money_contact_name || ''}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Contact Email</label>
-            <input
-              type="email"
-              name="earnest_money_contact_email"
-              className={inputClass}
-              placeholder="email@company.com"
-              defaultValue={transaction.earnest_money_contact_email || ''}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Contact Phone</label>
-            <input
-              type="tel"
-              name="earnest_money_contact_phone"
-              className={inputClass}
-              placeholder="(801) 555-1234"
-              defaultValue={transaction.earnest_money_contact_phone || ''}
-            />
-          </div>
-        </div>
 
         <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Section 24 Deadlines</h3>
         
