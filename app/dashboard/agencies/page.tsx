@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getUserRole } from '@/lib/supabase/get-user-role'
+import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import AgenciesTabs from './agencies-tabs'
@@ -10,8 +10,9 @@ export default async function AgenciesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
   
-  const role = await getUserRole()
-  if (!role) redirect('/auth/login')
+  const userContext = await getUserContext()
+  if (!userContext) redirect('/auth/login')
+  const role = userContext.role
 
   // Fetch all agency agreements
   let query = supabase

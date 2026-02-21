@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getUserRole } from '@/lib/supabase/get-user-role'
+import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -9,8 +9,9 @@ export default async function ListingsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
   
-  const role = await getUserRole()
-  if (!role) redirect('/auth/login')
+  const userContext = await getUserContext()
+  if (!userContext) redirect('/auth/login')
+  const role = userContext.role
 
   // Fetch listings based on role
   let query = supabase

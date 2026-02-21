@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getUserRole } from '@/lib/supabase/get-user-role'
+import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import NewListingForm from './new-listing-form'
 
@@ -13,8 +13,9 @@ export default async function NewListingPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
   
-  const role = await getUserRole()
-  if (!role) redirect('/auth/login')
+  const userContext = await getUserContext()
+  if (!userContext) redirect('/auth/login')
+  const role = userContext.role
 
   const params = await searchParams
   const agencyId = params.agency
