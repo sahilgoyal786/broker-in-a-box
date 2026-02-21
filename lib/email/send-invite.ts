@@ -31,7 +31,7 @@ export async function sendInviteEmail(params: InviteEmailParams) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `${params.fromName || 'Broker in a Box'} <${params.fromEmail || 'noreply@brokerinabox.com'}>`,
+      from: `${params.fromName || 'Broker in a Box'} <${params.fromEmail || 'onboarding@resend.dev'}>`,
       to: params.to,
       subject: params.subject,
       html: params.htmlBody,
