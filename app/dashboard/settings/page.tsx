@@ -10,7 +10,7 @@ export default async function SettingsPage() {
 
   const { data: broker } = await supabase
     .from('brokers')
-    .select('id, name, email, gmail_transactions_email, gmail_refresh_token')
+    .select('id, name, email, gmail_transactions_email, gmail_refresh_token, notification_preference')
     .eq('auth_user_id', user.id)
     .single() as any
 

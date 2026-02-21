@@ -13,10 +13,12 @@ export async function GET(request: Request) {
     if (!error) {
       // Ensure a broker record exists for this user
       const { data: { user } } = await supabase.auth.getUser()
+      let redirectTo = next
+      
       if (user) {
         const { data: existingBroker } = await supabase
           .from('brokers')
-          .select('id')
+          .select('id, notification_preference')
           .eq('auth_user_id', user.id)
           .single()
 
@@ -27,6 +29,11 @@ export async function GET(request: Request) {
             name: user.user_metadata?.full_name ?? user.email ?? 'Broker',
             email: user.email ?? '',
           } as any)
+          // New broker - send to onboarding
+          redirectTo = '/dashboard/onboarding'
+        } else if (!existingBroker.notification_preference) {
+          // Existing broker without notification preference set - send to onboarding
+          redirectTo = '/dashboard/onboarding'
         }
       }
 
@@ -34,11 +41,11 @@ export async function GET(request: Request) {
       const isLocalEnv = process.env.NODE_ENV === 'development'
 
       if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`)
+        return NextResponse.redirect(`${origin}${redirectTo}`)
       } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`)
+        return NextResponse.redirect(`https://${forwardedHost}${redirectTo}`)
       } else {
-        return NextResponse.redirect(`${origin}${next}`)
+        return NextResponse.redirect(`${origin}${redirectTo}`)
       }
     }
   }

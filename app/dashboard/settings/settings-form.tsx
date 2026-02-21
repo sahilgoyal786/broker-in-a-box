@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Broker } from '@/types/database'
 
 interface Props {
-  broker: Pick<Broker, 'id' | 'name' | 'email' | 'gmail_transactions_email' | 'gmail_refresh_token'>
+  broker: Pick<Broker, 'id' | 'name' | 'email' | 'gmail_transactions_email' | 'gmail_refresh_token' | 'notification_preference'>
 }
 
 export default function SettingsForm({ broker }: Props) {
@@ -13,10 +13,13 @@ export default function SettingsForm({ broker }: Props) {
 
   const [brokerName, setBrokerName] = useState(broker.name)
   const [gmailEmail, setGmailEmail] = useState(broker.gmail_transactions_email ?? '')
+  const [notificationPref, setNotificationPref] = useState(broker.notification_preference ?? 'exception_based')
   const [savingProfile, setSavingProfile] = useState(false)
   const [savingGmail, setSavingGmail] = useState(false)
+  const [savingNotifications, setSavingNotifications] = useState(false)
   const [profileMsg, setProfileMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [gmailMsg, setGmailMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  const [notificationsMsg, setNotificationsMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
   const inputClass =
     'w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2.5 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
@@ -53,6 +56,23 @@ export default function SettingsForm({ broker }: Props) {
     setGmailMsg(error
       ? { type: 'err', text: error.message }
       : { type: 'ok', text: 'Gmail address saved.' }
+    )
+  }
+
+  async function saveNotifications(e: React.FormEvent) {
+    e.preventDefault()
+    setSavingNotifications(true)
+    setNotificationsMsg(null)
+
+    const { error } = await supabase
+      .from('brokers')
+      .update({ notification_preference: notificationPref } as any)
+      .eq('id', broker.id)
+
+    setSavingNotifications(false)
+    setNotificationsMsg(error
+      ? { type: 'err', text: error.message }
+      : { type: 'ok', text: 'Notification preferences saved.' }
     )
   }
 
@@ -161,6 +181,104 @@ export default function SettingsForm({ broker }: Props) {
             </button>
           </form>
         </div>
+      </div>
+
+      {/* Section 3: Notification Preferences */}
+      <div className="bg-slate-800 rounded-xl border border-slate-700">
+        <div className="px-6 py-4 border-b border-slate-700">
+          <h2 className="text-white font-semibold">Notifications</h2>
+          <p className="text-slate-400 text-sm mt-0.5">How you want to stay informed about team activity</p>
+        </div>
+        <form onSubmit={saveNotifications} className="p-6 space-y-5">
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 p-4 border-2 border-slate-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+              <input
+                type="radio"
+                name="notification_pref"
+                value="real_time"
+                checked={notificationPref === 'real_time'}
+                onChange={(e) => setNotificationPref(e.target.value)}
+                className="mt-1"
+              />
+              <div>
+                <div className="font-medium text-white">Real-Time Email Alerts</div>
+                <div className="text-sm text-slate-400">
+                  Get notified immediately when agents create or update transactions.
+                </div>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 p-4 border-2 border-slate-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+              <input
+                type="radio"
+                name="notification_pref"
+                value="daily_digest"
+                checked={notificationPref === 'daily_digest'}
+                onChange={(e) => setNotificationPref(e.target.value)}
+                className="mt-1"
+              />
+              <div>
+                <div className="font-medium text-white">Daily Digest Email</div>
+                <div className="text-sm text-slate-400">
+                  One email per day summarizing all activity.
+                </div>
+              </div>
+            </label>
+
+            <label className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-colors ${notificationPref === 'exception_based' ? 'border-blue-500 bg-blue-500/10' : 'border-slate-700 hover:border-blue-500'}`}>
+              <input
+                type="radio"
+                name="notification_pref"
+                value="exception_based"
+                checked={notificationPref === 'exception_based'}
+                onChange={(e) => setNotificationPref(e.target.value)}
+                className="mt-1"
+              />
+              <div>
+                <div className="font-medium text-white flex items-center gap-2">
+                  Exception-Based Alerts
+                  <span className="text-xs bg-blue-500 text-white px-2 py-0.5 rounded">
+                    Recommended
+                  </span>
+                </div>
+                <div className="text-sm text-slate-400">
+                  Only get notified about compliance issues: missing docs, license expirations, stuck transactions.
+                </div>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 p-4 border-2 border-slate-700 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+              <input
+                type="radio"
+                name="notification_pref"
+                value="dashboard_only"
+                checked={notificationPref === 'dashboard_only'}
+                onChange={(e) => setNotificationPref(e.target.value)}
+                className="mt-1"
+              />
+              <div>
+                <div className="font-medium text-white">Dashboard Only</div>
+                <div className="text-sm text-slate-400">
+                  No emails - just log in when you want to check.
+                </div>
+              </div>
+            </label>
+          </div>
+
+          {notificationsMsg && (
+            <div className={`p-3 rounded-lg text-sm ${notificationsMsg.type === 'ok' ? 'bg-green-500/20 border border-green-500/30 text-green-400' : 'bg-red-500/20 border border-red-500/30 text-red-400'}`}>
+              {notificationsMsg.text}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={savingNotifications}
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:text-blue-400 text-white font-semibold rounded-xl transition-colors text-sm"
+          >
+            {savingNotifications ? 'Saving…' : 'Save Notification Preferences'}
+          </button>
+        </form>
       </div>
     </div>
   )
