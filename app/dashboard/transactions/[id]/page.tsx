@@ -99,13 +99,6 @@ export default async function TransactionDetailPage({
     .eq('transaction_id', id)
     .order('received_at', { ascending: false }) as any
 
-  // Fetch deadlines
-  const { data: deadlines } = await supabase
-    .from('transaction_deadlines')
-    .select('*')
-    .eq('transaction_id', id)
-    .order('deadline_date', { ascending: true }) as any
-
   // Build doc map (form_identifier → document)
   const docMap = new Map<string, TransactionDocument>()
   allDocuments?.forEach(doc => {
@@ -162,6 +155,175 @@ export default async function TransactionDetailPage({
           </div>
         </div>
       </div>
+
+      {/* REPC Summary */}
+      <section className="mb-8">
+        <h2 className="text-white font-semibold text-lg mb-4">REPC Summary</h2>
+        
+        <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
+          <div className="grid grid-cols-2 gap-6">
+            {/* Key Dates */}
+            <div>
+              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Key Dates</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 text-sm">Offer Reference Date:</span>
+                  <span className="text-white text-sm font-medium">
+                    {transaction.offer_reference_date ? new Date(transaction.offer_reference_date).toLocaleDateString() : '—'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 text-sm">Contract Date:</span>
+                  <span className="text-white text-sm font-medium">
+                    {transaction.contract_date ? new Date(transaction.contract_date).toLocaleDateString() : '—'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Financial */}
+            <div>
+              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Financial</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 text-sm">Purchase Price:</span>
+                  <span className="text-white text-sm font-medium">
+                    {transaction.purchase_price ? `$${Number(transaction.purchase_price).toLocaleString()}` : '—'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 text-sm">Earnest Money:</span>
+                  <span className="text-white text-sm font-medium">
+                    {transaction.earnest_money_amount ? `$${Number(transaction.earnest_money_amount).toLocaleString()}` : '—'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Earnest Money Details */}
+          {transaction.earnest_money_location && (
+            <div className="mt-6 pt-6 border-t border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Earnest Money Holder</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-slate-400 text-xs">Location:</span>
+                  <p className="text-white text-sm mt-1">
+                    {transaction.earnest_money_location === 'title_company' ? 'Title Company' :
+                     transaction.earnest_money_location === 'buyer_broker' ? "Buyer's Broker" :
+                     transaction.earnest_money_location === 'listing_broker' ? 'Listing Broker' : '—'}
+                  </p>
+                </div>
+                {transaction.earnest_money_held_by && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Held By:</span>
+                    <p className="text-white text-sm mt-1">{transaction.earnest_money_held_by}</p>
+                  </div>
+                )}
+                {transaction.earnest_money_contact_name && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Contact:</span>
+                    <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_name}</p>
+                  </div>
+                )}
+                {transaction.earnest_money_contact_email && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Email:</span>
+                    <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_email}</p>
+                  </div>
+                )}
+                {transaction.earnest_money_contact_phone && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Phone:</span>
+                    <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_phone}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Section 24 Deadlines */}
+          <div className="mt-6 pt-6 border-t border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Section 24 Deadlines</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {transaction.seller_disclosure_deadline && (
+                <div>
+                  <span className="text-slate-400 text-xs">Seller Disclosure (24a):</span>
+                  <p className="text-white text-sm mt-1">{new Date(transaction.seller_disclosure_deadline).toLocaleDateString()}</p>
+                </div>
+              )}
+              {transaction.due_diligence_deadline && (
+                <div>
+                  <span className="text-slate-400 text-xs">Due Diligence (24b):</span>
+                  <p className="text-white text-sm mt-1">{new Date(transaction.due_diligence_deadline).toLocaleDateString()}</p>
+                </div>
+              )}
+              {transaction.finance_appraisal_deadline && (
+                <div>
+                  <span className="text-slate-400 text-xs">Finance & Appraisal (24c):</span>
+                  <p className="text-white text-sm mt-1">{new Date(transaction.finance_appraisal_deadline).toLocaleDateString()}</p>
+                </div>
+              )}
+              {transaction.settlement_deadline && (
+                <div>
+                  <span className="text-slate-400 text-xs">Settlement (24d):</span>
+                  <p className="text-white text-sm mt-1 font-semibold">{new Date(transaction.settlement_deadline).toLocaleDateString()}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Custom Deadlines */}
+          {(transaction.custom_deadline_1_label || transaction.custom_deadline_2_label) && (
+            <div className="mt-6 pt-6 border-t border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Additional Deadlines</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {transaction.custom_deadline_1_label && (
+                  <div>
+                    <span className="text-slate-400 text-xs">{transaction.custom_deadline_1_label}:</span>
+                    <p className="text-white text-sm mt-1">
+                      {transaction.custom_deadline_1_date ? new Date(transaction.custom_deadline_1_date).toLocaleDateString() : '—'}
+                    </p>
+                  </div>
+                )}
+                {transaction.custom_deadline_2_label && (
+                  <div>
+                    <span className="text-slate-400 text-xs">{transaction.custom_deadline_2_label}:</span>
+                    <p className="text-white text-sm mt-1">
+                      {transaction.custom_deadline_2_date ? new Date(transaction.custom_deadline_2_date).toLocaleDateString() : '—'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Limited Agency Disclosure */}
+          {transaction.agency_role === 'limited_agency' && (
+            <div className="mt-6 pt-6 border-t border-slate-700">
+              <div className="flex items-center gap-3">
+                {transaction.limited_agency_disclosure_received ? (
+                  <>
+                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-white text-sm font-medium">Limited Agency Disclosure Received</p>
+                      <p className="text-slate-400 text-xs mt-0.5">Signed and dated by offer reference date</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-orange-400 text-sm font-medium">Limited Agency Disclosure Required</p>
+                      <p className="text-orange-300/70 text-xs mt-0.5">Must be signed and dated no later than the offer reference date</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Compliance Checklist */}
       <section className="mb-8">
@@ -266,45 +428,6 @@ export default async function TransactionDetailPage({
           </div>
         </section>
       )}
-
-      {/* Deadlines */}
-      <section>
-        <h2 className="text-white font-semibold text-lg mb-4">Deadlines</h2>
-        {!deadlines || deadlines.length === 0 ? (
-          <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 text-center">
-            <p className="text-slate-400 text-sm">No deadlines yet — they&apos;ll appear when a REPC is processed.</p>
-          </div>
-        ) : (
-          <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-700">
-                  <th className="text-left px-5 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                    Deadline
-                  </th>
-                  <th className="text-left px-5 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-700">
-                {deadlines.map(dl => (
-                  <tr key={dl.id}>
-                    <td className="px-5 py-3 text-slate-300 text-sm">{dl.label}</td>
-                    <td className="px-5 py-3 text-slate-300 text-sm">
-                      {new Date(dl.deadline_date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
     </div>
   )
 }
