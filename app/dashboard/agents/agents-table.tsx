@@ -274,47 +274,46 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    {(() => {
-                      const hasCodeOfEthics = !!agent.nar_code_of_ethics_date
-                      const hasFairHousing = !!agent.nar_fair_housing_date
-                      
-                      if (hasCodeOfEthics && hasFairHousing) {
-                        return (
-                          <div className="flex flex-col gap-1">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">✓ Both Complete</span>
-                            {agent.nar_code_of_ethics_cert_url && (
-                              <a href={agent.nar_code_of_ethics_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View COE</a>
-                            )}
-                            {agent.nar_fair_housing_cert_url && (
-                              <a href={agent.nar_fair_housing_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View FH</a>
-                            )}
-                          </div>
-                        )
-                      } else if (hasCodeOfEthics || hasFairHousing) {
-                        return (
-                          <div className="flex flex-col gap-1">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400">⚠️ Partial</span>
-                            {hasCodeOfEthics ? (
-                              <>
-                                <span className="text-xs text-slate-400">✓ Code of Ethics</span>
-                                {agent.nar_code_of_ethics_cert_url && (
-                                  <a href={agent.nar_code_of_ethics_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View</a>
-                                )}
-                              </>
-                            ) : (
-                              <>
-                                <span className="text-xs text-slate-400">✓ Fair Housing</span>
-                                {agent.nar_fair_housing_cert_url && (
-                                  <a href={agent.nar_fair_housing_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View</a>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        )
-                      } else {
-                        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-700 text-slate-400">Not Complete</span>
-                      }
-                    })()}
+                    <div className="flex flex-col gap-1 text-sm">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-slate-400">COE:</span>
+                        {agent.nar_code_of_ethics_date ? (
+                          agent.nar_code_of_ethics_cert_url ? (
+                            <a 
+                              href={agent.nar_code_of_ethics_cert_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-green-400 font-semibold hover:text-green-300"
+                            >
+                              Y
+                            </a>
+                          ) : (
+                            <span className="text-green-400 font-semibold">Y</span>
+                          )
+                        ) : (
+                          <span className="text-red-400 font-semibold">N</span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-slate-400">FH:</span>
+                        {agent.nar_fair_housing_date ? (
+                          agent.nar_fair_housing_cert_url ? (
+                            <a 
+                              href={agent.nar_fair_housing_cert_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-green-400 font-semibold hover:text-green-300"
+                            >
+                              Y
+                            </a>
+                          ) : (
+                            <span className="text-green-400 font-semibold">Y</span>
+                          )
+                        ) : (
+                          <span className="text-red-400 font-semibold">N</span>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     {agent.license_expiration ? (
