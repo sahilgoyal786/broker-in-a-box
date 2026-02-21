@@ -438,7 +438,10 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           disabled={loading}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
         >
-          {loading ? 'Creating...' : 'Create Listing'}
+          {loading 
+            ? (agencyAgreement ? 'Saving...' : 'Creating...') 
+            : (agencyAgreement ? 'Save Property Details' : 'Create Listing')
+          }
         </button>
       </div>
     </form>
