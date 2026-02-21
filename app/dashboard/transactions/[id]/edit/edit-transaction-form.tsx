@@ -8,6 +8,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [showLimitedAgency, setShowLimitedAgency] = useState(transaction.agency_role === 'limited_agency')
+  const [agencyRole, setAgencyRole] = useState(transaction.agency_role)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -34,6 +35,10 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       seller_last_name: formData.get('seller_last_name') || null,
       seller_email: formData.get('seller_email') || null,
       seller_phone: formData.get('seller_phone') || null,
+      cooperating_brokerage: formData.get('cooperating_brokerage') || null,
+      cooperating_agent_name: formData.get('cooperating_agent_name') || null,
+      cooperating_agent_phone: formData.get('cooperating_agent_phone') || null,
+      cooperating_agent_email: formData.get('cooperating_agent_email') || null,
       purchase_price: formData.get('purchase_price') || null,
       offer_reference_date: formData.get('offer_reference_date'),
       contract_date: formData.get('contract_date'),
@@ -92,7 +97,10 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               className={inputClass} 
               required 
               defaultValue={transaction.agency_role}
-              onChange={(e) => setShowLimitedAgency(e.target.value === 'limited_agency')}
+              onChange={(e) => {
+                setShowLimitedAgency(e.target.value === 'limited_agency')
+                setAgencyRole(e.target.value)
+              }}
             >
               <option value="listing_agent">Listing Agent (Seller)</option>
               <option value="buyer_agent">Buyer's Agent</option>
@@ -291,6 +299,59 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               defaultValue={transaction.seller_phone || ''}
             />
           </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">
+          {agencyRole === 'listing_agent' ? "Buyer's Agent (Cooperating Broker)" : 
+           agencyRole === 'buyer_agent' ? "Listing Agent (Cooperating Broker)" :
+           "Other Agent (Cooperating Broker)"}
+        </h2>
+        
+        <div>
+          <label className={labelClass}>Brokerage Name</label>
+          <input
+            type="text"
+            name="cooperating_brokerage"
+            className={inputClass}
+            placeholder="e.g., Keller Williams Realty"
+            defaultValue={transaction.cooperating_brokerage || ''}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Agent Name</label>
+            <input
+              type="text"
+              name="cooperating_agent_name"
+              className={inputClass}
+              placeholder="e.g., John Smith"
+              defaultValue={transaction.cooperating_agent_name || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Agent Phone</label>
+            <input
+              type="tel"
+              name="cooperating_agent_phone"
+              className={inputClass}
+              placeholder="(801) 555-1234"
+              defaultValue={transaction.cooperating_agent_phone || ''}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>Agent Email</label>
+          <input
+            type="email"
+            name="cooperating_agent_email"
+            className={inputClass}
+            placeholder="agent@example.com"
+            defaultValue={transaction.cooperating_agent_email || ''}
+          />
         </div>
       </div>
 
