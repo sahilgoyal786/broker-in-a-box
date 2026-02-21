@@ -47,6 +47,12 @@ export default function NARComplianceSection({
         <p className="text-sm text-slate-400 mt-1">
           Current Cycle: January 1, 2025 – {cycleEndFormatted}
         </p>
+        <div className="mt-3 p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
+          <p className="text-xs text-blue-200">
+            <strong>Note:</strong> Your Utah CE hours are tracked automatically with the Division of Real Estate. 
+            NAR compliance requires you to upload proof of completion (certificate, email, or screenshot).
+          </p>
+        </div>
       </div>
       
       <div className="space-y-6">
