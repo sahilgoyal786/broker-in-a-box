@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import ProfileForm from './profile-form'
+import ChangePasswordForm from './change-password-form'
 import { User, Mail, Phone, CreditCard, Calendar, GraduationCap, Building } from 'lucide-react'
 
 export default async function ProfilePage() {
@@ -98,6 +99,9 @@ export default async function ProfilePage() {
               />
             </div>
           </div>
+
+          {/* Password */}
+          <ChangePasswordForm />
 
           {/* License Information */}
           <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
