@@ -37,28 +37,27 @@ export default function InviteAcceptForm({
     setLoading(true)
 
     try {
-      const supabase = createClient()
+      // Call API route to create user with service role (bypasses signup restrictions)
+      const response = await fetch('/api/invite/accept', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password })
+      })
 
-      // Create Supabase auth user
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to activate account')
+      }
+
+      // Now sign in the user
+      const supabase = createClient()
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (signUpError) throw signUpError
-      if (!authData.user) throw new Error('Failed to create user')
-
-      // Update agent record with auth_user_id and activate
-      const { error: updateError } = await supabase
-        .from('agents')
-        .update({
-          auth_user_id: authData.user.id,
-          invite_status: 'active',
-          invite_token: null  // Clear token after use
-        })
-        .eq('id', agentId) as any
-
-      if (updateError) throw updateError
+      if (signInError) throw signInError
 
       // Success! Redirect to dashboard
       router.push('/dashboard')
