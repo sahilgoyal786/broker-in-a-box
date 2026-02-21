@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Plus, FileText, Home } from 'lucide-react'
+import { Plus, FileText, Home, ArrowLeft } from 'lucide-react'
 
 export default async function AgencyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -51,6 +51,15 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
 
   return (
     <div className="space-y-6">
+      {/* Back Button */}
+      <Link
+        href="/dashboard/agencies"
+        className="inline-flex items-center text-blue-600 hover:text-blue-800"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back to Agency Agreements
+      </Link>
+
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>

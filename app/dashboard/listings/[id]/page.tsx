@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import StatusUpdater from './status-updater'
 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
@@ -30,16 +31,23 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
     return <div className="p-8">Listing not found</div>
   }
 
+  // Determine back link
+  const backHref = listing.agency_agreement_id 
+    ? `/dashboard/agencies/${listing.agency_agreement_id}`
+    : '/dashboard/agencies'
+
   return (
     <div className="p-8">
+      <Link
+        href={backHref}
+        className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        {listing.agency_agreement_id ? 'Back to Listing Agreement' : 'Back to Agency Agreements'}
+      </Link>
+
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Listing Details</h1>
-        <Link
-          href="/dashboard/listings"
-          className="text-blue-600 hover:text-blue-800"
-        >
-          ← Back to Listings
-        </Link>
+        <h1 className="text-3xl font-bold">Property Details</h1>
       </div>
 
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
