@@ -35,7 +35,8 @@ export default function AgentSwitcher({ agents, currentRole }: { agents: Agent[]
       setSelectedAgentId(null)
     }
     setIsOpen(false)
-    router.refresh()
+    // Force full page reload to ensure all components see the new state
+    window.location.reload()
   }
 
   const selectedAgent = agents.find(a => a.id === selectedAgentId)
