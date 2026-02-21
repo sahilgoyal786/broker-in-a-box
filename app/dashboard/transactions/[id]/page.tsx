@@ -147,11 +147,19 @@ export default async function TransactionDetailPage({
               </span>
             </div>
           </div>
-          <StatusUpdater 
-            transactionId={transaction.id} 
-            currentStatus={transaction.status} 
-            userRole={userContext.role}
-          />
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/dashboard/transactions/${transaction.id}/edit`}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Edit
+            </Link>
+            <StatusUpdater 
+              transactionId={transaction.id} 
+              currentStatus={transaction.status} 
+              userRole={userContext.role}
+            />
+          </div>
         </div>
       </div>
 

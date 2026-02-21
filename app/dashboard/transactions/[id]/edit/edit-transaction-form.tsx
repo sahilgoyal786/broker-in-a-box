@@ -1,0 +1,404 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+
+export default function EditTransactionForm({ transaction, agents, isAgent }: any) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setLoading(true)
+
+    const formData = new FormData(e.currentTarget)
+    const supabase = createClient()
+
+    const data: any = {
+      agent_id: formData.get('agent_id'),
+      transaction_type: formData.get('transaction_type'),
+      property_type: formData.get('property_type'),
+      agency_role: formData.get('agency_role'),
+      property_address: formData.get('property_address'),
+      property_city: formData.get('property_city'),
+      property_state: formData.get('property_state'),
+      property_zip: formData.get('property_zip'),
+      buyer_first_name: formData.get('buyer_first_name'),
+      buyer_last_name: formData.get('buyer_last_name'),
+      buyer_email: formData.get('buyer_email') || null,
+      buyer_phone: formData.get('buyer_phone') || null,
+      seller_first_name: formData.get('seller_first_name') || null,
+      seller_last_name: formData.get('seller_last_name') || null,
+      seller_email: formData.get('seller_email') || null,
+      seller_phone: formData.get('seller_phone') || null,
+      purchase_price: formData.get('purchase_price') || null,
+      offer_reference_date: formData.get('offer_reference_date'),
+      seller_disclosure_deadline: formData.get('seller_disclosure_deadline') || null,
+      due_diligence_deadline: formData.get('due_diligence_deadline') || null,
+      finance_appraisal_deadline: formData.get('finance_appraisal_deadline') || null,
+      settlement_deadline: formData.get('settlement_deadline'),
+      custom_deadline_1_label: formData.get('custom_deadline_1_label') || null,
+      custom_deadline_1_date: formData.get('custom_deadline_1_date') || null,
+      custom_deadline_2_label: formData.get('custom_deadline_2_label') || null,
+      custom_deadline_2_date: formData.get('custom_deadline_2_date') || null,
+    }
+
+    const { error } = await supabase
+      .from('transactions')
+      .update(data)
+      .eq('id', transaction.id)
+
+    if (error) {
+      alert('Error updating transaction: ' + error.message)
+      setLoading(false)
+      return
+    }
+
+    router.push(`/dashboard/transactions/${transaction.id}`)
+  }
+
+  const inputClass = 'w-full px-3 py-2 bg-slate-900 border border-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600'
+  const labelClass = 'block text-sm font-medium text-slate-300 mb-2'
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Transaction Type</h2>
+        
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className={labelClass}>Transaction</label>
+            <select name="transaction_type" className={inputClass} required defaultValue={transaction.transaction_type}>
+              <option value="purchase">Purchase</option>
+              <option value="lease">Lease</option>
+            </select>
+          </div>
+
+          <div>
+            <label className={labelClass}>Your Role</label>
+            <select name="agency_role" className={inputClass} required defaultValue={transaction.agency_role}>
+              <option value="listing_agent">Listing Agent (Seller)</option>
+              <option value="buyer_agent">Buyer's Agent</option>
+              <option value="dual_agency">Dual Agency</option>
+            </select>
+          </div>
+
+          <div>
+            <label className={labelClass}>Agent</label>
+            <select 
+              name="agent_id" 
+              className={inputClass}
+              required 
+              defaultValue={transaction.agent_id}
+              disabled={isAgent}
+            >
+              <option value="">Select agent...</option>
+              {agents.map((agent: any) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.first_name} {agent.last_name}
+                </option>
+              ))}
+            </select>
+            {isAgent && (
+              <p className="text-xs text-slate-500 mt-1">Agents cannot reassign transactions</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Property</h2>
+        
+        <div>
+          <label className={labelClass}>Address</label>
+          <input
+            type="text"
+            name="property_address"
+            className={inputClass}
+            required
+            defaultValue={transaction.property_address}
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className={labelClass}>City</label>
+            <input
+              type="text"
+              name="property_city"
+              className={inputClass}
+              required
+              defaultValue={transaction.property_city}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>State</label>
+            <input
+              type="text"
+              name="property_state"
+              className={inputClass}
+              defaultValue={transaction.property_state || 'UT'}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>ZIP</label>
+            <input
+              type="text"
+              name="property_zip"
+              className={inputClass}
+              defaultValue={transaction.property_zip}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>Property Type</label>
+          <select name="property_type" className={inputClass} required defaultValue={transaction.property_type}>
+            <option value="residential">Residential</option>
+            <option value="vacant_land">Vacant Land</option>
+            <option value="mobile_home">Mobile Home</option>
+            <option value="commercial">Commercial</option>
+            <option value="multi_unit">Multi-Unit</option>
+            <option value="farm">Farm</option>
+            <option value="residential_lease">Residential Lease</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Buyer</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>First Name</label>
+            <input
+              type="text"
+              name="buyer_first_name"
+              className={inputClass}
+              required
+              defaultValue={transaction.buyer_first_name}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Last Name</label>
+            <input
+              type="text"
+              name="buyer_last_name"
+              className={inputClass}
+              required
+              defaultValue={transaction.buyer_last_name}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Email</label>
+            <input
+              type="email"
+              name="buyer_email"
+              className={inputClass}
+              defaultValue={transaction.buyer_email || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Phone</label>
+            <input
+              type="tel"
+              name="buyer_phone"
+              className={inputClass}
+              defaultValue={transaction.buyer_phone || ''}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Seller</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>First Name</label>
+            <input
+              type="text"
+              name="seller_first_name"
+              className={inputClass}
+              defaultValue={transaction.seller_first_name || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Last Name</label>
+            <input
+              type="text"
+              name="seller_last_name"
+              className={inputClass}
+              defaultValue={transaction.seller_last_name || ''}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Email</label>
+            <input
+              type="email"
+              name="seller_email"
+              className={inputClass}
+              defaultValue={transaction.seller_email || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Phone</label>
+            <input
+              type="tel"
+              name="seller_phone"
+              className={inputClass}
+              defaultValue={transaction.seller_phone || ''}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">REPC Dates</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>
+              Offer Reference Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="offer_reference_date"
+              className={inputClass}
+              required
+              defaultValue={transaction.offer_reference_date || ''}
+            />
+            <p className="text-xs text-slate-500 mt-1">REPC front page</p>
+          </div>
+          <div>
+            <label className={labelClass}>Purchase Price</label>
+            <input
+              type="number"
+              name="purchase_price"
+              step="0.01"
+              className={inputClass}
+              placeholder="$"
+              defaultValue={transaction.purchase_price || ''}
+            />
+          </div>
+        </div>
+
+        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Section 24 Deadlines</h3>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Seller Disclosure Deadline</label>
+            <input
+              type="date"
+              name="seller_disclosure_deadline"
+              className={inputClass}
+              defaultValue={transaction.seller_disclosure_deadline || ''}
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24(a)</p>
+          </div>
+          <div>
+            <label className={labelClass}>Due Diligence Deadline</label>
+            <input
+              type="date"
+              name="due_diligence_deadline"
+              className={inputClass}
+              defaultValue={transaction.due_diligence_deadline || ''}
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24(b)</p>
+          </div>
+          <div>
+            <label className={labelClass}>Finance & Appraisal Deadline</label>
+            <input
+              type="date"
+              name="finance_appraisal_deadline"
+              className={inputClass}
+              defaultValue={transaction.finance_appraisal_deadline || ''}
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24(c)</p>
+          </div>
+          <div>
+            <label className={labelClass}>
+              Settlement Deadline <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="settlement_deadline"
+              className={inputClass}
+              required
+              defaultValue={transaction.settlement_deadline || ''}
+            />
+            <p className="text-xs text-slate-500 mt-1">Section 24(d)</p>
+          </div>
+        </div>
+
+        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Additional Deadlines (Optional)</h3>
+        <p className="text-xs text-slate-500 mb-3">For contingencies in addendums or special conditions</p>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Deadline Name</label>
+            <input
+              type="text"
+              name="custom_deadline_1_label"
+              className={inputClass}
+              placeholder="e.g., HOA Approval, Septic Inspection"
+              defaultValue={transaction.custom_deadline_1_label || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Date</label>
+            <input
+              type="date"
+              name="custom_deadline_1_date"
+              className={inputClass}
+              defaultValue={transaction.custom_deadline_1_date || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Deadline Name</label>
+            <input
+              type="text"
+              name="custom_deadline_2_label"
+              className={inputClass}
+              placeholder="e.g., Well Test, Zoning Approval"
+              defaultValue={transaction.custom_deadline_2_label || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Date</label>
+            <input
+              type="date"
+              name="custom_deadline_2_date"
+              className={inputClass}
+              defaultValue={transaction.custom_deadline_2_date || ''}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:text-blue-400 text-white font-semibold rounded-xl transition-colors"
+        >
+          {loading ? 'Saving...' : 'Save Changes'}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="px-6 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  )
+}
