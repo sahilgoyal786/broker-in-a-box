@@ -20,17 +20,30 @@ interface Transaction {
   created_at: string
   updated_at: string
   contract_date: string
+  agent_id: string
+  agents?: {
+    first_name: string
+    last_name: string
+  }
+}
+
+interface Agent {
+  id: string
+  first_name: string
+  last_name: string
 }
 
 interface FilterProps {
   transactions: Transaction[]
+  agents?: Agent[]
   canCreate: boolean
 }
 
-export default function TransactionsFilter({ transactions, canCreate }: FilterProps) {
+export default function TransactionsFilter({ transactions, agents = [], canCreate }: FilterProps) {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [nameSearch, setNameSearch] = useState('')
+  const [agentFilter, setAgentFilter] = useState('all')
   const [sideFilter, setSideFilter] = useState('all')
   const [citySearch, setCitySearch] = useState('')
   const [zipSearch, setZipSearch] = useState('')
@@ -53,6 +66,9 @@ export default function TransactionsFilter({ transactions, canCreate }: FilterPr
         const sellerName = `${tx.seller_first_name} ${tx.seller_last_name}`.toLowerCase()
         if (!buyerName.includes(search) && !sellerName.includes(search)) return false
       }
+
+      // Agent filter
+      if (agentFilter !== 'all' && tx.agent_id !== agentFilter) return false
 
       // Side filter (agency role)
       if (sideFilter !== 'all') {
@@ -79,12 +95,13 @@ export default function TransactionsFilter({ transactions, canCreate }: FilterPr
 
       return true
     })
-  }, [transactions, dateFrom, dateTo, nameSearch, sideFilter, citySearch, zipSearch, statusFilter])
+  }, [transactions, dateFrom, dateTo, nameSearch, agentFilter, sideFilter, citySearch, zipSearch, statusFilter])
 
   function clearFilters() {
     setDateFrom('')
     setDateTo('')
     setNameSearch('')
+    setAgentFilter('all')
     setSideFilter('all')
     setCitySearch('')
     setZipSearch('')
@@ -92,16 +109,31 @@ export default function TransactionsFilter({ transactions, canCreate }: FilterPr
   }
 
   function exportToCSV() {
-    const headers = ['Date', 'Client', 'Property', 'City', 'Zip', 'Side', 'Status']
-    const rows = filteredTransactions.map(tx => [
-      tx.contract_date || tx.created_at,
-      `${tx.buyer_last_name}, ${tx.buyer_first_name}`,
-      tx.property_address,
-      tx.property_city,
-      tx.property_zip,
-      tx.agency_role === 'listing_agent' ? 'Listing' : tx.agency_role === 'buyer_agent' ? 'Buyer' : 'Dual',
-      tx.status
-    ])
+    const headers = agents.length > 0 
+      ? ['Date', 'Agent', 'Client', 'Property', 'City', 'Zip', 'Side', 'Status']
+      : ['Date', 'Client', 'Property', 'City', 'Zip', 'Side', 'Status']
+    
+    const rows = filteredTransactions.map(tx => {
+      const baseRow = [
+        tx.contract_date || tx.created_at,
+        `${tx.buyer_last_name}, ${tx.buyer_first_name}`,
+        tx.property_address,
+        tx.property_city,
+        tx.property_zip,
+        tx.agency_role === 'listing_agent' ? 'Listing' : tx.agency_role === 'buyer_agent' ? 'Buyer' : 'Dual',
+        tx.status
+      ]
+      
+      if (agents.length > 0 && tx.agents) {
+        return [
+          tx.contract_date || tx.created_at,
+          `${tx.agents.last_name}, ${tx.agents.first_name}`,
+          ...baseRow.slice(1)
+        ]
+      }
+      
+      return baseRow
+    })
 
     const csvContent = [
       headers.join(','),
@@ -117,7 +149,7 @@ export default function TransactionsFilter({ transactions, canCreate }: FilterPr
     window.URL.revokeObjectURL(url)
   }
 
-  const hasActiveFilters = dateFrom || dateTo || nameSearch || sideFilter !== 'all' || citySearch || zipSearch || statusFilter !== 'all'
+  const hasActiveFilters = dateFrom || dateTo || nameSearch || agentFilter !== 'all' || sideFilter !== 'all' || citySearch || zipSearch || statusFilter !== 'all'
 
   const statusColors: Record<string, string> = {
     pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
@@ -182,6 +214,25 @@ export default function TransactionsFilter({ transactions, canCreate }: FilterPr
               className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
+          {/* Agent Filter (Broker only) */}
+          {agents.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Agent</label>
+              <select
+                value={agentFilter}
+                onChange={(e) => setAgentFilter(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Agents</option>
+                {agents.map(agent => (
+                  <option key={agent.id} value={agent.id}>
+                    {agent.last_name}, {agent.first_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Side Filter */}
           <div>
@@ -279,6 +330,9 @@ export default function TransactionsFilter({ transactions, canCreate }: FilterPr
             <thead>
               <tr className="border-b border-slate-700">
                 <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Client</th>
+                {agents.length > 0 && (
+                  <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Agent</th>
+                )}
                 <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Property</th>
                 <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Side</th>
                 <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Status</th>
@@ -300,6 +354,16 @@ export default function TransactionsFilter({ transactions, canCreate }: FilterPr
                       )}
                     </Link>
                   </td>
+                  {agents.length > 0 && (
+                    <td className="px-6 py-4">
+                      <p className="text-slate-300 text-sm">
+                        {tx.agents 
+                          ? `${tx.agents.last_name}, ${tx.agents.first_name}`
+                          : <span className="text-slate-500 italic">Unassigned</span>
+                        }
+                      </p>
+                    </td>
+                  )}
                   <td className="px-6 py-4">
                     <Link href={`/dashboard/transactions/${tx.id}`} className="block">
                       <p className="text-white text-sm">{tx.property_address}</p>

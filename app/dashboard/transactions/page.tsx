@@ -32,7 +32,12 @@ export default async function TransactionsPage() {
       status,
       created_at,
       updated_at,
-      contract_date
+      contract_date,
+      agent_id,
+      agents (
+        first_name,
+        last_name
+      )
     `)
     .order('updated_at', { ascending: false })
 
@@ -52,6 +57,25 @@ export default async function TransactionsPage() {
   }
 
   const { data: transactions } = await query as any
+
+  // Get list of agents for broker filter
+  let agents: any[] = []
+  if (userContext.role === 'broker') {
+    const { data: broker } = await supabase
+      .from('brokers')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .single() as any
+    
+    const { data: agentsList } = await supabase
+      .from('agents')
+      .select('id, first_name, last_name')
+      .eq('broker_id', broker?.id ?? '')
+      .eq('active', true)
+      .order('last_name', { ascending: true }) as any
+    
+    agents = agentsList ?? []
+  }
 
   return (
     <div className="p-8">
@@ -73,6 +97,7 @@ export default async function TransactionsPage() {
 
       <TransactionsFilter 
         transactions={transactions ?? []} 
+        agents={agents}
         canCreate={userContext.role === 'broker'}
       />
     </div>
