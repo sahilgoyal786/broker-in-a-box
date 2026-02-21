@@ -21,6 +21,11 @@ interface Agent {
   pendingSales: number
   closedDeals: number
   daysUntilExpiration: number | null
+  nar_code_of_ethics_date: string | null
+  nar_code_of_ethics_cert_url: string | null
+  nar_fair_housing_date: string | null
+  nar_fair_housing_cert_url: string | null
+  nar_cycle_end: string | null
 }
 
 export default function AgentsTable({ agents }: { agents: Agent[] }) {
@@ -219,6 +224,7 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Core</th>
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Elective</th>
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Mandatory</th>
+              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">NAR</th>
               <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Expires</th>
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Active Listings</th>
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Pending Sales</th>
@@ -266,6 +272,49 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                     ) : (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400">NO</span>
                     )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {(() => {
+                      const hasCodeOfEthics = !!agent.nar_code_of_ethics_date
+                      const hasFairHousing = !!agent.nar_fair_housing_date
+                      
+                      if (hasCodeOfEthics && hasFairHousing) {
+                        return (
+                          <div className="flex flex-col gap-1">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">✓ Both Complete</span>
+                            {agent.nar_code_of_ethics_cert_url && (
+                              <a href={agent.nar_code_of_ethics_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View COE</a>
+                            )}
+                            {agent.nar_fair_housing_cert_url && (
+                              <a href={agent.nar_fair_housing_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View FH</a>
+                            )}
+                          </div>
+                        )
+                      } else if (hasCodeOfEthics || hasFairHousing) {
+                        return (
+                          <div className="flex flex-col gap-1">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400">⚠️ Partial</span>
+                            {hasCodeOfEthics ? (
+                              <>
+                                <span className="text-xs text-slate-400">✓ Code of Ethics</span>
+                                {agent.nar_code_of_ethics_cert_url && (
+                                  <a href={agent.nar_code_of_ethics_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View</a>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-xs text-slate-400">✓ Fair Housing</span>
+                                {agent.nar_fair_housing_cert_url && (
+                                  <a href={agent.nar_fair_housing_cert_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300">View</a>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        )
+                      } else {
+                        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-700 text-slate-400">Not Complete</span>
+                      }
+                    })()}
                   </td>
                   <td className="px-6 py-4">
                     {agent.license_expiration ? (
