@@ -34,6 +34,9 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       seller_phone: formData.get('seller_phone') || null,
       purchase_price: formData.get('purchase_price') || null,
       offer_reference_date: formData.get('offer_reference_date'),
+      contract_date: formData.get('contract_date'),
+      earnest_money_amount: formData.get('earnest_money_amount') || null,
+      earnest_money_location: formData.get('earnest_money_location') || null,
       seller_disclosure_deadline: formData.get('seller_disclosure_deadline') || null,
       due_diligence_deadline: formData.get('due_diligence_deadline') || null,
       finance_appraisal_deadline: formData.get('finance_appraisal_deadline') || null,
@@ -261,7 +264,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       </div>
 
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">REPC Dates</h2>
+        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">REPC Summary</h2>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -275,8 +278,24 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               required
               defaultValue={transaction.offer_reference_date || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">REPC front page</p>
+            <p className="text-xs text-slate-500 mt-1">REPC front page - before acceptance</p>
           </div>
+          <div>
+            <label className={labelClass}>
+              Contract Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="contract_date"
+              className={inputClass}
+              required
+              defaultValue={transaction.contract_date || ''}
+            />
+            <p className="text-xs text-slate-500 mt-1">Date accepted/signed by all parties</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Purchase Price</label>
             <input
@@ -288,6 +307,33 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               defaultValue={transaction.purchase_price || ''}
             />
           </div>
+          <div>
+            <label className={labelClass}>Earnest Money Amount</label>
+            <input
+              type="number"
+              name="earnest_money_amount"
+              step="0.01"
+              className={inputClass}
+              placeholder="$"
+              defaultValue={transaction.earnest_money_amount || ''}
+            />
+            <p className="text-xs text-slate-500 mt-1">Due within 4 days of contract date</p>
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>Where is the Earnest Money?</label>
+          <select 
+            name="earnest_money_location" 
+            className={inputClass}
+            defaultValue={transaction.earnest_money_location || ''}
+          >
+            <option value="">Select location...</option>
+            <option value="title_company">Title Company</option>
+            <option value="buyer_broker">Buyer's Broker</option>
+            <option value="listing_broker">Listing Broker</option>
+          </select>
+          <p className="text-xs text-slate-500 mt-1">Where the earnest money deposit is being held</p>
         </div>
 
         <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Section 24 Deadlines</h3>
