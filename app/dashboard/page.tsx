@@ -41,7 +41,7 @@ export default async function DashboardPage() {
       .eq('status', 'closed'),
   ])
 
-  // Active listings = listing agreements with NO active transaction
+  // Active listings = listing agreements without CLOSED transactions
   const { data: allListingAgreements } = await supabase
     .from('agency_agreements')
     .select('id')
@@ -49,18 +49,18 @@ export default async function DashboardPage() {
     .eq('agreement_type', 'listing_agreement')
     .eq('status', 'active') as any
 
-  const { data: listingsWithDeals } = await supabase
+  const { data: closedListings } = await supabase
     .from('transactions')
     .select('agency_agreement_id')
     .eq('broker_id', broker?.id ?? '')
     .eq('agency_role', 'listing_agent')
-    .neq('status', 'cancelled')
+    .eq('status', 'closed')
     .not('agency_agreement_id', 'is', null) as any
 
-  const listingsWithDealsSet = new Set(listingsWithDeals?.map((t: any) => t.agency_agreement_id) ?? [])
-  const activeListings = allListingAgreements?.filter((a: any) => !listingsWithDealsSet.has(a.id)).length ?? 0
+  const closedListingsSet = new Set(closedListings?.map((t: any) => t.agency_agreement_id) ?? [])
+  const activeListings = allListingAgreements?.filter((a: any) => !closedListingsSet.has(a.id)).length ?? 0
 
-  // Active buyer brokers = buyer agency agreements with NO active transaction
+  // Active buyer brokers = buyer agency agreements without CLOSED transactions
   const { data: allBuyerAgreements } = await supabase
     .from('agency_agreements')
     .select('id')
@@ -68,16 +68,16 @@ export default async function DashboardPage() {
     .eq('agreement_type', 'buyer_agency_agreement')
     .eq('status', 'active') as any
 
-  const { data: buyersWithDeals } = await supabase
+  const { data: closedBuyers } = await supabase
     .from('transactions')
     .select('agency_agreement_id')
     .eq('broker_id', broker?.id ?? '')
     .eq('agency_role', 'buyer_agent')
-    .neq('status', 'cancelled')
+    .eq('status', 'closed')
     .not('agency_agreement_id', 'is', null) as any
 
-  const buyersWithDealsSet = new Set(buyersWithDeals?.map((t: any) => t.agency_agreement_id) ?? [])
-  const activeBuyerBrokers = allBuyerAgreements?.filter((a: any) => !buyersWithDealsSet.has(a.id)).length ?? 0
+  const closedBuyersSet = new Set(closedBuyers?.map((t: any) => t.agency_agreement_id) ?? [])
+  const activeBuyerBrokers = allBuyerAgreements?.filter((a: any) => !closedBuyersSet.has(a.id)).length ?? 0
 
   // CE Compliance - count agents needing attention
   const { data: allAgents } = await supabase
