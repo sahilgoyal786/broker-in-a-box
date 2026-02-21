@@ -88,7 +88,7 @@ export async function POST(request: Request) {
           htmlBody: emailTemplate.html,
           textBody: emailTemplate.text,
           fromName: broker.name,
-          fromEmail: broker.email
+          fromEmail: 'onboarding@resend.dev' // Use Resend's verified domain
         })
 
         invites.push({
