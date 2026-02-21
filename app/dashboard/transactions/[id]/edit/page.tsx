@@ -3,7 +3,8 @@ import { notFound, redirect } from 'next/navigation'
 import EditTransactionForm from './edit-transaction-form'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 
-export default async function EditTransactionPage({ params }: { params: { id: string } }) {
+export default async function EditTransactionPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { role, brokerId, agentId } = await getUserContext()
 
@@ -13,7 +14,7 @@ export default async function EditTransactionPage({ params }: { params: { id: st
   const { data: transaction, error } = await supabase
     .from('transactions')
     .select('*, agent:agents(first_name, last_name)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single() as any
 
   if (error || !transaction) notFound()
