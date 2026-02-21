@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
+import AgentSwitcher from './agent-switcher'
 
 export default async function DashboardLayout({
   children,
@@ -30,6 +31,13 @@ export default async function DashboardLayout({
     .select('first_name, last_name')
     .eq('id', userContext.agentId)
     .single() as any : { data: null }
+
+  // Get all agents for broker's agent switcher
+  const { data: agents } = userContext.role === 'broker' ? await supabase
+    .from('agents')
+    .select('id, first_name, last_name')
+    .eq('broker_id', userContext.brokerId)
+    .order('last_name') as any : { data: [] }
     
   const displayName = userContext.role === 'broker' 
     ? (broker?.name ?? user.email)
@@ -102,8 +110,18 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
-        {children}
+      <main className="flex-1 overflow-auto flex flex-col">
+        {/* Header with agent switcher */}
+        {userContext.role === 'broker' && agents && agents.length > 0 && (
+          <div className="bg-slate-900 border-b border-slate-800 px-8 py-4 flex justify-end">
+            <AgentSwitcher agents={agents} currentRole={userContext.role} />
+          </div>
+        )}
+        
+        {/* Page content */}
+        <div className="flex-1">
+          {children}
+        </div>
       </main>
     </div>
   )
