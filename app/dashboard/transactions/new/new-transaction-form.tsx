@@ -8,6 +8,7 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [showLimitedAgency, setShowLimitedAgency] = useState(false)
+  const [agencyRole, setAgencyRole] = useState(agency?.agreement_type === 'listing_agreement' ? 'listing_agent' : 'buyer_agent')
 
   // Pre-fill from agency if provided
   const initialData = agency ? {
@@ -57,6 +58,10 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
       seller_last_name: formData.get('seller_last_name') || null,
       seller_email: formData.get('seller_email') || null,
       seller_phone: formData.get('seller_phone') || null,
+      cooperating_brokerage: formData.get('cooperating_brokerage') || null,
+      cooperating_agent_name: formData.get('cooperating_agent_name') || null,
+      cooperating_agent_phone: formData.get('cooperating_agent_phone') || null,
+      cooperating_agent_email: formData.get('cooperating_agent_email') || null,
       purchase_price: formData.get('purchase_price') || null,
       offer_reference_date: formData.get('offer_reference_date'),
       contract_date: formData.get('contract_date'),
@@ -124,7 +129,10 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               className="w-full px-3 py-2 border rounded-lg" 
               required 
               defaultValue={initialData.agency_role || 'buyer_agent'}
-              onChange={(e) => setShowLimitedAgency(e.target.value === 'limited_agency')}
+              onChange={(e) => {
+                setShowLimitedAgency(e.target.value === 'limited_agency')
+                setAgencyRole(e.target.value)
+              }}
             >
               <option value="listing_agent">Listing Agent (Seller)</option>
               <option value="buyer_agent">Buyer's Agent</option>
@@ -322,6 +330,55 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               defaultValue={initialData.seller_phone || ''}
             />
           </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">
+          {agencyRole === 'listing_agent' ? "Buyer's Agent (Cooperating Broker)" : 
+           agencyRole === 'buyer_agent' ? "Listing Agent (Cooperating Broker)" :
+           "Other Agent (Cooperating Broker)"}
+        </h2>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2">Brokerage Name</label>
+          <input
+            type="text"
+            name="cooperating_brokerage"
+            className="w-full px-3 py-2 border rounded-lg"
+            placeholder="e.g., Keller Williams Realty"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Agent Name</label>
+            <input
+              type="text"
+              name="cooperating_agent_name"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., John Smith"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Agent Phone</label>
+            <input
+              type="tel"
+              name="cooperating_agent_phone"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="(801) 555-1234"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Agent Email</label>
+          <input
+            type="email"
+            name="cooperating_agent_email"
+            className="w-full px-3 py-2 border rounded-lg"
+            placeholder="agent@example.com"
+          />
         </div>
       </div>
 

@@ -201,6 +201,51 @@ export default async function TransactionDetailPage({
             </div>
           </div>
 
+          {/* Cooperating Broker */}
+          {(transaction.cooperating_brokerage || transaction.cooperating_agent_name || transaction.cooperating_agent_phone || transaction.cooperating_agent_email) && (
+            <div className="mt-6 pt-6 border-t border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">
+                {transaction.agency_role === 'listing_agent' ? "Buyer's Agent (Cooperating Broker)" : 
+                 transaction.agency_role === 'buyer_agent' ? "Listing Agent (Cooperating Broker)" :
+                 "Other Agent (Cooperating Broker)"}
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                {transaction.cooperating_brokerage && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Brokerage:</span>
+                    <p className="text-white text-sm mt-1">{transaction.cooperating_brokerage}</p>
+                  </div>
+                )}
+                {transaction.cooperating_agent_name && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Agent:</span>
+                    <p className="text-white text-sm mt-1">{transaction.cooperating_agent_name}</p>
+                  </div>
+                )}
+                {transaction.cooperating_agent_phone && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Phone:</span>
+                    <p className="text-white text-sm mt-1">
+                      <a href={`tel:${transaction.cooperating_agent_phone}`} className="text-blue-400 hover:text-blue-300">
+                        {transaction.cooperating_agent_phone}
+                      </a>
+                    </p>
+                  </div>
+                )}
+                {transaction.cooperating_agent_email && (
+                  <div>
+                    <span className="text-slate-400 text-xs">Email:</span>
+                    <p className="text-white text-sm mt-1">
+                      <a href={`mailto:${transaction.cooperating_agent_email}`} className="text-blue-400 hover:text-blue-300">
+                        {transaction.cooperating_agent_email}
+                      </a>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Earnest Money Details */}
           <div className="mt-6 pt-6 border-t border-slate-700">
             <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Earnest Money Holder</h3>
