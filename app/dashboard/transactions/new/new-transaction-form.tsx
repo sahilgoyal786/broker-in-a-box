@@ -326,7 +326,7 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               name="seller_disclosure_deadline"
               className="w-full px-3 py-2 border rounded-lg"
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24.1</p>
+            <p className="text-xs text-slate-500 mt-1">Section 24(a)</p>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Due Diligence Deadline</label>
@@ -335,7 +335,7 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               name="due_diligence_deadline"
               className="w-full px-3 py-2 border rounded-lg"
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24.2</p>
+            <p className="text-xs text-slate-500 mt-1">Section 24(b)</p>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Finance & Appraisal Deadline</label>
@@ -344,7 +344,7 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               name="finance_appraisal_deadline"
               className="w-full px-3 py-2 border rounded-lg"
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24.3</p>
+            <p className="text-xs text-slate-500 mt-1">Section 24(c)</p>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">
@@ -356,7 +356,7 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               className="w-full px-3 py-2 border rounded-lg"
               required
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24.4</p>
+            <p className="text-xs text-slate-500 mt-1">Section 24(d)</p>
           </div>
         </div>
       </div>

@@ -9,10 +9,10 @@ ADD COLUMN settlement_deadline DATE;
 
 -- Add comments explaining the fields
 COMMENT ON COLUMN transactions.offer_reference_date IS 'REPC front page - primary date when offer was made';
-COMMENT ON COLUMN transactions.seller_disclosure_deadline IS 'Section 24.1 - Seller Disclosure Deadline';
-COMMENT ON COLUMN transactions.due_diligence_deadline IS 'Section 24.2 - Due Diligence Deadline';
-COMMENT ON COLUMN transactions.finance_appraisal_deadline IS 'Section 24.3 - Finance and Appraisal Deadline';
-COMMENT ON COLUMN transactions.settlement_deadline IS 'Section 24.4 - Settlement Deadline (when signing happens)';
+COMMENT ON COLUMN transactions.seller_disclosure_deadline IS 'Section 24(a) - Seller Disclosure Deadline';
+COMMENT ON COLUMN transactions.due_diligence_deadline IS 'Section 24(b) - Due Diligence Deadline';
+COMMENT ON COLUMN transactions.finance_appraisal_deadline IS 'Section 24(c) - Finance and Appraisal Deadline';
+COMMENT ON COLUMN transactions.settlement_deadline IS 'Section 24(d) - Settlement Deadline (when signing happens)';
 
 -- Create index on settlement_deadline for sorting/filtering
 CREATE INDEX idx_transactions_settlement_deadline ON transactions(settlement_deadline);

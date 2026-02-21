@@ -12,10 +12,10 @@ Added proper REPC date tracking to transactions:
 - `offer_reference_date` (required) - Primary date, when offer was made
 
 **Section 24 Deadlines:**
-- `seller_disclosure_deadline` (24.1)
-- `due_diligence_deadline` (24.2)
-- `finance_appraisal_deadline` (24.3)
-- `settlement_deadline` (24.4, required) - When signing happens
+- `seller_disclosure_deadline` (24(a))
+- `due_diligence_deadline` (24(b))
+- `finance_appraisal_deadline` (24(c))
+- `settlement_deadline` (24(d), required) - When signing happens
 
 **Important Distinctions:**
 - **Settlement** = parties sign documents (Section 24.4 deadline)
@@ -72,10 +72,10 @@ Transaction create/edit forms now capture:
 ```sql
 ALTER TABLE transactions
 ADD COLUMN offer_reference_date DATE,
-ADD COLUMN seller_disclosure_deadline DATE,
-ADD COLUMN due_diligence_deadline DATE,
-ADD COLUMN finance_appraisal_deadline DATE,
-ADD COLUMN settlement_deadline DATE;
+ADD COLUMN seller_disclosure_deadline DATE,  -- Section 24(a)
+ADD COLUMN due_diligence_deadline DATE,       -- Section 24(b)
+ADD COLUMN finance_appraisal_deadline DATE,   -- Section 24(c)
+ADD COLUMN settlement_deadline DATE;          -- Section 24(d)
 
 -- Indexes for sorting/filtering
 CREATE INDEX idx_transactions_settlement_deadline ON transactions(settlement_deadline);
@@ -107,10 +107,10 @@ Already committed and pushed to GitHub. Vercel auto-deploys.
 1. **Offer Reference Date** - Primary identifier, always exists first. Until you have a contract, this is the only date to go by.
 
 2. **Section 24 Deadlines** - Critical compliance dates that happen during "pending" status:
-   - Seller must disclose property issues
-   - Buyer completes inspections (due diligence)
-   - Financing/appraisal must be approved
-   - Settlement signing must happen
+   - 24(a): Seller must disclose property issues
+   - 24(b): Buyer completes inspections (due diligence)
+   - 24(c): Financing/appraisal must be approved
+   - 24(d): Settlement signing must happen
 
 3. **Settlement vs Closing** - Common confusion:
    - **Settlement** = signing happens (can be late Friday 4:30 PM)
