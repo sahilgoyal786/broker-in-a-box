@@ -43,7 +43,7 @@ export default function TransactionsFilter({ transactions, agents = [], canCreat
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [nameSearch, setNameSearch] = useState('')
-  const [agentFilter, setAgentFilter] = useState('all')
+  const [selectedAgents, setSelectedAgents] = useState<string[]>([])
   const [sideFilter, setSideFilter] = useState('all')
   const [citySearch, setCitySearch] = useState('')
   const [zipSearch, setZipSearch] = useState('')
@@ -67,8 +67,8 @@ export default function TransactionsFilter({ transactions, agents = [], canCreat
         if (!buyerName.includes(search) && !sellerName.includes(search)) return false
       }
 
-      // Agent filter
-      if (agentFilter !== 'all' && tx.agent_id !== agentFilter) return false
+      // Agent filter (multi-select)
+      if (selectedAgents.length > 0 && !selectedAgents.includes(tx.agent_id)) return false
 
       // Side filter (agency role)
       if (sideFilter !== 'all') {
@@ -95,17 +95,29 @@ export default function TransactionsFilter({ transactions, agents = [], canCreat
 
       return true
     })
-  }, [transactions, dateFrom, dateTo, nameSearch, agentFilter, sideFilter, citySearch, zipSearch, statusFilter])
+  }, [transactions, dateFrom, dateTo, nameSearch, selectedAgents, sideFilter, citySearch, zipSearch, statusFilter])
 
   function clearFilters() {
     setDateFrom('')
     setDateTo('')
     setNameSearch('')
-    setAgentFilter('all')
+    setSelectedAgents([])
     setSideFilter('all')
     setCitySearch('')
     setZipSearch('')
     setStatusFilter('all')
+  }
+
+  function toggleAgent(agentId: string) {
+    setSelectedAgents(prev => 
+      prev.includes(agentId) 
+        ? prev.filter(id => id !== agentId)
+        : [...prev, agentId]
+    )
+  }
+
+  function removeAgent(agentId: string) {
+    setSelectedAgents(prev => prev.filter(id => id !== agentId))
   }
 
   function exportToCSV() {
@@ -149,7 +161,7 @@ export default function TransactionsFilter({ transactions, agents = [], canCreat
     window.URL.revokeObjectURL(url)
   }
 
-  const hasActiveFilters = dateFrom || dateTo || nameSearch || agentFilter !== 'all' || sideFilter !== 'all' || citySearch || zipSearch || statusFilter !== 'all'
+  const hasActiveFilters = dateFrom || dateTo || nameSearch || selectedAgents.length > 0 || sideFilter !== 'all' || citySearch || zipSearch || statusFilter !== 'all'
 
   const statusColors: Record<string, string> = {
     pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
@@ -215,22 +227,47 @@ export default function TransactionsFilter({ transactions, agents = [], canCreat
             />
           </div>
 
-          {/* Agent Filter (Broker only) */}
+          {/* Agent Filter (Broker only - Multi-select) */}
           {agents.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">Agent</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">
+                Agent {selectedAgents.length > 0 && `(${selectedAgents.length} selected)`}
+              </label>
               <select
-                value={agentFilter}
-                onChange={(e) => setAgentFilter(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    toggleAgent(e.target.value)
+                    e.target.value = '' // Reset dropdown
+                  }
+                }}
                 className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value=""
               >
-                <option value="all">All Agents</option>
-                {agents.map(agent => (
+                <option value="">Select agents...</option>
+                {agents.filter(a => !selectedAgents.includes(a.id)).map(agent => (
                   <option key={agent.id} value={agent.id}>
                     {agent.last_name}, {agent.first_name}
                   </option>
                 ))}
               </select>
+              {selectedAgents.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedAgents.map(agentId => {
+                    const agent = agents.find(a => a.id === agentId)
+                    if (!agent) return null
+                    return (
+                      <button
+                        key={agentId}
+                        onClick={() => removeAgent(agentId)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-lg transition-colors"
+                      >
+                        {agent.last_name}, {agent.first_name}
+                        <X className="w-3 h-3" />
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
 
