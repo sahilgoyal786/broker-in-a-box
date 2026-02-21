@@ -9,6 +9,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
   const [loading, setLoading] = useState(false)
   const [showLimitedAgency, setShowLimitedAgency] = useState(transaction.agency_role === 'limited_agency')
   const [agencyRole, setAgencyRole] = useState(transaction.agency_role)
+  const [earnestMoneyLocation, setEarnestMoneyLocation] = useState(transaction.earnest_money_location || '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -43,7 +44,10 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       offer_reference_date: formData.get('offer_reference_date'),
       contract_date: formData.get('contract_date'),
       earnest_money_amount: formData.get('earnest_money_amount') || null,
+      buyer_title_company: formData.get('buyer_title_company') || null,
+      seller_title_company: formData.get('seller_title_company') || null,
       earnest_money_location: formData.get('earnest_money_location') || null,
+      earnest_money_location_other: formData.get('earnest_money_location_other') || null,
       earnest_money_held_by: formData.get('earnest_money_held_by') || null,
       earnest_money_contact_name: formData.get('earnest_money_contact_name') || null,
       earnest_money_contact_email: formData.get('earnest_money_contact_email') || null,
@@ -413,20 +417,59 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Buyer Title Company</label>
+            <input
+              type="text"
+              name="buyer_title_company"
+              className={inputClass}
+              placeholder="e.g., First American Title"
+              defaultValue={transaction.buyer_title_company || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Seller Title Company</label>
+            <input
+              type="text"
+              name="seller_title_company"
+              className={inputClass}
+              placeholder="e.g., Fidelity National Title"
+              defaultValue={transaction.seller_title_company || ''}
+            />
+          </div>
+        </div>
+
         <div>
           <label className={labelClass}>Where is the Earnest Money?</label>
           <select 
             name="earnest_money_location" 
             className={inputClass}
-            defaultValue={transaction.earnest_money_location || ''}
+            value={earnestMoneyLocation}
+            onChange={(e) => setEarnestMoneyLocation(e.target.value)}
           >
             <option value="">Select location...</option>
-            <option value="title_company">Title Company</option>
+            <option value="buyer_title_company">Buyer Title Company</option>
+            <option value="seller_title_company">Seller Title Company</option>
             <option value="buyer_broker">Buyer's Broker</option>
             <option value="listing_broker">Listing Broker</option>
+            <option value="other">Other</option>
           </select>
           <p className="text-xs text-slate-500 mt-1">Where the earnest money deposit is being held</p>
         </div>
+
+        {earnestMoneyLocation === 'other' && (
+          <div>
+            <label className={labelClass}>Please Specify Location</label>
+            <input
+              type="text"
+              name="earnest_money_location_other"
+              className={inputClass}
+              placeholder="Specify where earnest money is held"
+              defaultValue={transaction.earnest_money_location_other || ''}
+            />
+          </div>
+        )}
 
         <div>
           <label className={labelClass}>Held By (Company/Brokerage Name)</label>

@@ -9,6 +9,7 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
   const [loading, setLoading] = useState(false)
   const [showLimitedAgency, setShowLimitedAgency] = useState(false)
   const [agencyRole, setAgencyRole] = useState(agency?.agreement_type === 'listing_agreement' ? 'listing_agent' : 'buyer_agent')
+  const [earnestMoneyLocation, setEarnestMoneyLocation] = useState('')
 
   // Pre-fill from agency if provided
   const initialData = agency ? {
@@ -66,7 +67,10 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
       offer_reference_date: formData.get('offer_reference_date'),
       contract_date: formData.get('contract_date'),
       earnest_money_amount: formData.get('earnest_money_amount') || null,
+      buyer_title_company: formData.get('buyer_title_company') || null,
+      seller_title_company: formData.get('seller_title_company') || null,
       earnest_money_location: formData.get('earnest_money_location') || null,
+      earnest_money_location_other: formData.get('earnest_money_location_other') || null,
       earnest_money_held_by: formData.get('earnest_money_held_by') || null,
       earnest_money_contact_name: formData.get('earnest_money_contact_name') || null,
       earnest_money_contact_email: formData.get('earnest_money_contact_email') || null,
@@ -436,16 +440,56 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
           </div>
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Buyer Title Company</label>
+            <input
+              type="text"
+              name="buyer_title_company"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., First American Title"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Seller Title Company</label>
+            <input
+              type="text"
+              name="seller_title_company"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., Fidelity National Title"
+            />
+          </div>
+        </div>
+
         <div>
           <label className="block text-sm font-medium mb-2">Where is the Earnest Money?</label>
-          <select name="earnest_money_location" className="w-full px-3 py-2 border rounded-lg">
+          <select 
+            name="earnest_money_location" 
+            className="w-full px-3 py-2 border rounded-lg"
+            value={earnestMoneyLocation}
+            onChange={(e) => setEarnestMoneyLocation(e.target.value)}
+          >
             <option value="">Select location...</option>
-            <option value="title_company">Title Company</option>
+            <option value="buyer_title_company">Buyer Title Company</option>
+            <option value="seller_title_company">Seller Title Company</option>
             <option value="buyer_broker">Buyer's Broker</option>
             <option value="listing_broker">Listing Broker</option>
+            <option value="other">Other</option>
           </select>
           <p className="text-xs text-slate-500 mt-1">Where the earnest money deposit is being held</p>
         </div>
+
+        {earnestMoneyLocation === 'other' && (
+          <div>
+            <label className="block text-sm font-medium mb-2">Please Specify Location</label>
+            <input
+              type="text"
+              name="earnest_money_location_other"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Specify where earnest money is held"
+            />
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium mb-2">Held By (Company/Brokerage Name)</label>
