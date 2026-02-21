@@ -50,20 +50,39 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
     const formData = new FormData(e.currentTarget)
     const supabase = createClient()
 
-    // Get broker ID
+    // Get broker ID based on role
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const { data: broker } = await supabase
-      .from('brokers')
-      .select('id')
-      .eq('id', user.id)
-      .single()
+    let brokerId: string | null = null
 
-    if (!broker) {
-      setError('Broker not found')
-      setLoading(false)
-      return
+    if (role === 'broker') {
+      const { data: broker } = await supabase
+        .from('brokers')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (!broker) {
+        setError('Broker not found')
+        setLoading(false)
+        return
+      }
+      brokerId = broker.id
+    } else {
+      // Agent: get broker_id from agents table
+      const { data: agent } = await supabase
+        .from('agents')
+        .select('broker_id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (!agent) {
+        setError('Agent not found')
+        setLoading(false)
+        return
+      }
+      brokerId = agent.broker_id
     }
 
     const agentId = agencyAgreement 
@@ -73,7 +92,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
     const { error: insertError } = await supabase
       .from('listings')
       .insert({
-        broker_id: broker.id,
+        broker_id: brokerId,
         agent_id: agentId,
         agency_agreement_id: agencyAgreement?.id || null,
         property_address: formData.get('property_address'),
