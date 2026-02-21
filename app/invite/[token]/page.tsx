@@ -1,10 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import InviteAcceptForm from './invite-accept-form'
 
 export default async function InviteAcceptPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   // Look up invite by token
   const { data: agent } = await supabase
