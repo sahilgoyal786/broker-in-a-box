@@ -16,7 +16,7 @@ export default async function AgentsPage() {
 
   const { data: agents } = await supabase
     .from('agents')
-    .select('id, first_name, last_name, email, license_number, license_expiration, active, ce_hours_core, ce_hours_other, mandatory_course_completed')
+    .select('id, first_name, last_name, email, license_number, license_expiration, active, ce_hours_core, ce_hours_other, mandatory_course_completed, invite_status')
     .eq('broker_id', broker?.id ?? '')
     .eq('active', true)  // Only show active agents
     .order('last_name', { ascending: true }) as any

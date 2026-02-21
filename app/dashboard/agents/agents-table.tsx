@@ -16,6 +16,7 @@ interface Agent {
   ce_hours_core: number
   ce_hours_other: number
   mandatory_course_completed: boolean
+  invite_status: string
   activeListings: number
   pendingSales: number
   closedDeals: number
@@ -105,6 +106,65 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
     window.location.href = `mailto:${emails}`
   }
 
+  function getInviteStatusBadge(status: string) {
+    switch (status) {
+      case 'active':
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">Active</span>
+      case 'invited':
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">Invited</span>
+      case 'pending':
+      default:
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400">Pending</span>
+    }
+  }
+
+  async function handleInviteSelected() {
+    if (selectedAgents.size === 0) {
+      alert('Please select at least one agent')
+      return
+    }
+
+    const selectedAgentsList = agents.filter(a => selectedAgents.has(a.id))
+    
+    // Check if any are already active
+    const activeCount = selectedAgentsList.filter(a => a.invite_status === 'active').length
+    if (activeCount > 0) {
+      if (!confirm(`${activeCount} of the selected agents are already active. Invite the remaining ${selectedAgents.size - activeCount}?`)) {
+        return
+      }
+    }
+
+    const agentNames = selectedAgentsList.map(a => `${a.first_name} ${a.last_name}`).join(', ')
+    
+    if (!confirm(`Send invite emails to ${selectedAgents.size} agent${selectedAgents.size > 1 ? 's' : ''}?\n\n${agentNames.substring(0, 200)}${agentNames.length > 200 ? '...' : ''}`)) {
+      return
+    }
+
+    setUpdating(true)
+
+    try {
+      const response = await fetch('/api/agents/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentIds: Array.from(selectedAgents) })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        alert(`✅ Invited ${data.invited} agent${data.invited > 1 ? 's' : ''}!${data.failed > 0 ? `\n\n❌ Failed: ${data.failed}` : ''}`)
+        setSelectedAgents(new Set())
+        router.refresh()
+      } else {
+        alert(`Error: ${data.error || 'Failed to send invites'}`)
+      }
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   return (
     <div>
       {/* Bulk Actions */}
@@ -114,6 +174,14 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
             {selectedAgents.size} agent{selectedAgents.size > 1 ? 's' : ''} selected
           </p>
           <div className="flex gap-3">
+            <button
+              onClick={handleInviteSelected}
+              disabled={updating}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+            >
+              <Mail className="w-4 h-4" />
+              {updating ? 'Sending...' : 'Invite Selected'}
+            </button>
             <button
               onClick={handleEmailSelected}
               className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold rounded-lg transition-colors"
@@ -147,6 +215,7 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
               </th>
               <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Name</th>
               <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Email</th>
+              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Status</th>
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Core</th>
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Elective</th>
               <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Mandatory</th>
@@ -181,6 +250,9 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-slate-300 text-sm">{agent.email}</p>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {getInviteStatusBadge(agent.invite_status)}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <p className="text-slate-300 text-sm font-medium">{agent.ce_hours_core ?? 0}</p>
