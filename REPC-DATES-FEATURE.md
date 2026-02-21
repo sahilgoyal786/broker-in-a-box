@@ -17,6 +17,10 @@ Added proper REPC date tracking to transactions:
 - `finance_appraisal_deadline` (24(c))
 - `settlement_deadline` (24(d), required) - When signing happens
 
+**Custom Deadlines (for addendums/special conditions):**
+- `custom_deadline_1_label` + `custom_deadline_1_date` (e.g., "HOA Approval", "Septic Inspection")
+- `custom_deadline_2_label` + `custom_deadline_2_date` (e.g., "Well Test", "Zoning Approval")
+
 **Important Distinctions:**
 - **Settlement** = parties sign documents (Section 24.4 deadline)
 - **Closing** = deed records, funds transfer (up to 4 days after settlement per Section 3.2)

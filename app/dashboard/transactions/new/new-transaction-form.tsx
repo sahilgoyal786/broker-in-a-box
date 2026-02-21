@@ -61,6 +61,10 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
       due_diligence_deadline: formData.get('due_diligence_deadline') || null,
       finance_appraisal_deadline: formData.get('finance_appraisal_deadline') || null,
       settlement_deadline: formData.get('settlement_deadline'),
+      custom_deadline_1_label: formData.get('custom_deadline_1_label') || null,
+      custom_deadline_1_date: formData.get('custom_deadline_1_date') || null,
+      custom_deadline_2_label: formData.get('custom_deadline_2_label') || null,
+      custom_deadline_2_date: formData.get('custom_deadline_2_date') || null,
       status: 'pending'
     }
 
@@ -357,6 +361,46 @@ export default function NewTransactionForm({ brokerId, agents, agency, currentAg
               required
             />
             <p className="text-xs text-slate-500 mt-1">Section 24(d)</p>
+          </div>
+        </div>
+
+        <h3 className="text-sm font-semibold text-slate-700 mt-6 mb-3">Additional Deadlines (Optional)</h3>
+        <p className="text-xs text-slate-500 mb-3">For contingencies in addendums or special conditions</p>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Deadline Name</label>
+            <input
+              type="text"
+              name="custom_deadline_1_label"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., HOA Approval, Septic Inspection"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Date</label>
+            <input
+              type="date"
+              name="custom_deadline_1_date"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Deadline Name</label>
+            <input
+              type="text"
+              name="custom_deadline_2_label"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., Well Test, Zoning Approval"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Date</label>
+            <input
+              type="date"
+              name="custom_deadline_2_date"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
           </div>
         </div>
       </div>
