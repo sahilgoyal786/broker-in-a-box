@@ -202,101 +202,85 @@ export default async function TransactionDetailPage({
           </div>
 
           {/* Earnest Money Details */}
-          {transaction.earnest_money_location && (
-            <div className="mt-6 pt-6 border-t border-slate-700">
-              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Earnest Money Holder</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-slate-400 text-xs">Location:</span>
-                  <p className="text-white text-sm mt-1">
-                    {transaction.earnest_money_location === 'title_company' ? 'Title Company' :
-                     transaction.earnest_money_location === 'buyer_broker' ? "Buyer's Broker" :
-                     transaction.earnest_money_location === 'listing_broker' ? 'Listing Broker' : '—'}
-                  </p>
-                </div>
-                {transaction.earnest_money_held_by && (
-                  <div>
-                    <span className="text-slate-400 text-xs">Held By:</span>
-                    <p className="text-white text-sm mt-1">{transaction.earnest_money_held_by}</p>
-                  </div>
-                )}
-                {transaction.earnest_money_contact_name && (
-                  <div>
-                    <span className="text-slate-400 text-xs">Contact:</span>
-                    <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_name}</p>
-                  </div>
-                )}
-                {transaction.earnest_money_contact_email && (
-                  <div>
-                    <span className="text-slate-400 text-xs">Email:</span>
-                    <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_email}</p>
-                  </div>
-                )}
-                {transaction.earnest_money_contact_phone && (
-                  <div>
-                    <span className="text-slate-400 text-xs">Phone:</span>
-                    <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_phone}</p>
-                  </div>
-                )}
+          <div className="mt-6 pt-6 border-t border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Earnest Money Holder</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="text-slate-400 text-xs">Location:</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.earnest_money_location === 'title_company' ? 'Title Company' :
+                   transaction.earnest_money_location === 'buyer_broker' ? "Buyer's Broker" :
+                   transaction.earnest_money_location === 'listing_broker' ? 'Listing Broker' : '—'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Held By:</span>
+                <p className="text-white text-sm mt-1">{transaction.earnest_money_held_by || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Contact:</span>
+                <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_name || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Email:</span>
+                <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_email || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Phone:</span>
+                <p className="text-white text-sm mt-1">{transaction.earnest_money_contact_phone || '—'}</p>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Section 24 Deadlines */}
           <div className="mt-6 pt-6 border-t border-slate-700">
             <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Section 24 Deadlines</h3>
             <div className="grid grid-cols-2 gap-4">
-              {transaction.seller_disclosure_deadline && (
-                <div>
-                  <span className="text-slate-400 text-xs">Seller Disclosure (24a):</span>
-                  <p className="text-white text-sm mt-1">{new Date(transaction.seller_disclosure_deadline).toLocaleDateString()}</p>
-                </div>
-              )}
-              {transaction.due_diligence_deadline && (
-                <div>
-                  <span className="text-slate-400 text-xs">Due Diligence (24b):</span>
-                  <p className="text-white text-sm mt-1">{new Date(transaction.due_diligence_deadline).toLocaleDateString()}</p>
-                </div>
-              )}
-              {transaction.finance_appraisal_deadline && (
-                <div>
-                  <span className="text-slate-400 text-xs">Finance & Appraisal (24c):</span>
-                  <p className="text-white text-sm mt-1">{new Date(transaction.finance_appraisal_deadline).toLocaleDateString()}</p>
-                </div>
-              )}
-              {transaction.settlement_deadline && (
-                <div>
-                  <span className="text-slate-400 text-xs">Settlement (24d):</span>
-                  <p className="text-white text-sm mt-1 font-semibold">{new Date(transaction.settlement_deadline).toLocaleDateString()}</p>
-                </div>
-              )}
+              <div>
+                <span className="text-slate-400 text-xs">Seller Disclosure (24a):</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.seller_disclosure_deadline ? new Date(transaction.seller_disclosure_deadline).toLocaleDateString() : '—'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Due Diligence (24b):</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.due_diligence_deadline ? new Date(transaction.due_diligence_deadline).toLocaleDateString() : '—'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Finance & Appraisal (24c):</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.finance_appraisal_deadline ? new Date(transaction.finance_appraisal_deadline).toLocaleDateString() : '—'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Settlement (24d):</span>
+                <p className="text-white text-sm mt-1 font-semibold">
+                  {transaction.settlement_deadline ? new Date(transaction.settlement_deadline).toLocaleDateString() : '—'}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Custom Deadlines */}
-          {(transaction.custom_deadline_1_label || transaction.custom_deadline_2_label) && (
-            <div className="mt-6 pt-6 border-t border-slate-700">
-              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Additional Deadlines</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {transaction.custom_deadline_1_label && (
-                  <div>
-                    <span className="text-slate-400 text-xs">{transaction.custom_deadline_1_label}:</span>
-                    <p className="text-white text-sm mt-1">
-                      {transaction.custom_deadline_1_date ? new Date(transaction.custom_deadline_1_date).toLocaleDateString() : '—'}
-                    </p>
-                  </div>
-                )}
-                {transaction.custom_deadline_2_label && (
-                  <div>
-                    <span className="text-slate-400 text-xs">{transaction.custom_deadline_2_label}:</span>
-                    <p className="text-white text-sm mt-1">
-                      {transaction.custom_deadline_2_date ? new Date(transaction.custom_deadline_2_date).toLocaleDateString() : '—'}
-                    </p>
-                  </div>
-                )}
+          <div className="mt-6 pt-6 border-t border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Additional Deadlines</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="text-slate-400 text-xs">{transaction.custom_deadline_1_label || 'Custom Deadline 1'}:</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.custom_deadline_1_date ? new Date(transaction.custom_deadline_1_date).toLocaleDateString() : '—'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">{transaction.custom_deadline_2_label || 'Custom Deadline 2'}:</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.custom_deadline_2_date ? new Date(transaction.custom_deadline_2_date).toLocaleDateString() : '—'}
+                </p>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Limited Agency Disclosure */}
           {transaction.agency_role === 'limited_agency' && (
