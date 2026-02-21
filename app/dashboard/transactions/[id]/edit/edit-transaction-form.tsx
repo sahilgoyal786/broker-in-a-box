@@ -134,7 +134,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               />
               <div>
                 <span className="text-sm font-medium text-orange-400">Limited Agency Disclosure and Agreement Received</span>
-                <p className="text-xs text-orange-300/70 mt-1">Required when representing both buyer and seller in the same transaction</p>
+                <p className="text-xs text-orange-300/70 mt-1">Disclosure must be signed and dated no later than the offer reference date</p>
               </div>
             </label>
           </div>
