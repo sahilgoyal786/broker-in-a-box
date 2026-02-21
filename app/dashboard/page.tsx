@@ -86,7 +86,8 @@ export default async function DashboardPage() {
     .limit(5) as any
 
   // Calculate totals
-  const totalsPending = (activeListings ?? 0) + (listingsUnderContract ?? 0) + (buyersUnderContract ?? 0)
+  // Totals Pending = only transactions under contract (not active listings)
+  const totalsPending = (listingsUnderContract ?? 0) + (buyersUnderContract ?? 0)
   const totalsClosed = (listingsClosed ?? 0) + (buyersClosed ?? 0)
 
   const stats = [
