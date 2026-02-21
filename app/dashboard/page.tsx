@@ -145,7 +145,10 @@ export default async function DashboardPage() {
       {/* Active Deals */}
       <div className="bg-slate-800 rounded-xl border border-slate-700">
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <h2 className="text-white font-semibold">Active Deals (Pending & Under Contract)</h2>
+          <div>
+            <h2 className="text-white font-semibold">Active Deals</h2>
+            <p className="text-slate-400 text-sm mt-0.5">Under contract or in review</p>
+          </div>
           <Link
             href="/dashboard/transactions"
             className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
@@ -158,7 +161,7 @@ export default async function DashboardPage() {
           <div className="p-12 text-center">
             <AlertCircle className="w-8 h-8 text-slate-600 mx-auto mb-3" />
             <p className="text-slate-400">No active deals</p>
-            <p className="text-slate-500 text-sm mt-2">Deals in pending or under contract status will appear here</p>
+            <p className="text-slate-500 text-sm mt-2">Transactions under contract or in review will appear here</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-700">
