@@ -1,9 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
-import TransactionsTable from './transactions-table'
+import TransactionsView from './transactions-view'
 
 export default async function TransactionsPage() {
   const supabase = await createClient()
@@ -78,25 +76,9 @@ export default async function TransactionsPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Transactions</h1>
-          <p className="text-slate-400 mt-1">{transactions?.length ?? 0} total</p>
-        </div>
-        <Link
-          href="/dashboard/transactions/new"
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          New Transaction
-        </Link>
-      </div>
-
-      <TransactionsTable 
-        transactions={transactions ?? []} 
-        userRole={userContext.role}
-      />
-    </div>
+    <TransactionsView 
+      transactions={transactions ?? []} 
+      userRole={userContext.role}
+    />
   )
 }

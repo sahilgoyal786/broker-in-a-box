@@ -29,24 +29,31 @@ interface Transaction {
 
 export default function TransactionsTable({ 
   transactions, 
-  userRole 
+  userRole,
+  onFilterChange
 }: { 
   transactions: Transaction[]
   userRole: string
+  onFilterChange?: (count: number) => void
 }) {
   const [filteredTransactions, setFilteredTransactions] = useState(transactions)
 
   useEffect(() => {
     const { viewingAsAgent, impersonateAgentId } = getViewContext()
     
+    let filtered = transactions
     if (userRole === 'broker' && viewingAsAgent && impersonateAgentId) {
       // Filter to selected agent's transactions
-      setFilteredTransactions(transactions.filter(t => t.agent_id === impersonateAgentId))
-    } else {
-      // Show all (broker normal mode or actual agent)
-      setFilteredTransactions(transactions)
+      filtered = transactions.filter(t => t.agent_id === impersonateAgentId)
     }
-  }, [transactions, userRole])
+    
+    setFilteredTransactions(filtered)
+    
+    // Notify parent of filtered count
+    if (onFilterChange) {
+      onFilterChange(filtered.length)
+    }
+  }, [transactions, userRole, onFilterChange])
 
   const statusColors: Record<string, string> = {
     active: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
