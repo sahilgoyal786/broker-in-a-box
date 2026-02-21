@@ -4,10 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function NewAgencyForm({ brokerId, agents }: any) {
+export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgent }: any) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [agreementType, setAgreementType] = useState('listing_agreement')
+  const [selectedAgentId, setSelectedAgentId] = useState(currentAgentId || '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -75,7 +76,14 @@ export default function NewAgencyForm({ brokerId, agents }: any) {
 
         <div>
           <label className="block text-sm font-medium mb-2">Agent</label>
-          <select name="agent_id" className="w-full px-3 py-2 border rounded-lg" required>
+          <select 
+            name="agent_id" 
+            value={selectedAgentId}
+            onChange={(e) => setSelectedAgentId(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg" 
+            required
+            disabled={isAgent}
+          >
             <option value="">Select agent...</option>
             {agents.map((agent: any) => (
               <option key={agent.id} value={agent.id}>
@@ -83,6 +91,9 @@ export default function NewAgencyForm({ brokerId, agents }: any) {
               </option>
             ))}
           </select>
+          {isAgent && (
+            <p className="text-xs text-slate-500 mt-1">This agreement will be assigned to you</p>
+          )}
         </div>
       </div>
 

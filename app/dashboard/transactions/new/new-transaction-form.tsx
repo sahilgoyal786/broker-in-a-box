@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function NewTransactionForm({ brokerId, agents, agency }: any) {
+export default function NewTransactionForm({ brokerId, agents, agency, currentAgentId, isAgent }: any) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   // Pre-fill from agency if provided
   const initialData = agency ? {
     agency_agreement_id: agency.id,
-    agent_id: agency.agent_id,
+    agent_id: agency.agent_id || currentAgentId || '',
     property_address: agency.property_address || '',
     property_city: agency.property_city || '',
     property_state: agency.property_state || 'UT',
@@ -111,7 +111,13 @@ export default function NewTransactionForm({ brokerId, agents, agency }: any) {
 
           <div>
             <label className="block text-sm font-medium mb-2">Agent</label>
-            <select name="agent_id" className="w-full px-3 py-2 border rounded-lg" required defaultValue={initialData.agent_id || ''}>
+            <select 
+              name="agent_id" 
+              className="w-full px-3 py-2 border rounded-lg" 
+              required 
+              defaultValue={initialData.agent_id || currentAgentId || ''}
+              disabled={isAgent}
+            >
               <option value="">Select agent...</option>
               {agents.map((agent: any) => (
                 <option key={agent.id} value={agent.id}>
@@ -119,6 +125,9 @@ export default function NewTransactionForm({ brokerId, agents, agency }: any) {
                 </option>
               ))}
             </select>
+            {isAgent && (
+              <p className="text-xs text-slate-500 mt-1">This transaction will be assigned to you</p>
+            )}
           </div>
         </div>
       </div>

@@ -43,15 +43,13 @@ export default async function AgenciesPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Agency Agreements</h1>
-        {userContext.role === 'broker' && (
-          <Link
-            href="/dashboard/agencies/new"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Agency Agreement
-          </Link>
-        )}
+        <Link
+          href="/dashboard/agencies/new"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          New Agency Agreement
+        </Link>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
