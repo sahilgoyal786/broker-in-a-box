@@ -42,6 +42,7 @@ export default async function DashboardLayout({
     { href: '/dashboard/agencies', label: 'Agency Agreements', icon: FileText, roles: ['broker', 'agent'] },
     { href: '/dashboard/transactions', label: 'Transactions', icon: FileText, roles: ['broker', 'agent'] },
     { href: '/dashboard/agents', label: 'Agents', icon: Users, roles: ['broker'] },  // Broker only
+    { href: '/dashboard/profile', label: 'Profile', icon: User, roles: ['agent'] },  // Agent only
     { href: '/dashboard/settings', label: 'Settings', icon: Settings, roles: ['broker'] },  // Broker only
   ].filter(item => item.roles.includes(userContext.role))
 

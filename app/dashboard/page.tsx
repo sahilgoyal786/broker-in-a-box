@@ -85,13 +85,22 @@ export default async function DashboardPage() {
     .order('created_at', { ascending: false })
     .limit(5) as any
 
+  // Calculate totals
+  const totalsPending = (activeListings ?? 0) + (listingsUnderContract ?? 0) + (buyersUnderContract ?? 0)
+  const totalsClosed = (listingsClosed ?? 0) + (buyersClosed ?? 0)
+
   const stats = [
+    // Row 1: Active pipeline
     { label: 'Active Listings', value: activeListings ?? 0, icon: FileText, color: 'text-blue-400', href: '/dashboard/agencies' },
     { label: 'Listings Pending', value: listingsUnderContract ?? 0, icon: Clock, color: 'text-yellow-400', href: '/dashboard/transactions' },
     { label: 'Buyers Pending', value: buyersUnderContract ?? 0, icon: Clock, color: 'text-purple-400', href: '/dashboard/transactions' },
-    { label: 'CE Alerts', value: ceNeedsAttention, icon: GraduationCap, color: ceNeedsAttention > 0 ? 'text-red-400' : 'text-green-400', href: '/dashboard/ce-compliance' },
+    { label: 'Totals Pending', value: totalsPending, icon: FileText, color: 'text-orange-400', href: '/dashboard/transactions', highlighted: true },
+    
+    // Row 2: Performance + closed
+    { label: 'CE Alerts', value: ceNeedsAttention, icon: GraduationCap, color: ceNeedsAttention > 0 ? 'text-red-400' : 'text-green-400', href: '/dashboard/agents' },
     { label: 'Listings Closed', value: listingsClosed ?? 0, icon: CheckCircle, color: 'text-green-400', href: '/dashboard/transactions' },
     { label: 'Buyers Closed', value: buyersClosed ?? 0, icon: CheckCircle, color: 'text-green-400', href: '/dashboard/transactions' },
+    { label: 'Totals Closed', value: totalsClosed, icon: CheckCircle, color: 'text-emerald-400', href: '/dashboard/transactions', highlighted: true },
   ]
 
   const statusColors: Record<string, string> = {
@@ -113,11 +122,19 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        {stats.map(({ label, value, icon: Icon, color, href }) => (
-          <Link key={label} href={href} className="bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-slate-600 transition-colors">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {stats.map(({ label, value, icon: Icon, color, href, highlighted }) => (
+          <Link 
+            key={label} 
+            href={href} 
+            className={`rounded-xl p-6 border transition-colors ${
+              highlighted 
+                ? 'bg-slate-700 border-slate-600 hover:border-slate-500 ring-1 ring-slate-600' 
+                : 'bg-slate-800 border-slate-700 hover:border-slate-600'
+            }`}
+          >
             <div className="flex items-center justify-between mb-3">
-              <p className="text-slate-400 text-sm">{label}</p>
+              <p className={`text-sm font-medium ${highlighted ? 'text-slate-200' : 'text-slate-400'}`}>{label}</p>
               <Icon className={`w-5 h-5 ${color}`} />
             </div>
             <p className="text-3xl font-bold text-white">{value}</p>
