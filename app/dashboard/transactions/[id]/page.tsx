@@ -246,26 +246,75 @@ export default async function TransactionDetailPage({
             </div>
           )}
 
-          {/* Title Companies */}
-          {(transaction.buyer_title_company || transaction.seller_title_company) && (
-            <div className="mt-6 pt-6 border-t border-slate-700">
-              <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Title Companies</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {transaction.buyer_title_company && (
-                  <div>
-                    <span className="text-slate-400 text-xs">Buyer Title Company:</span>
-                    <p className="text-white text-sm mt-1">{transaction.buyer_title_company}</p>
-                  </div>
-                )}
-                {transaction.seller_title_company && (
-                  <div>
-                    <span className="text-slate-400 text-xs">Seller Title Company:</span>
-                    <p className="text-white text-sm mt-1">{transaction.seller_title_company}</p>
-                  </div>
-                )}
+          {/* Seller's Title Company */}
+          <div className="mt-6 pt-6 border-t border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Seller's Title Company</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="text-slate-400 text-xs">Company Name:</span>
+                <p className="text-white text-sm mt-1">{transaction.seller_title_company || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Contact Person:</span>
+                <p className="text-white text-sm mt-1">{transaction.seller_title_contact_name || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Email:</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.seller_title_contact_email ? (
+                    <a href={`mailto:${transaction.seller_title_contact_email}`} className="text-blue-400 hover:text-blue-300">
+                      {transaction.seller_title_contact_email}
+                    </a>
+                  ) : '—'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Phone:</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.seller_title_contact_phone ? (
+                    <a href={`tel:${transaction.seller_title_contact_phone}`} className="text-blue-400 hover:text-blue-300">
+                      {transaction.seller_title_contact_phone}
+                    </a>
+                  ) : '—'}
+                </p>
               </div>
             </div>
-          )}
+          </div>
+
+          {/* Buyer's Title Company */}
+          <div className="mt-6 pt-6 border-t border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-400 uppercase mb-3">Buyer's Title Company</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="text-slate-400 text-xs">Company Name:</span>
+                <p className="text-white text-sm mt-1">{transaction.buyer_title_company || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Contact Person:</span>
+                <p className="text-white text-sm mt-1">{transaction.buyer_title_contact_name || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Email:</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.buyer_title_contact_email ? (
+                    <a href={`mailto:${transaction.buyer_title_contact_email}`} className="text-blue-400 hover:text-blue-300">
+                      {transaction.buyer_title_contact_email}
+                    </a>
+                  ) : '—'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs">Phone:</span>
+                <p className="text-white text-sm mt-1">
+                  {transaction.buyer_title_contact_phone ? (
+                    <a href={`tel:${transaction.buyer_title_contact_phone}`} className="text-blue-400 hover:text-blue-300">
+                      {transaction.buyer_title_contact_phone}
+                    </a>
+                  ) : '—'}
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Earnest Money Details */}
           <div className="mt-6 pt-6 border-t border-slate-700">

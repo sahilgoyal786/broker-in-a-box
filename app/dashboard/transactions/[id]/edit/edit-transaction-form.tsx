@@ -44,14 +44,20 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       offer_reference_date: formData.get('offer_reference_date'),
       contract_date: formData.get('contract_date'),
       earnest_money_amount: formData.get('earnest_money_amount') || null,
-      buyer_title_company: formData.get('buyer_title_company') || null,
-      seller_title_company: formData.get('seller_title_company') || null,
       earnest_money_location: formData.get('earnest_money_location') || null,
       earnest_money_location_other: formData.get('earnest_money_location_other') || null,
       earnest_money_held_by: formData.get('earnest_money_held_by') || null,
       earnest_money_contact_name: formData.get('earnest_money_contact_name') || null,
       earnest_money_contact_email: formData.get('earnest_money_contact_email') || null,
       earnest_money_contact_phone: formData.get('earnest_money_contact_phone') || null,
+      seller_title_company: formData.get('seller_title_company') || null,
+      seller_title_contact_name: formData.get('seller_title_contact_name') || null,
+      seller_title_contact_email: formData.get('seller_title_contact_email') || null,
+      seller_title_contact_phone: formData.get('seller_title_contact_phone') || null,
+      buyer_title_company: formData.get('buyer_title_company') || null,
+      buyer_title_contact_name: formData.get('buyer_title_contact_name') || null,
+      buyer_title_contact_email: formData.get('buyer_title_contact_email') || null,
+      buyer_title_contact_phone: formData.get('buyer_title_contact_phone') || null,
       seller_disclosure_deadline: formData.get('seller_disclosure_deadline') || null,
       due_diligence_deadline: formData.get('due_diligence_deadline') || null,
       finance_appraisal_deadline: formData.get('finance_appraisal_deadline') || null,
@@ -417,28 +423,99 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Seller's Title Company</h3>
+        
+        <div>
+          <label className={labelClass}>Company Name</label>
+          <input
+            type="text"
+            name="seller_title_company"
+            className={inputClass}
+            placeholder="e.g., Fidelity National Title"
+            defaultValue={transaction.seller_title_company || ''}
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className={labelClass}>Buyer Title Company</label>
+            <label className={labelClass}>Contact Person</label>
             <input
               type="text"
-              name="buyer_title_company"
+              name="seller_title_contact_name"
               className={inputClass}
-              placeholder="e.g., First American Title"
-              defaultValue={transaction.buyer_title_company || ''}
+              placeholder="Contact name"
+              defaultValue={transaction.seller_title_contact_name || ''}
             />
           </div>
           <div>
-            <label className={labelClass}>Seller Title Company</label>
+            <label className={labelClass}>Contact Email</label>
             <input
-              type="text"
-              name="seller_title_company"
+              type="email"
+              name="seller_title_contact_email"
               className={inputClass}
-              placeholder="e.g., Fidelity National Title"
-              defaultValue={transaction.seller_title_company || ''}
+              placeholder="email@company.com"
+              defaultValue={transaction.seller_title_contact_email || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Contact Phone</label>
+            <input
+              type="tel"
+              name="seller_title_contact_phone"
+              className={inputClass}
+              placeholder="(801) 555-1234"
+              defaultValue={transaction.seller_title_contact_phone || ''}
             />
           </div>
         </div>
+
+        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Buyer's Title Company</h3>
+        
+        <div>
+          <label className={labelClass}>Company Name</label>
+          <input
+            type="text"
+            name="buyer_title_company"
+            className={inputClass}
+            placeholder="e.g., First American Title"
+            defaultValue={transaction.buyer_title_company || ''}
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className={labelClass}>Contact Person</label>
+            <input
+              type="text"
+              name="buyer_title_contact_name"
+              className={inputClass}
+              placeholder="Contact name"
+              defaultValue={transaction.buyer_title_contact_name || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Contact Email</label>
+            <input
+              type="email"
+              name="buyer_title_contact_email"
+              className={inputClass}
+              placeholder="email@company.com"
+              defaultValue={transaction.buyer_title_contact_email || ''}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Contact Phone</label>
+            <input
+              type="tel"
+              name="buyer_title_contact_phone"
+              className={inputClass}
+              placeholder="(801) 555-1234"
+              defaultValue={transaction.buyer_title_contact_phone || ''}
+            />
+          </div>
+        </div>
+
+        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Earnest Money Holder</h3>
 
         <div>
           <label className={labelClass}>Where is the Earnest Money?</label>
