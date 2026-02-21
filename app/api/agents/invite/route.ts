@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { getUserContext } from '@/lib/supabase/get-user-role'
+import { sendInviteEmail } from '@/lib/email/send-invite'
+import { getInviteEmailTemplate } from '@/lib/email-templates/invite-agent'
 
 export async function POST(request: Request) {
   try {
@@ -72,20 +74,30 @@ export async function POST(request: Request) {
 
         // Send invite email
         const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${token}`
+        const agentName = `${agent.first_name} ${agent.last_name}`
         
-        await sendInviteEmail({
-          to: agent.email,
-          agentName: `${agent.first_name} ${agent.last_name}`,
+        const emailTemplate = getInviteEmailTemplate({
+          agentName,
           brokerName: broker.name,
           inviteUrl
+        })
+
+        await sendInviteEmail({
+          to: agent.email,
+          subject: `You've been invited to ${broker.name}'s Transaction Portal`,
+          htmlBody: emailTemplate.html,
+          textBody: emailTemplate.text,
+          fromName: broker.name,
+          fromEmail: broker.email
         })
 
         invites.push({
           id: agent.id,
           email: agent.email,
-          name: `${agent.first_name} ${agent.last_name}`
+          name: agentName
         })
       } catch (error: any) {
+        console.error(`Failed to invite ${agent.email}:`, error)
         errors.push({
           id: agent.id,
           email: agent.email,
@@ -115,23 +127,4 @@ function generateInviteToken(): string {
   const array = new Uint8Array(32)
   crypto.getRandomValues(array)
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
-}
-
-async function sendInviteEmail({ to, agentName, brokerName, inviteUrl }: {
-  to: string
-  agentName: string
-  brokerName: string
-  inviteUrl: string
-}) {
-  // TODO: Implement Gmail API email sending
-  // For now, just log (we'll implement Gmail API next)
-  console.log('Sending invite email:', {
-    to,
-    agentName,
-    brokerName,
-    inviteUrl
-  })
-  
-  // Placeholder - will implement actual Gmail API sending
-  // This would use the broker's connected Gmail account to send
 }
