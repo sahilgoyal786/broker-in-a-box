@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User, Home } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import AgentSwitcher from './agent-switcher'
 

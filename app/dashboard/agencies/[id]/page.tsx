@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Plus, FileText } from 'lucide-react'
+import { Plus, FileText, Home } from 'lucide-react'
 
 export default async function AgencyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -37,6 +37,17 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
     .select('*')
     .eq('agency_agreement_id', id)
     .order('created_at', { ascending: false }) as any
+
+  // Get listing details if this is a listing agreement
+  let listing = null
+  if (agency.agreement_type === 'listing_agreement') {
+    const { data } = await supabase
+      .from('listings')
+      .select('*')
+      .eq('agency_agreement_id', id)
+      .maybeSingle() as any
+    listing = data
+  }
 
   return (
     <div className="space-y-6">
@@ -144,6 +155,106 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
           )}
         </div>
       </div>
+
+      {/* Property Details (Listing Agreements Only) */}
+      {agency.agreement_type === 'listing_agreement' && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex justify-between items-center border-b pb-2 mb-4">
+            <h2 className="text-lg font-semibold">Property Details</h2>
+            {listing ? (
+              <Link
+                href={`/dashboard/listings/${listing.id}`}
+                className="text-blue-600 hover:text-blue-800 text-sm"
+              >
+                Edit Details
+              </Link>
+            ) : (
+              <Link
+                href={`/dashboard/listings/new?agency=${id}`}
+                className="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+              >
+                <Home className="w-4 h-4 mr-1" />
+                Add Property Details
+              </Link>
+            )}
+          </div>
+          
+          {listing ? (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm text-gray-600">Property Address</label>
+                <p className="font-medium">{listing.property_address}</p>
+                <p className="text-sm text-gray-600">
+                  {listing.property_city}, {listing.property_state} {listing.property_zip}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-600">Property Type</label>
+                <p className="capitalize">{listing.property_type.replace(/_/g, ' ')}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-600">Listing Price</label>
+                <p className="font-medium text-lg text-green-600">
+                  ${listing.listing_price?.toLocaleString()}
+                </p>
+              </div>
+              {listing.mls_number && (
+                <div>
+                  <label className="text-sm text-gray-600">MLS Number</label>
+                  <p className="font-medium">{listing.mls_number}</p>
+                </div>
+              )}
+              {(listing.bedrooms || listing.bathrooms || listing.square_feet) && (
+                <>
+                  {listing.bedrooms && (
+                    <div>
+                      <label className="text-sm text-gray-600">Bedrooms</label>
+                      <p>{listing.bedrooms}</p>
+                    </div>
+                  )}
+                  {listing.bathrooms && (
+                    <div>
+                      <label className="text-sm text-gray-600">Bathrooms</label>
+                      <p>{listing.bathrooms}</p>
+                    </div>
+                  )}
+                  {listing.square_feet && (
+                    <div>
+                      <label className="text-sm text-gray-600">Square Feet</label>
+                      <p>{listing.square_feet.toLocaleString()} sq ft</p>
+                    </div>
+                  )}
+                </>
+              )}
+              <div>
+                <label className="text-sm text-gray-600">Listing Period</label>
+                <p className="text-sm">
+                  {new Date(listing.listing_start_date).toLocaleDateString()} - {new Date(listing.listing_end_date).toLocaleDateString()}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-600">Status</label>
+                <p>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    listing.status === 'active' ? 'bg-green-100 text-green-800' :
+                    listing.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    listing.status === 'closed' ? 'bg-blue-100 text-blue-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {listing.status}
+                  </span>
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <Home className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+              <p>No property details yet</p>
+              <p className="text-sm mt-1">Add MLS info, pricing, and property features</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Related Transactions */}
       <div className="bg-white rounded-lg shadow p-6">

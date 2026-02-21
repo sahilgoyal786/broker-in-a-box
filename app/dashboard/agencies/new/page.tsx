@@ -3,7 +3,11 @@ import { redirect } from 'next/navigation'
 import NewAgencyForm from './new-agency-form'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 
-export default async function NewAgencyPage() {
+export default async function NewAgencyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>
+}) {
   const supabase = await createClient()
   
   const { data: { user } } = await supabase.auth.getUser()
@@ -11,6 +15,9 @@ export default async function NewAgencyPage() {
 
   const userContext = await getUserContext()
   if (!userContext) redirect('/auth/login')
+
+  const params = await searchParams
+  const agreementType = params.type === 'buyer' ? 'buyer_agency_agreement' : 'listing_agreement'
 
   let brokerId: string
   let agents: any[] = []
@@ -50,12 +57,15 @@ export default async function NewAgencyPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">New Agency Agreement</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {agreementType === 'listing_agreement' ? 'New Listing Agreement' : 'New Buyer Agency Agreement'}
+      </h1>
       <NewAgencyForm 
         brokerId={brokerId} 
         agents={agents} 
         currentAgentId={currentAgentId}
         isAgent={userContext.role === 'agent'}
+        agreementType={agreementType}
       />
     </div>
   )

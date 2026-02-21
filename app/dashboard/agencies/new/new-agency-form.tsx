@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgent }: any) {
+export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgent, agreementType: initialType }: any) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [agreementType, setAgreementType] = useState('listing_agreement')
+  const [agreementType, setAgreementType] = useState(initialType || 'listing_agreement')
   const [selectedAgentId, setSelectedAgentId] = useState(currentAgentId || '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

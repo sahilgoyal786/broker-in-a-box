@@ -1,30 +1,43 @@
-// Run SQL migration against Supabase
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 
-const supabaseUrl = 'https://jlxaeowgovscixmyviqc.supabase.co';
-const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseGFlb3dnb3ZzY2l4bXl2aXFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczOTkyNjcyOCwiZXhwIjoyMDU1NTAyNzI4fQ.8nkjdB74IrIaQ4yF_TqPB-Bom-jzVLLtMKbQdWKk85I';
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabase = createClient(
+  'https://jlxaeowgovscixmyviqc.supabase.co',
+  '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***' // service role key
+);
 
 async function runMigration() {
-  const sql = fs.readFileSync('supabase/add-ce-tracking.sql', 'utf8');
-  
-  console.log('Running CE tracking migration...');
-  
-  const { data, error } = await supabase.rpc('exec_sql', { sql_query: sql });
-  
-  if (error) {
-    console.error('Migration failed:', error);
+  try {
+    const sql = fs.readFileSync('./supabase/migration-add-listings.sql', 'utf8');
+    
+    // Execute the SQL
+    const { data, error } = await supabase.rpc('exec_sql', { sql_query: sql }).catch(async () => {
+      // If exec_sql RPC doesn't exist, try direct approach via REST
+      const response = await fetch('https://jlxaeowgovscixmyviqc.supabase.co/rest/v1/rpc/exec_sql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***',
+          'Authorization': 'Bearer ***REMOVED-SUPABASE-SERVICE-ROLE-KEY***'
+        },
+        body: JSON.stringify({ sql_query: sql })
+      });
+      return await response.json();
+    });
+    
+    if (error) {
+      console.error('Migration failed:', error);
+      process.exit(1);
+    }
+    
+    console.log('Migration completed successfully!');
+    console.log(data);
+  } catch (err) {
+    console.error('Error running migration:', err.message);
+    console.log('\nPlease run this SQL manually in the Supabase dashboard SQL editor:');
+    console.log('https://supabase.com/dashboard/project/jlxaeowgovscixmyviqc/sql/new');
     process.exit(1);
   }
-  
-  console.log('✅ Migration completed successfully!');
-  console.log('Added CE tracking fields to agents table:');
-  console.log('  - ce_hours_core');
-  console.log('  - ce_hours_other');
-  console.log('  - mandatory_course_completed');
-  console.log('  - ce_last_updated');
 }
 
 runMigration();
