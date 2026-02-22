@@ -51,7 +51,7 @@ export default async function NewListingPage({
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">
-        {agency ? `Add Property Details: ${agency.client_first_name} ${agency.client_last_name}` : 'New Listing'}
+        {agency ? `Add Property Details: ${agency.client_first_name} ${agency.client_last_name}` : 'New Listing [UPDATED]'}
       </h1>
       <NewListingForm 
         role={role} 
