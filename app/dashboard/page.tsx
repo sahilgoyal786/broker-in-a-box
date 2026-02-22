@@ -119,15 +119,15 @@ export default async function DashboardPage() {
   )
   const agentsWithPending = agentsWithPendingSet.size
 
-  // Calculate top agents by pending sales count
-  const agentPendingCounts = allTransactions
-    ?.filter((t: any) => ['pending', 'under_contract'].includes(t.status))
+  // Calculate top agents by CLOSED sales count (revenue producers)
+  const agentClosedCounts = allTransactions
+    ?.filter((t: any) => t.status === 'closed')
     .reduce((acc: any, t: any) => {
       acc[t.agent_id] = (acc[t.agent_id] || 0) + 1
       return acc
     }, {}) ?? {}
 
-  const topAgents = Object.entries(agentPendingCounts)
+  const topAgents = Object.entries(agentClosedCounts)
     .sort(([, a]: any, [, b]: any) => b - a)
     .slice(0, 3)
     .map(([agentId, count]) => {
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
       return {
         id: agentId,
         name: agent ? `${agent.first_name} ${agent.last_name}` : 'Unknown',
-        pendingCount: count
+        closedCount: count
       }
     })
 
@@ -254,8 +254,8 @@ export default async function DashboardPage() {
           {/* Top 3 Agents */}
           <div className="bg-white rounded-lg border border-gray-200 shadow p-6">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-gray-600">Top Agents (U/C)</p>
-              <CheckCircle className="w-5 h-5 text-yellow-600" />
+              <p className="text-sm font-medium text-gray-600">Top Agents (Closed)</p>
+              <CheckCircle className="w-5 h-5 text-green-600" />
             </div>
             <div className="space-y-2">
               {topAgents.length > 0 ? (
@@ -264,11 +264,11 @@ export default async function DashboardPage() {
                     <span className="text-gray-900">
                       {idx + 1}. {agent.name}
                     </span>
-                    <span className="font-semibold text-gray-700">{agent.pendingCount}</span>
+                    <span className="font-semibold text-gray-700">{agent.closedCount}</span>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-400">No deals under contract yet</p>
+                <p className="text-sm text-gray-400">No closed deals yet</p>
               )}
             </div>
           </div>
