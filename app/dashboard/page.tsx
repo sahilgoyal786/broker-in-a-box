@@ -214,9 +214,10 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      {/* Agent Performance KPIs */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Agent Performance</h2>
+      {/* Agent Performance KPIs - Broker Only */}
+      {userContext.role === 'broker' && (
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Agent Performance</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Agents */}
@@ -272,7 +273,8 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   )
 }
