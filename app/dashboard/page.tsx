@@ -22,22 +22,22 @@ export default async function DashboardPage() {
     // Listings pending (includes CTP review and cancellation review - still pending until approved)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
       .eq('broker_id', broker?.id ?? '')
-      .eq('agency_role', 'listing_agent')
+      .eq('transaction_type', 'listing')
       .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation']),
     // Buyers pending (includes CTP review and cancellation review - still pending until approved)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
       .eq('broker_id', broker?.id ?? '')
-      .eq('agency_role', 'buyer_agent')
+      .in('transaction_type', ['buyer_agency', 'limited_agency'])
       .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation']),
     // Listings closed (only when office marks it closed)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
       .eq('broker_id', broker?.id ?? '')
-      .eq('agency_role', 'listing_agent')
+      .eq('transaction_type', 'listing')
       .eq('status', 'closed'),
     // Buyers closed (only when office marks it closed)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
       .eq('broker_id', broker?.id ?? '')
-      .eq('agency_role', 'buyer_agent')
+      .in('transaction_type', ['buyer_agency', 'limited_agency'])
       .eq('status', 'closed'),
   ])
 
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
     .from('transactions')
     .select('agency_agreement_id')
     .eq('broker_id', broker?.id ?? '')
-    .eq('agency_role', 'listing_agent')
+    .eq('transaction_type', 'listing')
     .eq('status', 'closed')
     .not('agency_agreement_id', 'is', null) as any
 
@@ -72,7 +72,7 @@ export default async function DashboardPage() {
     .from('transactions')
     .select('agency_agreement_id')
     .eq('broker_id', broker?.id ?? '')
-    .eq('agency_role', 'buyer_agent')
+    .in('transaction_type', ['buyer_agency', 'limited_agency'])
     .eq('status', 'closed')
     .not('agency_agreement_id', 'is', null) as any
 
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
   // Recent transactions (exclude cancelled and closed)
   const { data: recentTransactions } = await supabase
     .from('transactions')
-    .select('id, buyer_first_name, buyer_last_name, seller_first_name, seller_last_name, property_address, property_city, property_type, transaction_type, agency_role, status, created_at')
+    .select('id, buyer_first_name, buyer_last_name, seller_first_name, seller_last_name, property_address, property_city, property_type, transaction_type, status, created_at')
     .eq('broker_id', broker?.id ?? '')
     .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
     .order('created_at', { ascending: false })
@@ -215,9 +215,9 @@ export default async function DashboardPage() {
           <div className="divide-y divide-gray-200">
             {recentTransactions.map((tx: any) => {
               // Client = whoever we represent
-              const clientFirstName = tx.agency_role === 'listing_agent' ? tx.seller_first_name : tx.buyer_first_name
-              const clientLastName = tx.agency_role === 'listing_agent' ? tx.seller_last_name : tx.buyer_last_name
-              const roleLabel = tx.agency_role === 'listing_agent' ? 'Listing' : tx.agency_role === 'buyer_agent' ? 'Buyer' : 'Dual'
+              const clientFirstName = tx.transaction_type === 'listing' ? tx.seller_first_name : tx.buyer_first_name
+              const clientLastName = tx.transaction_type === 'listing' ? tx.seller_last_name : tx.buyer_last_name
+              const roleLabel = tx.transaction_type === 'listing' ? 'Listing' : tx.transaction_type === 'buyer_agency' ? 'Buyer' : 'Limited Agency'
               
               return (
                 <Link

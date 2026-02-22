@@ -35,7 +35,7 @@ export default async function AgentsPage() {
       .from('transactions')
       .select('agency_agreement_id')
       .eq('agent_id', agent.id)
-      .eq('agency_role', 'listing_agent')
+      .eq('transaction_type', 'listing')
       .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
       .not('agency_agreement_id', 'is', null) as any
 
