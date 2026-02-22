@@ -105,6 +105,21 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
             <p className="text-xs text-slate-500 mt-1">This agreement will be assigned to you</p>
           )}
         </div>
+
+        {agreementType === 'listing_agreement' && (
+          <div>
+            <label className="block text-sm font-medium mb-2">Property Type</label>
+            <select name="property_type" className="w-full px-3 py-2 border rounded-lg">
+              <option value="residential">Residential</option>
+              <option value="vacant_land">Vacant Land</option>
+              <option value="mobile_home">Mobile Home</option>
+              <option value="commercial">Commercial</option>
+              <option value="multi_unit">Multi-Unit</option>
+              <option value="farm">Farm</option>
+              <option value="residential_lease">Residential Lease</option>
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
@@ -155,19 +170,6 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
         <div className="bg-white p-6 rounded-lg shadow space-y-4">
           <h2 className="text-lg font-semibold border-b pb-2">Property Information</h2>
           
-          <div>
-            <label className="block text-sm font-medium mb-2">Property Type</label>
-            <select name="property_type" className="w-full px-3 py-2 border rounded-lg">
-              <option value="residential">Residential</option>
-              <option value="vacant_land">Vacant Land</option>
-              <option value="mobile_home">Mobile Home</option>
-              <option value="commercial">Commercial</option>
-              <option value="multi_unit">Multi-Unit</option>
-              <option value="farm">Farm</option>
-              <option value="residential_lease">Residential Lease</option>
-            </select>
-          </div>
-
           <div>
             <label className="block text-sm font-medium mb-2">Property Address</label>
             <input
