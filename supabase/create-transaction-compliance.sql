@@ -24,7 +24,7 @@ CREATE POLICY "Brokers can view all transaction compliance"
   USING (
     EXISTS (
       SELECT 1 FROM brokers
-      WHERE brokers.id = auth.uid()
+      WHERE brokers.auth_user_id = auth.uid()
     )
   );
 
@@ -35,7 +35,29 @@ CREATE POLICY "Agents can view their own transaction compliance"
       SELECT 1 FROM transactions t
       JOIN agents a ON t.agent_id = a.id
       WHERE t.id = transaction_compliance_items.transaction_id
-      AND a.id = auth.uid()
+      AND a.auth_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Brokers can insert transaction compliance"
+  ON transaction_compliance_items FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM transactions t
+      JOIN brokers b ON t.broker_id = b.id
+      WHERE t.id = transaction_compliance_items.transaction_id
+      AND b.auth_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Agents can insert their own transaction compliance"
+  ON transaction_compliance_items FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM transactions t
+      JOIN agents a ON t.agent_id = a.id
+      WHERE t.id = transaction_compliance_items.transaction_id
+      AND a.auth_user_id = auth.uid()
     )
   );
 
@@ -44,7 +66,7 @@ CREATE POLICY "Brokers can update all transaction compliance"
   USING (
     EXISTS (
       SELECT 1 FROM brokers
-      WHERE brokers.id = auth.uid()
+      WHERE brokers.auth_user_id = auth.uid()
     )
   );
 
@@ -55,7 +77,7 @@ CREATE POLICY "Agents can update their own transaction compliance"
       SELECT 1 FROM transactions t
       JOIN agents a ON t.agent_id = a.id
       WHERE t.id = transaction_compliance_items.transaction_id
-      AND a.id = auth.uid()
+      AND a.auth_user_id = auth.uid()
     )
   );
 
