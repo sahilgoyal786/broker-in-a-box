@@ -19,6 +19,7 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
 
     // Update agency agreement
     const agencyData: any = {
+      agent_id: formData.get('agent_id'),
       client_first_name: formData.get('client_first_name'),
       client_last_name: formData.get('client_last_name'),
       client_email: formData.get('client_email') || null,
@@ -53,6 +54,7 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
     // Update listing if exists
     if (listing && agency.agreement_type === 'listing_agreement') {
       const listingData: any = {
+        agent_id: formData.get('agent_id'),
         property_address: formData.get('property_address'),
         property_city: formData.get('property_city'),
         property_state: formData.get('property_state'),
@@ -90,6 +92,47 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
           {error}
         </div>
       )}
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Agreement Type</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Agent</label>
+            <select
+              name="agent_id"
+              required
+              defaultValue={agency.agent_id}
+              className="w-full px-3 py-2 border rounded-lg"
+            >
+              {agents.map((agent: any) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.last_name}, {agent.first_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {agency.agreement_type === 'listing_agreement' && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Property Type</label>
+              <select
+                name="property_type"
+                required
+                defaultValue={agency.property_type}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="residential">Residential</option>
+                <option value="vacant_land">Vacant Land</option>
+                <option value="commercial">Commercial</option>
+                <option value="multi_unit">Multi-Unit</option>
+                <option value="farm">Farm</option>
+                <option value="residential_lease">Residential Lease</option>
+              </select>
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-lg font-semibold border-b pb-2">Client Information</h2>
