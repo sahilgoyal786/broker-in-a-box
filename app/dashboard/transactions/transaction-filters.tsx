@@ -151,8 +151,7 @@ export default function TransactionFilters({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All statuses</option>
-            <option value="pending">Pending</option>
-            <option value="under_contract">Under Contract</option>
+            <option value="pending">Under Contract</option>
             <option value="closed">Closed</option>
             <option value="cancelled">Cancelled</option>
           </select>
