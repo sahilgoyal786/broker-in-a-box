@@ -38,6 +38,7 @@ export default async function NewAgencyPage({
       .from('agents')
       .select('*')
       .eq('broker_id', broker.id)
+      .order('last_name')
       .order('first_name') as any
     
     agents = agentsList || []
