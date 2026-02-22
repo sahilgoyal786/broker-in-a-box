@@ -28,6 +28,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       transaction_type: formData.get('transaction_type'),
       contract_type: formData.get('contract_type'),
       contract_date: formData.get('contract_date'),
+      list_price: formData.get('list_price') || null,
       purchase_price: formData.get('purchase_price') || null,
       earnest_money_amount: formData.get('earnest_money_amount') || null,
       earnest_money_location: formData.get('earnest_money_location') || null,
@@ -314,7 +315,17 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Purchase Price</label>
+            <label className="block text-sm font-medium mb-2">List Price (Original Asking)</label>
+            <input
+              type="number"
+              name="list_price"
+              step="0.01"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Original listing price"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Purchase Price (Contract Price)</label>
             <input
               type="number"
               name="purchase_price"
@@ -323,16 +334,17 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Earnest Money Amount</label>
-            <input
-              type="number"
-              name="earnest_money_amount"
-              step="0.01"
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="0.00"
-            />
-          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Earnest Money Amount</label>
+          <input
+            type="number"
+            name="earnest_money_amount"
+            step="0.01"
+            className="w-full px-3 py-2 border rounded-lg"
+            placeholder="0.00"
+          />
         </div>
 
         <div>
