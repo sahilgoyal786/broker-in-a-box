@@ -114,12 +114,12 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
   function getInviteStatusBadge(status: string) {
     switch (status) {
       case 'active':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">Active</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">Active</span>
       case 'invited':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">Invited</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">Invited</span>
       case 'pending':
       default:
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400">Pending</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">Pending</span>
     }
   }
 
@@ -174,8 +174,8 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
     <div>
       {/* Bulk Actions */}
       {selectedAgents.size > 0 && (
-        <div className="mb-4 p-4 bg-blue-900/30 border border-blue-700 rounded-xl flex items-center justify-between">
-          <p className="text-white font-medium">
+        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between shadow-sm">
+          <p className="text-gray-900 font-medium">
             {selectedAgents.size} agent{selectedAgents.size > 1 ? 's' : ''} selected
           </p>
           <div className="flex gap-3">
@@ -206,111 +206,111 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
         </div>
       )}
 
-      <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow">
         <table className="w-full">
-          <thead>
-            <tr className="border-b border-slate-700">
+          <thead className="bg-gray-50">
+            <tr className="border-b border-gray-200">
               <th className="px-6 py-3">
                 <input
                   type="checkbox"
                   checked={selectedAgents.size === agents.length && agents.length > 0}
                   onChange={toggleAll}
-                  className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500"
+                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
               </th>
-              <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Name</th>
-              <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Email</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Status</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Core</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Elective</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Mandatory</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">NAR</th>
-              <th className="text-left px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Expires</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Active Listings</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Pending Sales</th>
-              <th className="text-center px-6 py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider">Closed</th>
+              <th className="text-left px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Name</th>
+              <th className="text-left px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Email</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Status</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Core</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Elective</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Mandatory</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">NAR</th>
+              <th className="text-left px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Expires</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Active Listings</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">U/C Sales</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Closed</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-700">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {agents.map((agent) => {
               const isExpiring = agent.daysUntilExpiration !== null && agent.daysUntilExpiration <= 45 && agent.daysUntilExpiration >= 0
               const isExpired = agent.daysUntilExpiration !== null && agent.daysUntilExpiration < 0
               
               return (
-                <tr key={agent.id} className="hover:bg-slate-700/40 transition-colors">
+                <tr key={agent.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <input
                       type="checkbox"
                       checked={selectedAgents.has(agent.id)}
                       onChange={() => toggleAgent(agent.id)}
-                      className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500"
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
                   </td>
                   <td className="px-6 py-4">
                     <Link 
                       href={`/dashboard/agents/${agent.id}`}
-                      className="text-white font-medium text-sm hover:text-blue-400 transition-colors"
+                      className="text-gray-900 font-medium text-sm hover:text-blue-600 transition-colors"
                     >
                       {agent.last_name}, {agent.first_name}
                     </Link>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-slate-300 text-sm">{agent.email}</p>
+                    <p className="text-gray-700 text-sm">{agent.email}</p>
                   </td>
                   <td className="px-6 py-4 text-center">
                     {getInviteStatusBadge(agent.invite_status)}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <p className="text-slate-300 text-sm font-medium">{agent.ce_hours_core ?? 0}</p>
+                    <p className="text-gray-700 text-sm font-medium">{agent.ce_hours_core ?? 0}</p>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <p className="text-slate-300 text-sm font-medium">{agent.ce_hours_other ?? 0}</p>
+                    <p className="text-gray-700 text-sm font-medium">{agent.ce_hours_other ?? 0}</p>
                   </td>
                   <td className="px-6 py-4 text-center">
                     {agent.mandatory_course_completed ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">YES</span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">YES</span>
                     ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400">NO</span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">NO</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex flex-col gap-1 text-sm">
                       <div className="flex items-center justify-center gap-2">
-                        <span className="text-slate-400">COE:</span>
+                        <span className="text-gray-600">COE:</span>
                         {agent.nar_code_of_ethics_date ? (
                           agent.nar_code_of_ethics_cert_url ? (
                             <a 
                               href={agent.nar_code_of_ethics_cert_url} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-green-400 font-semibold hover:text-green-300"
+                              className="text-green-600 font-semibold hover:text-green-700"
                             >
                               Y
                             </a>
                           ) : (
-                            <span className="text-green-400 font-semibold">Y</span>
+                            <span className="text-green-600 font-semibold">Y</span>
                           )
                         ) : (
-                          <span className="text-red-400 font-semibold">N</span>
+                          <span className="text-red-600 font-semibold">N</span>
                         )}
                       </div>
                       <div className="flex items-center justify-center gap-2">
-                        <span className="text-slate-400">FH:</span>
+                        <span className="text-gray-600">FH:</span>
                         {agent.nar_fair_housing_date ? (
                           agent.nar_fair_housing_cert_url ? (
                             <a 
                               href={agent.nar_fair_housing_cert_url} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-green-400 font-semibold hover:text-green-300"
+                              className="text-green-600 font-semibold hover:text-green-700"
                             >
                               Y
                             </a>
                           ) : (
-                            <span className="text-green-400 font-semibold">Y</span>
+                            <span className="text-green-600 font-semibold">Y</span>
                           )
                         ) : (
-                          <span className="text-red-400 font-semibold">N</span>
+                          <span className="text-red-600 font-semibold">N</span>
                         )}
                       </div>
                     </div>
@@ -318,35 +318,35 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                   <td className="px-6 py-4">
                     {agent.license_expiration ? (
                       <div className="flex items-center gap-2">
-                        {(isExpiring || isExpired) && <AlertTriangle className="w-4 h-4 text-orange-400" />}
+                        {(isExpiring || isExpired) && <AlertTriangle className="w-4 h-4 text-orange-600" />}
                         <div>
                           <p className={`text-sm font-medium ${
-                            isExpired ? 'text-red-400' :
-                            isExpiring ? 'text-orange-400' :
-                            'text-slate-300'
+                            isExpired ? 'text-red-600' :
+                            isExpiring ? 'text-orange-600' :
+                            'text-gray-700'
                           }`}>
                             {new Date(agent.license_expiration).toLocaleDateString()}
                           </p>
                           {isExpiring && agent.daysUntilExpiration! > 0 && (
-                            <p className="text-xs text-orange-300">{agent.daysUntilExpiration} days</p>
+                            <p className="text-xs text-orange-600">{agent.daysUntilExpiration} days</p>
                           )}
                           {isExpired && (
-                            <p className="text-xs text-red-300">EXPIRED</p>
+                            <p className="text-xs text-red-600 font-semibold">EXPIRED</p>
                           )}
                         </div>
                       </div>
                     ) : (
-                      <span className="text-slate-600 italic text-sm">Not set</span>
+                      <span className="text-gray-400 italic text-sm">Not set</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="text-blue-400 font-semibold text-lg">{agent.activeListings}</span>
+                    <span className="text-blue-600 font-semibold text-lg">{agent.activeListings}</span>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="text-yellow-400 font-semibold text-lg">{agent.pendingSales}</span>
+                    <span className="text-yellow-600 font-semibold text-lg">{agent.pendingSales}</span>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="text-green-400 font-semibold text-lg">{agent.closedDeals}</span>
+                    <span className="text-green-600 font-semibold text-lg">{agent.closedDeals}</span>
                   </td>
                 </tr>
               )
