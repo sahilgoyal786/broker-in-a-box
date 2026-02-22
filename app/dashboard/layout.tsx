@@ -87,7 +87,7 @@ export default async function DashboardLayout({
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-sm group"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:bg-slate-800 transition-colors text-sm group"
             >
               <Icon className="w-4 h-4 flex-shrink-0" />
               {label}
@@ -100,7 +100,7 @@ export default async function DashboardLayout({
           <form action="/auth/signout" method="post">
             <button
               type="submit"
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-sm"
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-white hover:bg-slate-800 transition-colors text-sm"
             >
               <LogOut className="w-4 h-4" />
               Sign out
