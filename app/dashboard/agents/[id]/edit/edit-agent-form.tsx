@@ -265,15 +265,25 @@ export default function EditAgentForm({ agent }: { agent: any }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Primary Board/MLS
+              Primary Board
             </label>
-            <input
-              type="text"
+            <select
               name="primary_board"
               value={formData.primary_board}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            >
+              <option value="">Select a board...</option>
+              <option value="Utah Association of REALTORS® (statewide)">Utah Association of REALTORS® (statewide)</option>
+              <option value="Salt Lake Board of REALTORS®">Salt Lake Board of REALTORS®</option>
+              <option value="Utah Central Association of REALTORS®">Utah Central Association of REALTORS®</option>
+              <option value="Northern Wasatch Association of REALTORS®">Northern Wasatch Association of REALTORS®</option>
+              <option value="Tooele County Association of REALTORS®">Tooele County Association of REALTORS®</option>
+              <option value="Washington County Board of REALTORS®">Washington County Board of REALTORS®</option>
+              <option value="Iron County Board of REALTORS®">Iron County Board of REALTORS®</option>
+              <option value="Cache Valley Association of REALTORS®">Cache Valley Association of REALTORS®</option>
+              <option value="Park City Board of REALTORS®">Park City Board of REALTORS®</option>
+            </select>
           </div>
         </div>
       </div>

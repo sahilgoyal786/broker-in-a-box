@@ -270,7 +270,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
             <div className="space-y-3">
               {agent.primary_board && (
                 <div>
-                  <p className="text-xs text-gray-600">Primary Board/MLS</p>
+                  <p className="text-xs text-gray-600">Primary Board</p>
                   <p className="text-sm text-gray-900">{agent.primary_board}</p>
                 </div>
               )}
