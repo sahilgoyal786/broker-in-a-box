@@ -139,6 +139,7 @@ BEGIN
   END IF;
   
   RETURN NEW;
+END;
 $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS trigger_update_transaction_compliance ON transactions;
