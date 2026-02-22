@@ -104,15 +104,12 @@ BEGIN
   INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
   VALUES (NEW.id, 'CONFIRMATION OF RECEIPT OF EARNEST MONEY', 'pdf_auto', true, sort_counter);
 
-  -- Buyer-side forms (buyer_agency and limited_agency roles)
+  -- Buyer-side forms (buyer_agency and limited_agency roles only)
+  -- Listing agents don't handle earnest money deposit - that's the buyer's agent's job
   IF trans_role IN ('buyer_agency', 'limited_agency') THEN
     sort_counter := sort_counter + 1;
     INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
-    VALUES (NEW.id, 'Copy of EM Check', 'manual_upload', true, sort_counter);
-
-    sort_counter := sort_counter + 1;
-    INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
-    VALUES (NEW.id, 'Earnest Money Bank Deposit Receipt', 'manual_upload', true, sort_counter);
+    VALUES (NEW.id, 'Earnest Money Deposit Receipt', 'manual_upload', true, sort_counter);
   END IF;
 
   -- Lead paint disclosure for pre-1978 residential/multi-unit properties

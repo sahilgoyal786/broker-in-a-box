@@ -26,12 +26,15 @@ Creates the **transaction_compliance_items** table and auto-populates compliance
      - Residential/Mobile Home: "SELLER'S PROPERTY CONDITION DISCLOSURE SIGNED BY BUYER"
 4. ✅ **CONFIRMATION OF RECEIPT OF EARNEST MONEY** (pdf_auto)
 
-### Buyer-Side Forms (buyer_agency and limited_agency roles):
-5. ✅ **Copy of EM Check** (manual_upload)
-6. ✅ **Earnest Money Bank Deposit Receipt** (manual_upload)
+### Buyer-Side Forms (buyer_agency and limited_agency roles ONLY):
+**Note**: Listing agents don't handle earnest money deposits - that's the buyer's agent's responsibility.
+
+5. ✅ **Earnest Money Deposit Receipt** (manual_upload)
+   - Proof that earnest money was actually deposited
+   - Critical for buyer-side: If buyer defaults without depositing EM, there's nothing to claim
 
 ### Conditional Forms:
-7. ✅ **Lead Paint Disclosure** (pre-1978 residential/multi-unit only)
+6. ✅ **Lead Paint Disclosure** (pre-1978 residential/multi-unit only)
    - "DISCLOSURE & ACKNOWLEDGEMENT REGARDING LEAD-BASED PAINT AND/OR LEAD-BASED PAINT HAZARDS SIGNED BY BUYER"
 
 ## 🔄 Auto-Population
