@@ -8,7 +8,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [transactionType, setTransactionType] = useState(prefillData?.transaction_type || '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -31,8 +30,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       contract_type: formData.get('contract_type'),
       offer_reference_date: formData.get('offer_reference_date') || null,
       contract_date: formData.get('contract_date'),
-      original_list_price: formData.get('original_list_price') || null,
-      current_list_price: formData.get('current_list_price') || null,
       purchase_price: formData.get('purchase_price') || null,
       earnest_money_amount: formData.get('earnest_money_amount') || null,
       earnest_money_location: formData.get('earnest_money_location') || null,
@@ -121,8 +118,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           <select 
             name="transaction_type" 
             required
-            value={transactionType}
-            onChange={(e) => setTransactionType(e.target.value)}
+            defaultValue={prefillData?.transaction_type || ''}
             className="w-full px-3 py-2 border rounded-lg"
           >
             <option value="">Select your role...</option>
@@ -366,34 +362,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             />
           </div>
         </div>
-
-        {/* Show list prices only if listing agent or limited agency */}
-        {transactionType && (transactionType === 'listing' || transactionType === 'limited_agency') && (
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">Original List Price</label>
-              <input
-                type="number"
-                name="original_list_price"
-                step="0.01"
-                className="w-full px-3 py-2 border rounded-lg"
-                placeholder="0.00"
-                defaultValue={prefillData?.current_list_price || ''}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Current List Price</label>
-              <input
-                type="number"
-                name="current_list_price"
-                step="0.01"
-                className="w-full px-3 py-2 border rounded-lg"
-                placeholder="0.00"
-                defaultValue={prefillData?.current_list_price || ''}
-              />
-            </div>
-          </div>
-        )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
