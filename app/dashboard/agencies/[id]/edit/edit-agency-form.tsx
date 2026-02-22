@@ -36,7 +36,7 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
       agencyData.property_state = formData.get('property_state')
       agencyData.property_zip = formData.get('property_zip')
       agencyData.property_type = formData.get('property_type')
-      agencyData.list_price = formData.get('list_price') || null
+      agencyData.list_price = formData.get('current_list_price') || null
       agencyData.mls_number = formData.get('mls_number') || null
       agencyData.tax_id = formData.get('tax_id') || null
     }
@@ -64,7 +64,9 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
         property_type: formData.get('property_type'),
         tax_id: formData.get('tax_id') || null,
         mls_number: formData.get('mls_number') || null,
-        listing_price: formData.get('list_price'),
+        original_list_price: formData.get('original_list_price'),
+        current_list_price: formData.get('current_list_price'),
+        listing_price: formData.get('current_list_price'),
         listing_start_date: formData.get('agreement_date'),
         listing_end_date: formData.get('expiration_date') || null,
         seller_name: `${formData.get('client_first_name')} ${formData.get('client_last_name')}`,
@@ -306,15 +308,27 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">List Price</label>
-            <input
-              type="number"
-              name="list_price"
-              defaultValue={agency.list_price || ''}
-              step="0.01"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Original List Price</label>
+              <input
+                type="number"
+                name="original_list_price"
+                defaultValue={listing?.original_list_price || agency.list_price || ''}
+                step="0.01"
+                className="w-full px-3 py-2 border rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Current List Price</label>
+              <input
+                type="number"
+                name="current_list_price"
+                defaultValue={listing?.current_list_price || agency.list_price || ''}
+                step="0.01"
+                className="w-full px-3 py-2 border rounded-lg"
+              />
+            </div>
           </div>
         </div>
       )}
