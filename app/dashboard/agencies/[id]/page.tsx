@@ -88,7 +88,15 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
         <div className="col-span-2 space-y-6">
           {/* Agreement Details */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Agreement Details</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Agreement Details</h2>
+              <Link
+                href={`/dashboard/agencies/${id}/edit`}
+                className="text-blue-600 hover:text-blue-800 text-sm"
+              >
+                Edit
+              </Link>
+            </div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
               <div>
                 <div className="text-gray-600">Client</div>
