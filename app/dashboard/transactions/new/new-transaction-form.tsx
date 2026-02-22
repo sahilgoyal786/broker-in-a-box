@@ -49,7 +49,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       inspection_deadline: formData.get('inspection_deadline') || null,
       loan_approval_deadline: formData.get('loan_approval_deadline') || null,
       appraisal_deadline: formData.get('appraisal_deadline') || null,
-      buyer_property_sale_deadline: formData.get('buyer_property_sale_deadline') || null,
       custom_deadline_1_label: formData.get('custom_deadline_1_label') || null,
       custom_deadline_1_date: formData.get('custom_deadline_1_date') || null,
       custom_deadline_2_label: formData.get('custom_deadline_2_label') || null,
@@ -566,17 +565,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Sale of Buyer's Property Deadline</label>
-            <input
-              type="date"
-              name="buyer_property_sale_deadline"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-2">Settlement Deadline</label>
             <input
