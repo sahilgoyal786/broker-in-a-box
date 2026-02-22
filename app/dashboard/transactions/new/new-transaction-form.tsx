@@ -30,6 +30,23 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       contract_date: formData.get('contract_date'),
       purchase_price: formData.get('purchase_price') || null,
       earnest_money_amount: formData.get('earnest_money_amount') || null,
+      earnest_money_location: formData.get('earnest_money_location') || null,
+      earnest_money_held_by: formData.get('earnest_money_held_by') || null,
+      earnest_money_contact_name: formData.get('earnest_money_contact_name') || null,
+      earnest_money_contact_email: formData.get('earnest_money_contact_email') || null,
+      earnest_money_contact_phone: formData.get('earnest_money_contact_phone') || null,
+      seller_title_company: formData.get('seller_title_company') || null,
+      seller_title_contact_name: formData.get('seller_title_contact_name') || null,
+      seller_title_contact_email: formData.get('seller_title_contact_email') || null,
+      seller_title_contact_phone: formData.get('seller_title_contact_phone') || null,
+      buyer_title_company: formData.get('buyer_title_company') || null,
+      buyer_title_contact_name: formData.get('buyer_title_contact_name') || null,
+      buyer_title_contact_email: formData.get('buyer_title_contact_email') || null,
+      buyer_title_contact_phone: formData.get('buyer_title_contact_phone') || null,
+      inspection_deadline: formData.get('inspection_deadline') || null,
+      loan_approval_deadline: formData.get('loan_approval_deadline') || null,
+      appraisal_deadline: formData.get('appraisal_deadline') || null,
+      buyer_property_sale_deadline: formData.get('buyer_property_sale_deadline') || null,
       anticipated_closing_date: formData.get('anticipated_closing_date') || null,
       buyer_first_name: formData.get('buyer_first_name'),
       buyer_last_name: formData.get('buyer_last_name'),
@@ -258,25 +275,13 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">ZIP</label>
-            <input
-              type="text"
-              name="property_zip"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Purchase Price</label>
-            <input
-              type="number"
-              name="purchase_price"
-              step="0.01"
-              required
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">ZIP</label>
+          <input
+            type="text"
+            name="property_zip"
+            className="w-full px-3 py-2 border rounded-lg"
+          />
         </div>
       </div>
 
@@ -303,15 +308,207 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Purchase Price</label>
+            <input
+              type="number"
+              name="purchase_price"
+              step="0.01"
+              required
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Earnest Money Amount</label>
+            <input
+              type="number"
+              name="earnest_money_amount"
+              step="0.01"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="0.00"
+            />
+          </div>
+        </div>
+
         <div>
-          <label className="block text-sm font-medium mb-2">Earnest Money Amount</label>
-          <input
-            type="number"
-            name="earnest_money_amount"
-            step="0.01"
+          <label className="block text-sm font-medium mb-2">Where is Earnest Money Held?</label>
+          <select 
+            name="earnest_money_location" 
             className="w-full px-3 py-2 border rounded-lg"
-            placeholder="0.00"
-          />
+          >
+            <option value="">Select location...</option>
+            <option value="buyer_title">Buyer's Title Company</option>
+            <option value="seller_title">Seller's Title Company</option>
+            <option value="buyer_broker">Buyer's Broker</option>
+            <option value="listing_broker">Listing Broker</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Held By (Company Name)</label>
+            <input
+              type="text"
+              name="earnest_money_held_by"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., First American Title"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Contact Person</label>
+            <input
+              type="text"
+              name="earnest_money_contact_name"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Contact Email</label>
+            <input
+              type="email"
+              name="earnest_money_contact_email"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Contact Phone</label>
+            <input
+              type="tel"
+              name="earnest_money_contact_phone"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Seller's Title Company</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Company Name</label>
+            <input
+              type="text"
+              name="seller_title_company"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Contact Person</label>
+            <input
+              type="text"
+              name="seller_title_contact_name"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Email</label>
+            <input
+              type="email"
+              name="seller_title_contact_email"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Phone</label>
+            <input
+              type="tel"
+              name="seller_title_contact_phone"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Buyer's Title Company</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Company Name</label>
+            <input
+              type="text"
+              name="buyer_title_company"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Contact Person</label>
+            <input
+              type="text"
+              name="buyer_title_contact_name"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Email</label>
+            <input
+              type="email"
+              name="buyer_title_contact_email"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Phone</label>
+            <input
+              type="tel"
+              name="buyer_title_contact_phone"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Section 24 Deadlines</h2>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Inspection Deadline</label>
+            <input
+              type="date"
+              name="inspection_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Loan Approval Deadline</label>
+            <input
+              type="date"
+              name="loan_approval_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Appraisal Deadline</label>
+            <input
+              type="date"
+              name="appraisal_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Sale of Buyer's Property Deadline</label>
+            <input
+              type="date"
+              name="buyer_property_sale_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
         </div>
       </div>
 
