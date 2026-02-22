@@ -159,6 +159,11 @@ export default function TransactionsTable({
     listing: 'Listing',
     buyer_agency: 'Buyer',
     limited_agency: 'Limited',
+    // Legacy values (map to new labels)
+    seller_purchase: 'Limited',
+    buyer_purchase: 'Buyer',
+    unrepresented_buyer: 'Buyer',
+    fsbo_purchase: 'Buyer',
   }
 
   if (!filteredTransactions || filteredTransactions.length === 0) {
@@ -204,7 +209,7 @@ export default function TransactionsTable({
                     </td>
                   )}
                   <td className="px-4 py-3 text-sm">
-                    {roleLabels[tx.transaction_type] || tx.transaction_type}
+                    {roleLabels[tx.transaction_type] || 'Buyer'}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     {propTypeLabels[tx.property_type]}
