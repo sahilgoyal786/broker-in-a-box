@@ -30,7 +30,7 @@ interface Transaction {
   }
 }
 
-type SortField = 'agent' | 'role' | 'type' | 'client' | 'address' | 'county' | 'price' | 'settlement'
+type SortField = 'agent' | 'role' | 'type' | 'client' | 'address' | 'county' | 'price' | 'settlement' | 'status'
 type SortDirection = 'asc' | 'desc'
 
 export default function TransactionsTable({ 
@@ -116,6 +116,10 @@ export default function TransactionsTable({
         aVal = a.anticipated_closing_date || ''
         bVal = b.anticipated_closing_date || ''
         break
+      case 'status':
+        aVal = a.status
+        bVal = b.status
+        break
       default:
         return 0
     }
@@ -166,6 +170,20 @@ export default function TransactionsTable({
     fsbo_purchase: 'Buyer',
   }
 
+  const statusLabels: Record<string, string> = {
+    pending: 'Pending',
+    under_contract: 'Under Contract',
+    closed: 'Closed',
+    cancelled: 'Cancelled',
+  }
+
+  const statusColors: Record<string, string> = {
+    pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    under_contract: 'bg-blue-100 text-blue-800 border-blue-200',
+    closed: 'bg-green-100 text-green-800 border-green-200',
+    cancelled: 'bg-red-100 text-red-800 border-red-200',
+  }
+
   if (!filteredTransactions || filteredTransactions.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
@@ -189,6 +207,7 @@ export default function TransactionsTable({
               <SortableHeader field="county">County</SortableHeader>
               <SortableHeader field="price">Sales Price</SortableHeader>
               <SortableHeader field="settlement">Settlement Deadline</SortableHeader>
+              <SortableHeader field="status">Status</SortableHeader>
               <th className="text-left px-4 py-3 text-sm font-medium">Actions</th>
             </tr>
           </thead>
@@ -239,6 +258,11 @@ export default function TransactionsTable({
                       ? new Date(tx.anticipated_closing_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                       : <span className="text-gray-400">—</span>
                     }
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[tx.status] || 'bg-gray-100 text-gray-800 border-gray-200'}`}>
+                      {statusLabels[tx.status] || tx.status}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <Link
