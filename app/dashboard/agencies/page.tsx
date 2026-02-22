@@ -18,7 +18,20 @@ export default async function AgenciesPage() {
   let query = supabase
     .from('agency_agreements')
     .select(`
-      *,
+      id,
+      agreement_type,
+      client_first_name,
+      client_last_name,
+      property_address,
+      property_city,
+      property_state,
+      property_zip,
+      county,
+      mls_number,
+      list_price,
+      status,
+      agreement_date,
+      expiration_date,
       agent:agents(first_name, last_name)
     `)
     .order('created_at', { ascending: false })
