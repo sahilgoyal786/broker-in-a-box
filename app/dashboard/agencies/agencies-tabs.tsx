@@ -73,10 +73,13 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
   })
 
   const SortIcon = ({ field }: { field: string }) => {
-    if (sortField !== field) return null
-    return sortDirection === 'asc' ? 
-      <ChevronUp className="w-4 h-4 inline ml-1" /> : 
-      <ChevronDown className="w-4 h-4 inline ml-1" />
+    const isActive = sortField === field
+    if (isActive) {
+      return sortDirection === 'asc' ? 
+        <ChevronUp className="w-4 h-4 inline ml-1 text-blue-600" /> : 
+        <ChevronDown className="w-4 h-4 inline ml-1 text-blue-600" />
+    }
+    return <ChevronDown className="w-4 h-4 inline ml-1 text-gray-300" />
   }
 
   return (
