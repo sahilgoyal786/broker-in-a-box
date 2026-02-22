@@ -57,7 +57,12 @@ export async function POST(
       .maybeSingle()
 
     if (listing && listing.year_built && listing.year_built < 1978) {
-      const leadPaintResult = await addLeadPaintDisclosure(supabase, id, listing.year_built)
+      const leadPaintResult = await addLeadPaintDisclosure(
+        supabase, 
+        id, 
+        listing.year_built,
+        listing.property_type || agency.property_type || 'residential'
+      )
       if (leadPaintResult.added) {
         totalItemsCreated++
       }

@@ -129,10 +129,11 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
 
     // Check if need to add lead paint disclosure for pre-1978 properties
     const yearBuilt = formData.get('year_built')
+    const propertyType = formData.get('property_type') as string
     if (agencyAgreement && yearBuilt) {
       const year = parseInt(yearBuilt as string)
       if (year && year < 1978) {
-        await addLeadPaintDisclosure(supabase, agencyAgreement.id, year)
+        await addLeadPaintDisclosure(supabase, agencyAgreement.id, year, propertyType || 'residential')
       }
     }
 
