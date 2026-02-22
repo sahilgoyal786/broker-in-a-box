@@ -3,7 +3,12 @@ import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import NewTransactionForm from './new-transaction-form'
 
-export default async function NewTransactionPage() {
+export default async function NewTransactionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from_listing?: string }>
+}) {
+  const params = await searchParams
   const supabase = await createClient()
   
   const { data: { user } } = await supabase.auth.getUser()
@@ -49,14 +54,60 @@ export default async function NewTransactionPage() {
     agents = [agent]
   }
 
+  // Check if creating from a listing
+  let prefillData = null
+  if (params.from_listing) {
+    const { data: agency } = await supabase
+      .from('agency_agreements')
+      .select(`
+        *,
+        agent_id
+      `)
+      .eq('id', params.from_listing)
+      .eq('broker_id', brokerId)
+      .single() as any
+
+    if (agency) {
+      const { data: listing } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('agency_agreement_id', params.from_listing)
+        .maybeSingle() as any
+
+      prefillData = {
+        agent_id: agency.agent_id,
+        seller_first_name: agency.client_first_name,
+        seller_last_name: agency.client_last_name,
+        seller_email: agency.client_email,
+        seller_phone: agency.client_phone,
+        property_address: listing?.property_address || agency.property_address,
+        property_city: listing?.property_city || agency.property_city,
+        property_state: listing?.property_state || agency.property_state || 'UT',
+        property_zip: listing?.property_zip || agency.property_zip,
+        county: listing?.county || agency.county,
+        property_type: listing?.property_type || agency.property_type,
+        current_list_price: listing?.listing_price,
+        transaction_type: 'listing', // They're the listing agent
+      }
+    }
+  }
+
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">New Purchase Contract</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {prefillData ? 'New Purchase Contract (from Listing)' : 'New Purchase Contract'}
+      </h1>
+      {prefillData && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+          Pre-filled with listing data for {prefillData.seller_first_name} {prefillData.seller_last_name}
+        </div>
+      )}
       <NewTransactionForm 
         brokerId={brokerId} 
         agents={agents} 
         currentAgentId={currentAgentId}
         isAgent={role === 'agent'}
+        prefillData={prefillData}
       />
     </div>
   )

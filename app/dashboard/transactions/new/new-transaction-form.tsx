@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function NewTransactionForm({ brokerId, agents, currentAgentId, isAgent }: any) {
+export default function NewTransactionForm({ brokerId, agents, currentAgentId, isAgent, prefillData }: any) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [transactionType, setTransactionType] = useState('')
+  const [transactionType, setTransactionType] = useState(prefillData?.transaction_type || '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -103,6 +103,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               name="agent_id"
               required
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.agent_id || ''}
             >
               <option value="">Select agent...</option>
               {agents.map((agent: any) => (
@@ -136,6 +137,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             name="property_type" 
             required
             className="w-full px-3 py-2 border rounded-lg"
+            defaultValue={prefillData?.property_type || ''}
           >
             <option value="">Select type...</option>
             <option value="residential">Residential</option>
@@ -217,6 +219,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               name="seller_first_name"
               required
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.seller_first_name || ''}
             />
           </div>
           <div>
@@ -226,6 +229,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               name="seller_last_name"
               required
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.seller_last_name || ''}
             />
           </div>
         </div>
@@ -237,6 +241,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               type="email"
               name="seller_email"
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.seller_email || ''}
             />
           </div>
           <div>
@@ -245,6 +250,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               type="tel"
               name="seller_phone"
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.seller_phone || ''}
             />
           </div>
         </div>
@@ -260,6 +266,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             name="property_address"
             required
             className="w-full px-3 py-2 border rounded-lg"
+            defaultValue={prefillData?.property_address || ''}
           />
         </div>
 
@@ -268,6 +275,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           <select
             name="county"
             className="w-full px-3 py-2 border rounded-lg"
+            defaultValue={prefillData?.county || ''}
           >
             <option value="">Select county...</option>
             <option value="Beaver County">Beaver</option>
@@ -309,6 +317,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               type="text"
               name="property_city"
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.property_city || ''}
             />
           </div>
           <div>
@@ -316,7 +325,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             <input
               type="text"
               name="property_state"
-              defaultValue="UT"
+              defaultValue={prefillData?.property_state || "UT"}
               maxLength={2}
               className="w-full px-3 py-2 border rounded-lg"
             />
@@ -329,6 +338,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             type="text"
             name="property_zip"
             className="w-full px-3 py-2 border rounded-lg"
+            defaultValue={prefillData?.property_zip || ''}
           />
         </div>
       </div>
@@ -367,6 +377,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
                 step="0.01"
                 className="w-full px-3 py-2 border rounded-lg"
                 placeholder="0.00"
+                defaultValue={prefillData?.current_list_price || ''}
               />
             </div>
             <div>
@@ -377,6 +388,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
                 step="0.01"
                 className="w-full px-3 py-2 border rounded-lg"
                 placeholder="0.00"
+                defaultValue={prefillData?.current_list_price || ''}
               />
             </div>
           </div>

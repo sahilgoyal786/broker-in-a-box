@@ -74,12 +74,22 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
             </p>
           </div>
         </div>
-        <span className={`px-3 py-1 text-sm rounded-full ${
-          agency.status === 'active' ? 'bg-green-100 text-green-800' :
-          'bg-gray-100 text-gray-800'
-        }`}>
-          {agency.status}
-        </span>
+        <div className="flex items-center gap-3">
+          {agency.agreement_type === 'listing_agreement' && agency.status === 'active' && (
+            <Link
+              href={`/dashboard/transactions/new?from_listing=${id}`}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
+            >
+              Create Purchase Contract
+            </Link>
+          )}
+          <span className={`px-3 py-1 text-sm rounded-full ${
+            agency.status === 'active' ? 'bg-green-100 text-green-800' :
+            'bg-gray-100 text-gray-800'
+          }`}>
+            {agency.status}
+          </span>
+        </div>
       </div>
 
       {/* Main Content - 2 Columns */}
