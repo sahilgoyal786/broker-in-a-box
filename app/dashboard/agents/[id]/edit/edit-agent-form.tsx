@@ -53,9 +53,18 @@ export default function EditAgentForm({ agent }: { agent: any }) {
 
     const supabase = createClient()
 
+    // Convert empty date strings to null
+    const updateData = {
+      ...formData,
+      date_of_birth: formData.date_of_birth || null,
+      license_expiration: formData.license_expiration || null,
+      original_license_date: formData.original_license_date || null,
+      hire_date: formData.hire_date || null
+    }
+
     const { error } = await supabase
       .from('agents')
-      .update(formData)
+      .update(updateData)
       .eq('id', agent.id)
 
     if (error) {
