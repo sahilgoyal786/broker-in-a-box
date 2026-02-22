@@ -90,19 +90,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
         )}
 
         <div>
-          <label className="block text-sm font-medium mb-2">Transaction Type</label>
-          <select 
-            name="contract_type" 
-            required
-            className="w-full px-3 py-2 border rounded-lg"
-          >
-            <option value="">Select type...</option>
-            <option value="purchase">Purchase</option>
-            <option value="lease">Lease</option>
-          </select>
-        </div>
-
-        <div>
           <label className="block text-sm font-medium mb-2">Your Role</label>
           <select 
             name="transaction_type" 
@@ -132,6 +119,19 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             <option value="multi_unit">Multi-Unit</option>
             <option value="farm">Farm</option>
             <option value="residential_lease">Residential Lease</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Transaction Type</label>
+          <select 
+            name="contract_type" 
+            required
+            className="w-full px-3 py-2 border rounded-lg"
+          >
+            <option value="">Select type...</option>
+            <option value="purchase">Purchase</option>
+            <option value="lease">Lease</option>
           </select>
         </div>
       </div>
