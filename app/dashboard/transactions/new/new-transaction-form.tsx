@@ -47,6 +47,10 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       loan_approval_deadline: formData.get('loan_approval_deadline') || null,
       appraisal_deadline: formData.get('appraisal_deadline') || null,
       buyer_property_sale_deadline: formData.get('buyer_property_sale_deadline') || null,
+      custom_deadline_1_label: formData.get('custom_deadline_1_label') || null,
+      custom_deadline_1_date: formData.get('custom_deadline_1_date') || null,
+      custom_deadline_2_label: formData.get('custom_deadline_2_label') || null,
+      custom_deadline_2_date: formData.get('custom_deadline_2_date') || null,
       anticipated_closing_date: formData.get('anticipated_closing_date') || null,
       buyer_first_name: formData.get('buyer_first_name'),
       buyer_last_name: formData.get('buyer_last_name'),
@@ -506,6 +510,48 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             <input
               type="date"
               name="buyer_property_sale_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <h3 className="text-md font-semibold mt-4 pt-4 border-t">Additional Custom Deadlines</h3>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Custom Deadline 1 Name</label>
+            <input
+              type="text"
+              name="custom_deadline_1_label"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., HOA Approval"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Custom Deadline 1 Date</label>
+            <input
+              type="date"
+              name="custom_deadline_1_date"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Custom Deadline 2 Name</label>
+            <input
+              type="text"
+              name="custom_deadline_2_label"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., Survey Completion"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Custom Deadline 2 Date</label>
+            <input
+              type="date"
+              name="custom_deadline_2_date"
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
