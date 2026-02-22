@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Home, Users } from 'lucide-react'
+import { Home, Users, ChevronUp, ChevronDown } from 'lucide-react'
 
 type Agreement = {
   id: string
@@ -34,8 +34,50 @@ type Props = {
 
 export default function AgenciesTabs({ listings, buyerAgreements, role }: Props) {
   const [activeTab, setActiveTab] = useState<'listings' | 'buyers'>('listings')
+  const [sortField, setSortField] = useState<string>('agreement_date')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
-  const agreements = activeTab === 'listings' ? listings : buyerAgreements
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const sortedAgreements = [...(activeTab === 'listings' ? listings : buyerAgreements)].sort((a, b) => {
+    let aVal: any = a[sortField as keyof Agreement]
+    let bVal: any = b[sortField as keyof Agreement]
+
+    // Handle nested agent object
+    if (sortField === 'agent') {
+      aVal = `${a.agent.last_name} ${a.agent.first_name}`
+      bVal = `${b.agent.last_name} ${b.agent.first_name}`
+    }
+
+    // Handle client name
+    if (sortField === 'client') {
+      aVal = `${a.client_last_name} ${a.client_first_name}`
+      bVal = `${b.client_last_name} ${b.client_first_name}`
+    }
+
+    // Handle nulls
+    if (aVal == null) return 1
+    if (bVal == null) return -1
+
+    // Compare
+    if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1
+    if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1
+    return 0
+  })
+
+  const SortIcon = ({ field }: { field: string }) => {
+    if (sortField !== field) return null
+    return sortDirection === 'asc' ? 
+      <ChevronUp className="w-4 h-4 inline ml-1" /> : 
+      <ChevronDown className="w-4 h-4 inline ml-1" />
+  }
 
   return (
     <div>
@@ -86,25 +128,65 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agent</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
+              <th 
+                onClick={() => handleSort('agent')}
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+              >
+                Agent <SortIcon field="agent" />
+              </th>
+              <th 
+                onClick={() => handleSort('client')}
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+              >
+                Client <SortIcon field="client" />
+              </th>
               {activeTab === 'listings' && (
                 <>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">County</th>
+                  <th 
+                    onClick={() => handleSort('property_type')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  >
+                    Type <SortIcon field="property_type" />
+                  </th>
+                  <th 
+                    onClick={() => handleSort('property_address')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  >
+                    Address <SortIcon field="property_address" />
+                  </th>
+                  <th 
+                    onClick={() => handleSort('county')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  >
+                    County <SortIcon field="county" />
+                  </th>
                 </>
               )}
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dates</th>
+              <th 
+                onClick={() => handleSort('status')}
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+              >
+                Status <SortIcon field="status" />
+              </th>
+              <th 
+                onClick={() => handleSort('agreement_date')}
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+              >
+                Dates <SortIcon field="agreement_date" />
+              </th>
               {activeTab === 'listings' && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MLS #</th>
+                <th 
+                  onClick={() => handleSort('mls_number')}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                >
+                  MLS # <SortIcon field="mls_number" />
+                </th>
               )}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {agreements.map((agreement) => (
+            {sortedAgreements.map((agreement) => (
               <tr key={agreement.id}>
                 <td className="px-6 py-4 text-sm text-gray-900">
                   {agreement.agent.first_name} {agreement.agent.last_name}
@@ -169,7 +251,7 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
                 </td>
               </tr>
             ))}
-            {agreements.length === 0 && (
+            {sortedAgreements.length === 0 && (
               <tr>
                 <td colSpan={activeTab === 'listings' ? 9 : 5} className="px-6 py-8 text-center text-gray-500">
                   No {activeTab === 'listings' ? 'listings' : 'buyer agreements'} yet. Click the button above to create one.
