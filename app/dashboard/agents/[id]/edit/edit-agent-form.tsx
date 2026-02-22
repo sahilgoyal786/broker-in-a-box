@@ -21,6 +21,9 @@ export default function EditAgentForm({ agent }: { agent: any }) {
     ce_hours_core: agent.ce_hours_core || 0,
     ce_hours_other: agent.ce_hours_other || 0,
     mandatory_course_completed: agent.mandatory_course_completed || false,
+    nar_code_of_ethics_date: agent.nar_code_of_ethics_date || '',
+    nar_fair_housing_date: agent.nar_fair_housing_date || '',
+    nar_cycle_end: agent.nar_cycle_end || '',
     date_of_birth: agent.date_of_birth || '',
     gender: agent.gender || '',
     primary_board: agent.primary_board || '',
@@ -59,7 +62,10 @@ export default function EditAgentForm({ agent }: { agent: any }) {
       date_of_birth: formData.date_of_birth || null,
       license_expiration: formData.license_expiration || null,
       original_license_date: formData.original_license_date || null,
-      hire_date: formData.hire_date || null
+      hire_date: formData.hire_date || null,
+      nar_code_of_ethics_date: formData.nar_code_of_ethics_date || null,
+      nar_fair_housing_date: formData.nar_fair_housing_date || null,
+      nar_cycle_end: formData.nar_cycle_end || null
     }
 
     const { error } = await supabase
@@ -342,6 +348,54 @@ export default function EditAgentForm({ agent }: { agent: any }) {
               />
               <span className="text-sm font-medium text-gray-700">Mandatory Course Completed</span>
             </label>
+          </div>
+        </div>
+      </div>
+
+      {/* NAR Compliance */}
+      <div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b">NAR Compliance</h2>
+        <div className="grid grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Code of Ethics Date
+            </label>
+            <input
+              type="date"
+              name="nar_code_of_ethics_date"
+              value={formData.nar_code_of_ethics_date}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">Required every 3 years</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Fair Housing Date
+            </label>
+            <input
+              type="date"
+              name="nar_fair_housing_date"
+              value={formData.nar_fair_housing_date}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">Required every 3 years</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Current Cycle Ends
+            </label>
+            <input
+              type="date"
+              name="nar_cycle_end"
+              value={formData.nar_cycle_end}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">3-year compliance cycle</p>
           </div>
         </div>
       </div>
