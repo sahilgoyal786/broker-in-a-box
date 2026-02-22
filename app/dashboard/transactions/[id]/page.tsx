@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
+import TransactionComplianceChecklist from './transaction-compliance-checklist'
 
 export default async function TransactionDetailPage({
   params,
@@ -34,6 +35,14 @@ export default async function TransactionDetailPage({
   if (userContext.role === 'agent' && transaction.agent_id !== userContext.agentId) {
     notFound()
   }
+
+  // Fetch compliance items
+  const { data: complianceItems } = await supabase
+    .from('transaction_compliance_items')
+    .select('*')
+    .eq('transaction_id', id)
+    .order('sort_order', { ascending: true })
+    .order('form_name') as any
 
   const roleLabels: Record<string, string> = {
     listing: 'Listing Agent',
@@ -234,10 +243,12 @@ export default async function TransactionDetailPage({
 
         {/* Right Column - Compliance (1/3) */}
         <div className="col-span-1">
-          <div className="bg-white rounded-lg shadow p-6 sticky top-6">
-            <h2 className="text-lg font-semibold mb-4">Compliance Documents</h2>
-            <p className="text-sm text-gray-500 mb-4">0 of 0 complete</p>
-            <p className="text-gray-400 text-sm italic">Compliance tracking coming soon</p>
+          <div className="sticky top-6">
+            <TransactionComplianceChecklist 
+              transactionId={id}
+              items={complianceItems || []}
+              canEdit={true}
+            />
           </div>
         </div>
       </div>
