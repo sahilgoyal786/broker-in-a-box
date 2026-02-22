@@ -26,6 +26,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       property_zip: formData.get('property_zip'),
       property_type: formData.get('property_type'),
       transaction_type: formData.get('transaction_type'),
+      contract_type: formData.get('contract_type'),
       contract_date: formData.get('contract_date'),
       purchase_price: formData.get('purchase_price') || null,
       earnest_money_amount: formData.get('earnest_money_amount') || null,
@@ -87,6 +88,19 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             </select>
           </div>
         )}
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Transaction Type</label>
+          <select 
+            name="contract_type" 
+            required
+            className="w-full px-3 py-2 border rounded-lg"
+          >
+            <option value="">Select type...</option>
+            <option value="purchase">Purchase</option>
+            <option value="lease">Lease</option>
+          </select>
+        </div>
 
         <div>
           <label className="block text-sm font-medium mb-2">Your Role</label>
