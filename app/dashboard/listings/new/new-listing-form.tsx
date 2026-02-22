@@ -492,6 +492,24 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           </div>
         )}
 
+        {/* FARM - Basic shell only (too rare for Wasatch Front) */}
+        {propertyType === 'farm' && (
+          <div className="col-span-2">
+            <p className="text-gray-600 italic">
+              Farm properties use basic information only (address, county, tax ID).
+            </p>
+          </div>
+        )}
+
+        {/* RESIDENTIAL LEASE - Basic shell only (too rare for Wasatch Front) */}
+        {propertyType === 'residential_lease' && (
+          <div className="col-span-2">
+            <p className="text-gray-600 italic">
+              Residential lease properties use basic information only (address, county, tax ID).
+            </p>
+          </div>
+        )}
+
         {/* Listing Information Header */}
         <div className="col-span-2">
           <h3 className="text-lg font-bold mb-4 mt-6">Listing Information</h3>
