@@ -181,6 +181,16 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium mb-2">Tax ID Number</label>
+            <input
+              type="text"
+              name="tax_id"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Required if no street address"
+            />
+          </div>
+
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2">
               <label className="block text-sm font-medium mb-2">City</label>
@@ -219,16 +229,6 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
                 className="w-full px-3 py-2 border rounded-lg"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Tax ID Number</label>
-            <input
-              type="text"
-              name="tax_id"
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Required if no street address"
-            />
           </div>
         </div>
       )}
