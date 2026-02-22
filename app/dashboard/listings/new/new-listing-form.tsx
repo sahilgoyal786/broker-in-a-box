@@ -24,6 +24,8 @@ type Agency = {
   property_zip?: string
   property_type?: string
   list_price?: number
+  agreement_date?: string
+  expiration_date?: string
   agent: {
     id: string
     first_name: string
@@ -284,6 +286,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
             type="date"
             name="listing_start_date"
             required
+            defaultValue={agencyAgreement?.agreement_date || ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
           />
         </div>
@@ -296,6 +299,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
             type="date"
             name="listing_end_date"
             required
+            defaultValue={agencyAgreement?.expiration_date || ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
           />
         </div>
