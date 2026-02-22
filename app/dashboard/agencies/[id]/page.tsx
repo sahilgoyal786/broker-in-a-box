@@ -341,13 +341,6 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
         )}
       </div>
 
-      {/* Compliance Checklist - Coming Soon */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold border-b pb-2 mb-4">Compliance Checklist</h2>
-        <div className="text-center py-8 text-gray-500">
-          <p className="text-sm">Agency agreement compliance tracking coming soon</p>
-        </div>
-      </div>
     </div>
   )
 }
