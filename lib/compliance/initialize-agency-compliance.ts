@@ -1,50 +1,58 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-// Residential listing compliance forms
+// Residential listing compliance forms (in workflow order)
 const RESIDENTIAL_LISTING_FORMS = [
   {
     form_name: 'EXCLUSIVE RIGHT TO SELL LISTING AGREEMENT & AGENCY DISCLOSURE',
     tracking_type: 'manual_checkbox',
-    is_required: true
+    is_required: true,
+    sort_order: 1
   },
   {
     form_name: 'Data Form - Residential',
     tracking_type: 'manual_checkbox',
-    is_required: true
-  },
-  {
-    form_name: 'WIRE FRAUD ALERT DISCLOSURE',
-    tracking_type: 'manual_checkbox',
-    is_required: true
+    is_required: true,
+    sort_order: 2
   },
   {
     form_name: "SELLER'S PROPERTY CONDITION DISCLOSURE",
     tracking_type: 'manual_checkbox',
-    is_required: true
+    is_required: true,
+    sort_order: 3
+  },
+  {
+    form_name: 'WIRE FRAUD ALERT DISCLOSURE',
+    tracking_type: 'manual_checkbox',
+    is_required: true,
+    sort_order: 4
   }
 ]
 
-// Residential buyer agency compliance forms
+// Residential buyer agency compliance forms (in workflow order)
 const RESIDENTIAL_BUYER_FORMS = [
   {
     form_name: 'EXCLUSIVE BUYER-BROKER AGREEMENT & AGENCY DISCLOSURE',
     tracking_type: 'manual_checkbox',
-    is_required: true
+    is_required: true,
+    sort_order: 1
   },
   {
     form_name: 'BUYER DUE DILIGENCE CHECKLIST',
     tracking_type: 'manual_checkbox',
-    is_required: true
+    is_required: true,
+    sort_order: 2
   },
   {
     form_name: 'FOR YOUR PROTECTION GET AN INSPECTION',
     tracking_type: 'manual_checkbox',
-    is_required: true
+    is_required: true,
+    sort_order: 3
   },
   {
     form_name: 'WIRE FRAUD ALERT',
     tracking_type: 'manual_checkbox',
-    is_required: true
+    is_required: true,
+    sort_order: 4
   }
 ]
 
@@ -114,7 +122,8 @@ export async function addLeadPaintDisclosure(
       agency_agreement_id: agencyAgreementId,
       form_name: 'DISCLOSURE & ACKNOWLEDGEMENT REGARDING LEAD-BASED PAINT AND/OR LEAD-BASED PAINT HAZARDS',
       tracking_type: 'manual_checkbox',
-      is_required: true
+      is_required: true,
+      sort_order: 5
     })
     .select()
     .single()

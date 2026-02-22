@@ -56,7 +56,7 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
     .from('agency_compliance_items')
     .select('*')
     .eq('agency_agreement_id', id)
-    .order('is_required', { ascending: false })
+    .order('sort_order', { ascending: true })
     .order('form_name') as any
 
   return (
