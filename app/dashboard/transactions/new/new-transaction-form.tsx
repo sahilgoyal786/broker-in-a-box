@@ -69,8 +69,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       cooperating_agent_phone: formData.get('cooperating_agent_phone') || null,
       cooperating_agent_email: formData.get('cooperating_agent_email') || null,
       status: 'pending',
-      client_first_name: formData.get('buyer_first_name'), // Required field
-      client_last_name: formData.get('buyer_last_name'), // Required field
     }
 
     const { data: transaction, error: insertError } = await supabase

@@ -56,8 +56,9 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       buyer_title_contact_phone: formData.get('buyer_title_contact_phone') || null,
       seller_disclosure_deadline: formData.get('seller_disclosure_deadline') || null,
       due_diligence_deadline: formData.get('due_diligence_deadline') || null,
-      finance_appraisal_deadline: formData.get('finance_appraisal_deadline') || null,
+      financing_appraisal_deadline: formData.get('financing_appraisal_deadline') || null,
       settlement_deadline: formData.get('settlement_deadline'),
+      anticipated_closing_date: formData.get('settlement_deadline') || null,
       custom_deadline_1_label: formData.get('custom_deadline_1_label') || null,
       custom_deadline_1_date: formData.get('custom_deadline_1_date') || null,
       custom_deadline_2_label: formData.get('custom_deadline_2_label') || null,
@@ -604,12 +605,12 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
             <p className="text-xs text-slate-500 mt-1">Section 24(b)</p>
           </div>
           <div>
-            <label className={labelClass}>Finance & Appraisal Deadline</label>
+            <label className={labelClass}>Financing & Appraisal Deadline</label>
             <input
               type="date"
-              name="finance_appraisal_deadline"
+              name="financing_appraisal_deadline"
               className={inputClass}
-              defaultValue={transaction.finance_appraisal_deadline || ''}
+              defaultValue={transaction.financing_appraisal_deadline || ''}
             />
             <p className="text-xs text-slate-500 mt-1">Section 24(c)</p>
           </div>
