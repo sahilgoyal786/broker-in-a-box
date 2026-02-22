@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { initializeAgencyCompliance } from '@/lib/compliance/initialize-agency-compliance'
 
 export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgent, agreementType: initialType }: any) {
   const router = useRouter()
@@ -51,6 +52,15 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
       setLoading(false)
       return
     }
+
+    // Initialize compliance checklist
+    const propertyType = data.property_type || 'residential'
+    await initializeAgencyCompliance(
+      supabase,
+      agency.id,
+      agreementType as 'listing_agreement' | 'buyer_agency_agreement',
+      propertyType
+    )
 
     router.push(`/dashboard/agencies/${agency.id}`)
   }

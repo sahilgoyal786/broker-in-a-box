@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { addLeadPaintDisclosure } from '@/lib/compliance/initialize-agency-compliance'
 
 type Agent = {
   id: string
@@ -122,6 +123,15 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
       setError(insertError.message)
       setLoading(false)
       return
+    }
+
+    // Check if need to add lead paint disclosure for pre-1978 properties
+    const yearBuilt = formData.get('year_built')
+    if (agencyAgreement && yearBuilt) {
+      const year = parseInt(yearBuilt as string)
+      if (year && year < 1978) {
+        await addLeadPaintDisclosure(supabase, agencyAgreement.id, year)
+      }
     }
 
     // If linked to agency, go back to agency detail page

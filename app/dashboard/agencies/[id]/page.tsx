@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Plus, FileText, Home, ArrowLeft } from 'lucide-react'
+import ComplianceChecklist from './compliance-checklist'
 
 export default async function AgencyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -48,6 +49,14 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
       .maybeSingle() as any
     listing = data
   }
+
+  // Get compliance checklist items
+  const { data: complianceItems } = await supabase
+    .from('agency_compliance_items')
+    .select('*')
+    .eq('agency_agreement_id', id)
+    .order('is_required', { ascending: false })
+    .order('form_name') as any
 
   return (
     <div className="space-y-6">
@@ -263,6 +272,15 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
             </div>
           )}
         </div>
+      )}
+
+      {/* Compliance Checklist */}
+      {complianceItems && complianceItems.length > 0 && (
+        <ComplianceChecklist 
+          agencyId={id}
+          items={complianceItems}
+          canEdit={true}
+        />
       )}
 
       {/* Related Transactions */}
