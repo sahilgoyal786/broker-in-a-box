@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Plus, FileText, Home, ArrowLeft } from 'lucide-react'
 import ComplianceChecklist from './compliance-checklist'
+import InitializeComplianceButton from './initialize-compliance-button'
 
 export default async function AgencyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -275,12 +276,20 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
       )}
 
       {/* Compliance Checklist */}
-      {complianceItems && complianceItems.length > 0 && (
+      {complianceItems && complianceItems.length > 0 ? (
         <ComplianceChecklist 
           agencyId={id}
           items={complianceItems}
           canEdit={true}
         />
+      ) : (
+        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
+          <h2 className="text-lg font-semibold text-white mb-4">Agency Compliance Checklist</h2>
+          <div className="text-center py-8">
+            <p className="text-slate-400 mb-4">No compliance items found for this agency agreement.</p>
+            <InitializeComplianceButton agencyId={id} />
+          </div>
+        </div>
       )}
 
       {/* Related Transactions */}
