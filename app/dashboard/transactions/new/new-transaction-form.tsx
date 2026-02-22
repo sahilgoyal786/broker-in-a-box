@@ -8,6 +8,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [transactionType, setTransactionType] = useState('')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -28,7 +29,8 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       transaction_type: formData.get('transaction_type'),
       contract_type: formData.get('contract_type'),
       contract_date: formData.get('contract_date'),
-      list_price: formData.get('list_price') || null,
+      original_list_price: formData.get('original_list_price') || null,
+      current_list_price: formData.get('current_list_price') || null,
       purchase_price: formData.get('purchase_price') || null,
       earnest_money_amount: formData.get('earnest_money_amount') || null,
       earnest_money_location: formData.get('earnest_money_location') || null,
@@ -116,6 +118,8 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           <select 
             name="transaction_type" 
             required
+            value={transactionType}
+            onChange={(e) => setTransactionType(e.target.value)}
             className="w-full px-3 py-2 border rounded-lg"
           >
             <option value="">Select your role...</option>
@@ -313,38 +317,54 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
         </div>
 
+        {/* Show list prices only if NOT listing agent */}
+        {transactionType && transactionType !== 'listing' && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Original List Price</label>
+              <input
+                type="number"
+                name="original_list_price"
+                step="0.01"
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="0.00"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Current List Price</label>
+              <input
+                type="number"
+                name="current_list_price"
+                step="0.01"
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">List Price (Original Asking)</label>
-            <input
-              type="number"
-              name="list_price"
-              step="0.01"
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Original listing price"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Purchase Price (Contract Price)</label>
+            <label className="block text-sm font-medium mb-2">Sales Price</label>
             <input
               type="number"
               name="purchase_price"
               step="0.01"
               required
               className="w-full px-3 py-2 border rounded-lg"
+              placeholder="0.00"
             />
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Earnest Money Amount</label>
-          <input
-            type="number"
-            name="earnest_money_amount"
-            step="0.01"
-            className="w-full px-3 py-2 border rounded-lg"
-            placeholder="0.00"
-          />
+          <div>
+            <label className="block text-sm font-medium mb-2">Earnest Money Amount</label>
+            <input
+              type="number"
+              name="earnest_money_amount"
+              step="0.01"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="0.00"
+            />
+          </div>
         </div>
 
         <div>
