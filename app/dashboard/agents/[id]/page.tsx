@@ -200,100 +200,103 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
             </div>
           </div>
 
-          {/* CE Compliance */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">CE Compliance</h2>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Core Hours</p>
-                  <p className="text-2xl font-bold text-gray-900">{agent.ce_hours_core ?? 0}</p>
-                  <p className="text-xs text-gray-600">of 12 required</p>
+          {/* CE & NAR Compliance - Side by Side */}
+          <div className="grid grid-cols-2 gap-6">
+            {/* CE Compliance */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">CE Compliance</h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">Core Hours</p>
+                    <p className="text-2xl font-bold text-gray-900">{agent.ce_hours_core ?? 0}</p>
+                    <p className="text-xs text-gray-600">of 12 required</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">Elective Hours</p>
+                    <p className="text-2xl font-bold text-gray-900">{agent.ce_hours_other ?? 0}</p>
+                    <p className="text-xs text-gray-600">of 6 required</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Elective Hours</p>
-                  <p className="text-2xl font-bold text-gray-900">{agent.ce_hours_other ?? 0}</p>
-                  <p className="text-xs text-gray-600">of 6 required</p>
+                <div className="pt-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-600 mb-2">Mandatory 3-Hour Course</p>
+                  {agent.mandatory_course_completed ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+                      ✓ Completed
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 border border-red-200">
+                      ✗ Not Completed
+                    </span>
+                  )}
                 </div>
-              </div>
-              <div className="pt-3 border-t border-gray-200">
-                <p className="text-xs text-gray-600 mb-2">Mandatory 3-Hour Course</p>
-                {agent.mandatory_course_completed ? (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
-                    ✓ Completed
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 border border-red-200">
-                    ✗ Not Completed
-                  </span>
+                {agent.ce_last_updated && (
+                  <div className="pt-3 border-t border-gray-200">
+                    <p className="text-xs text-gray-600">
+                      Last updated: {new Date(agent.ce_last_updated).toLocaleDateString()}
+                    </p>
+                  </div>
                 )}
               </div>
-              {agent.ce_last_updated && (
-                <div className="pt-3 border-t border-gray-200">
-                  <p className="text-xs text-gray-600">
-                    Last updated: {new Date(agent.ce_last_updated).toLocaleDateString()}
-                  </p>
-                </div>
-              )}
             </div>
-          </div>
 
-          {/* NAR Compliance */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">NAR Compliance</h2>
-            <div className="space-y-3">
-              <div>
-                <p className="text-xs text-gray-600 mb-1">Code of Ethics</p>
-                {agent.nar_code_of_ethics_date ? (
-                  <div>
-                    <p className="text-sm font-medium text-green-600">
-                      ✓ {new Date(agent.nar_code_of_ethics_date).toLocaleDateString()}
-                    </p>
-                    {agent.nar_code_of_ethics_cert_url && (
-                      <a 
-                        href={agent.nar_code_of_ethics_cert_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        View certificate
-                      </a>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm font-medium text-red-600">✗ Not completed</p>
-                )}
-              </div>
-              <div className="pt-3 border-t border-gray-200">
-                <p className="text-xs text-gray-600 mb-1">Fair Housing</p>
-                {agent.nar_fair_housing_date ? (
-                  <div>
-                    <p className="text-sm font-medium text-green-600">
-                      ✓ {new Date(agent.nar_fair_housing_date).toLocaleDateString()}
-                    </p>
-                    {agent.nar_fair_housing_cert_url && (
-                      <a 
-                        href={agent.nar_fair_housing_cert_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        View certificate
-                      </a>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm font-medium text-red-600">✗ Not completed</p>
-                )}
-              </div>
-              {agent.nar_cycle_end && (
-                <div className="pt-3 border-t border-gray-200">
-                  <p className="text-xs text-gray-600 mb-1">Current Cycle Ends</p>
-                  <p className="text-sm text-gray-900">
-                    {new Date(agent.nar_cycle_end).toLocaleDateString()}
-                  </p>
+            {/* NAR Compliance */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">NAR Compliance</h2>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Code of Ethics</p>
+                  {agent.nar_code_of_ethics_date ? (
+                    <div>
+                      <p className="text-sm font-medium text-green-600">
+                        ✓ {new Date(agent.nar_code_of_ethics_date).toLocaleDateString()}
+                      </p>
+                      {agent.nar_code_of_ethics_cert_url && (
+                        <a 
+                          href={agent.nar_code_of_ethics_cert_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:underline"
+                        >
+                          View certificate
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm font-medium text-red-600">✗ Not completed</p>
+                  )}
                 </div>
-              )}
+                <div className="pt-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-600 mb-1">Fair Housing</p>
+                  {agent.nar_fair_housing_date ? (
+                    <div>
+                      <p className="text-sm font-medium text-green-600">
+                        ✓ {new Date(agent.nar_fair_housing_date).toLocaleDateString()}
+                      </p>
+                      {agent.nar_fair_housing_cert_url && (
+                        <a 
+                          href={agent.nar_fair_housing_cert_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:underline"
+                        >
+                          View certificate
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm font-medium text-red-600">✗ Not completed</p>
+                  )}
+                </div>
+                {agent.nar_cycle_end && (
+                  <div className="pt-3 border-t border-gray-200">
+                    <p className="text-xs text-gray-600 mb-1">Current Cycle Ends</p>
+                    <p className="text-sm text-gray-900">
+                      {new Date(agent.nar_cycle_end).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
