@@ -286,7 +286,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
             type="date"
             name="listing_start_date"
             required
-            defaultValue={agencyAgreement?.agreement_date || ''}
+            defaultValue={agencyAgreement?.agreement_date ? agencyAgreement.agreement_date.split('T')[0] : ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
           />
         </div>
@@ -299,7 +299,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
             type="date"
             name="listing_end_date"
             required
-            defaultValue={agencyAgreement?.expiration_date || ''}
+            defaultValue={agencyAgreement?.expiration_date ? agencyAgreement.expiration_date.split('T')[0] : ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
           />
         </div>
