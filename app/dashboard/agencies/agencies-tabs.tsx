@@ -14,6 +14,7 @@ type Agreement = {
   property_state?: string
   property_zip?: string
   county?: string
+  property_type?: string
   list_price?: number
   mls_number?: string
   status: string
@@ -91,6 +92,7 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
                 <>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">County</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                 </>
               )}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -130,6 +132,9 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {agreement.county ? agreement.county.replace(' County', '') : '—'}
                     </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 capitalize">
+                      {agreement.property_type ? agreement.property_type.replace(/_/g, ' ') : '—'}
+                    </td>
                   </>
                 )}
                 <td className="px-6 py-4">
@@ -166,7 +171,7 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
             ))}
             {agreements.length === 0 && (
               <tr>
-                <td colSpan={activeTab === 'listings' ? 8 : 5} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={activeTab === 'listings' ? 9 : 5} className="px-6 py-8 text-center text-gray-500">
                   No {activeTab === 'listings' ? 'listings' : 'buyer agreements'} yet. Click the button above to create one.
                 </td>
               </tr>
