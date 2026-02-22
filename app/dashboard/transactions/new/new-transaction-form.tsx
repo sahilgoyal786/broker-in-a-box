@@ -25,6 +25,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       property_state: formData.get('property_state'),
       property_zip: formData.get('property_zip'),
       property_type: formData.get('property_type'),
+      transaction_type: formData.get('transaction_type'),
       contract_date: formData.get('contract_date'),
       purchase_price: formData.get('purchase_price') || null,
       earnest_money_amount: formData.get('earnest_money_amount') || null,
@@ -38,7 +39,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       seller_email: formData.get('seller_email') || null,
       seller_phone: formData.get('seller_phone') || null,
       status: 'pending',
-      transaction_type: 'listing', // Default for now
       client_first_name: formData.get('buyer_first_name'), // Required field
       client_last_name: formData.get('buyer_last_name'), // Required field
     }
@@ -67,10 +67,10 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
         </div>
       )}
 
-      {!isAgent && (
-        <div className="bg-white p-6 rounded-lg shadow space-y-4">
-          <h2 className="text-lg font-semibold border-b pb-2">Agent</h2>
-          
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Transaction Type</h2>
+        
+        {!isAgent && (
           <div>
             <label className="block text-sm font-medium mb-2">Agent</label>
             <select
@@ -86,8 +86,41 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               ))}
             </select>
           </div>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Your Role</label>
+          <select 
+            name="transaction_type" 
+            required
+            className="w-full px-3 py-2 border rounded-lg"
+          >
+            <option value="">Select your role...</option>
+            <option value="listing">Listing Agent (Representing Seller)</option>
+            <option value="buyer_agency">Buyer's Agent (Representing Buyer)</option>
+            <option value="seller_purchase">Dual Agency - Seller Side</option>
+            <option value="buyer_purchase">Dual Agency - Buyer Side</option>
+          </select>
         </div>
-      )}
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Property Type</label>
+          <select 
+            name="property_type" 
+            required
+            className="w-full px-3 py-2 border rounded-lg"
+          >
+            <option value="">Select type...</option>
+            <option value="residential">Residential</option>
+            <option value="vacant_land">Vacant Land</option>
+            <option value="mobile_home">Mobile Home</option>
+            <option value="commercial">Commercial</option>
+            <option value="multi_unit">Multi-Unit</option>
+            <option value="farm">Farm</option>
+            <option value="residential_lease">Residential Lease</option>
+          </select>
+        </div>
+      </div>
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-lg font-semibold border-b pb-2">Buyer Information</h2>
@@ -180,24 +213,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-lg font-semibold border-b pb-2">Property Information</h2>
         
-        <div>
-          <label className="block text-sm font-medium mb-2">Property Type</label>
-          <select 
-            name="property_type" 
-            required
-            className="w-full px-3 py-2 border rounded-lg"
-          >
-            <option value="">Select type...</option>
-            <option value="residential">Residential</option>
-            <option value="vacant_land">Vacant Land</option>
-            <option value="mobile_home">Mobile Home</option>
-            <option value="commercial">Commercial</option>
-            <option value="multi_unit">Multi-Unit</option>
-            <option value="farm">Farm</option>
-            <option value="residential_lease">Residential Lease</option>
-          </select>
-        </div>
-
         <div>
           <label className="block text-sm font-medium mb-2">Property Address</label>
           <input
