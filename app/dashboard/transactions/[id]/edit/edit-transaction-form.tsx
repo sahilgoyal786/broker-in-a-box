@@ -7,8 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 export default function EditTransactionForm({ transaction, agents, isAgent }: any) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [showLimitedAgency, setShowLimitedAgency] = useState(transaction.agency_role === 'limited_agency')
-  const [agencyRole, setAgencyRole] = useState(transaction.agency_role)
+  const [showLimitedAgency, setShowLimitedAgency] = useState(transaction.transaction_type === 'limited_agency')
+  const [agencyRole, setAgencyRole] = useState(transaction.transaction_type)
   const [earnestMoneyLocation, setEarnestMoneyLocation] = useState(transaction.earnest_money_location || '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -22,7 +22,6 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       agent_id: formData.get('agent_id'),
       transaction_type: formData.get('transaction_type'),
       property_type: formData.get('property_type'),
-      agency_role: formData.get('agency_role'),
       limited_agency_disclosure_received: formData.get('limited_agency_disclosure_received') === 'on',
       property_address: formData.get('property_address'),
       property_city: formData.get('property_city'),
@@ -98,19 +97,19 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           <div>
             <label className={labelClass}>Your Role</label>
             <select 
-              name="agency_role" 
-              id="agency_role"
+              name="transaction_type" 
+              id="transaction_type"
               className={inputClass} 
               required 
-              defaultValue={transaction.agency_role}
+              defaultValue={transaction.transaction_type}
               onChange={(e) => {
                 setShowLimitedAgency(e.target.value === 'limited_agency')
                 setAgencyRole(e.target.value)
               }}
             >
-              <option value="listing_agent">Listing Agent (Seller)</option>
-              <option value="buyer_agent">Buyer's Agent</option>
-              <option value="limited_agency">Limited Agency (Dual)</option>
+              <option value="listing">Listing Agent (Representing Seller)</option>
+              <option value="buyer_agency">Buyer's Agent (Representing Buyer)</option>
+              <option value="limited_agency">Limited Agency - Buyer/Seller</option>
             </select>
           </div>
 

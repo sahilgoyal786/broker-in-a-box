@@ -125,8 +125,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             <option value="">Select your role...</option>
             <option value="listing">Listing Agent (Representing Seller)</option>
             <option value="buyer_agency">Buyer's Agent (Representing Buyer)</option>
-            <option value="seller_purchase">Dual Agency - Seller Side</option>
-            <option value="buyer_purchase">Dual Agency - Buyer Side</option>
+            <option value="limited_agency">Limited Agency - Buyer/Seller</option>
           </select>
         </div>
 
@@ -149,7 +148,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Transaction Type</label>
+          <label className="block text-sm font-medium mb-2">Contract Type</label>
           <select 
             name="contract_type" 
             required
@@ -317,8 +316,8 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
         </div>
 
-        {/* Show list prices only if listing agent or dual agency */}
-        {transactionType && (transactionType === 'listing' || transactionType === 'seller_purchase') && (
+        {/* Show list prices only if listing agent or limited agency */}
+        {transactionType && (transactionType === 'listing' || transactionType === 'limited_agency') && (
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">Original List Price</label>
