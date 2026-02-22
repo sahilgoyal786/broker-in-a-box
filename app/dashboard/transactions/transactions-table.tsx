@@ -218,7 +218,7 @@ export default function TransactionsTable({
   }
 
   const statusLabels: Record<string, string> = {
-    pending: 'Pending',
+    pending: 'Under Contract',
     under_contract: 'Under Contract',
     closed: 'Closed',
     cancelled: 'Cancelled',

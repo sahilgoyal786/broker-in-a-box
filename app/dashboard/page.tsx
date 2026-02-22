@@ -238,7 +238,9 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColors[tx.status]}`}>
-                    {tx.status === 'pending_closure' ? 'CTP Review' :
+                    {tx.status === 'pending' ? 'Under Contract' :
+                     tx.status === 'under_contract' ? 'Under Contract' :
+                     tx.status === 'pending_closure' ? 'CTP Review' :
                      tx.status === 'pending_cancellation' ? 'Cancel Review' :
                      tx.status?.replace(/_/g, ' ')}
                   </span>

@@ -30,7 +30,7 @@ export default function TransactionFilters({
     client: '',
     city: '',
     county: '',
-    status: '',
+    status: 'pending', // Default to Under Contract
     dateFrom: '',
     dateTo: ''
   })
