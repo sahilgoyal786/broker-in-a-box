@@ -81,6 +81,7 @@ export default async function TransactionsPage() {
     <TransactionsView 
       transactions={transactions ?? []} 
       userRole={userContext.role}
+      agents={agents}
     />
   )
 }

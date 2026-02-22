@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ChevronUp, ChevronDown } from 'lucide-react'
 import { getViewContext } from '@/lib/get-view-context'
+import TransactionFilters from './transaction-filters'
 
 interface Transaction {
   id: string
@@ -36,22 +37,68 @@ type SortDirection = 'asc' | 'desc'
 export default function TransactionsTable({ 
   transactions, 
   userRole,
+  agents,
   onFilterChange
 }: { 
   transactions: Transaction[]
   userRole: string
+  agents?: Array<{ id: string; first_name: string; last_name: string }>
   onFilterChange?: (count: number) => void
 }) {
   const [filteredTransactions, setFilteredTransactions] = useState(transactions)
   const [sortField, setSortField] = useState<SortField>('settlement')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const [filters, setFilters] = useState<any>({})
 
   useEffect(() => {
     const { viewingAsAgent, impersonateAgentId } = getViewContext()
     
     let filtered = transactions
+    
+    // Agent switcher filter
     if (userRole === 'broker' && viewingAsAgent && impersonateAgentId) {
-      filtered = transactions.filter(t => t.agent_id === impersonateAgentId)
+      filtered = filtered.filter(t => t.agent_id === impersonateAgentId)
+    }
+
+    // Apply user filters
+    if (filters.agent) {
+      filtered = filtered.filter(t => t.agent_id === filters.agent)
+    }
+
+    if (filters.client) {
+      const clientSearch = filters.client.toLowerCase()
+      filtered = filtered.filter(t => {
+        const buyerName = `${t.buyer_first_name} ${t.buyer_last_name}`.toLowerCase()
+        const sellerName = `${t.seller_first_name || ''} ${t.seller_last_name || ''}`.toLowerCase()
+        return buyerName.includes(clientSearch) || sellerName.includes(clientSearch)
+      })
+    }
+
+    if (filters.city) {
+      const citySearch = filters.city.toLowerCase()
+      filtered = filtered.filter(t => 
+        t.property_city?.toLowerCase().includes(citySearch)
+      )
+    }
+
+    if (filters.county) {
+      filtered = filtered.filter(t => t.county === filters.county)
+    }
+
+    if (filters.status) {
+      filtered = filtered.filter(t => t.status === filters.status)
+    }
+
+    if (filters.dateFrom) {
+      filtered = filtered.filter(t => 
+        t.anticipated_closing_date && t.anticipated_closing_date >= filters.dateFrom
+      )
+    }
+
+    if (filters.dateTo) {
+      filtered = filtered.filter(t => 
+        t.anticipated_closing_date && t.anticipated_closing_date <= filters.dateTo
+      )
     }
     
     setFilteredTransactions(filtered)
@@ -59,7 +106,7 @@ export default function TransactionsTable({
     if (onFilterChange) {
       onFilterChange(filtered.length)
     }
-  }, [transactions, userRole, onFilterChange])
+  }, [transactions, userRole, filters, onFilterChange])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -184,18 +231,30 @@ export default function TransactionsTable({
     cancelled: 'bg-red-100 text-red-800 border-red-200',
   }
 
-  if (!filteredTransactions || filteredTransactions.length === 0) {
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <p className="text-gray-600">No transactions yet</p>
-        <p className="text-gray-400 text-sm mt-1">Create your first transaction to get started.</p>
-      </div>
-    )
-  }
-
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-      <div className="overflow-x-auto">
+      {/* Filters */}
+      <TransactionFilters
+        options={{
+          agents: agents || [],
+          showAgentFilter: userRole === 'broker'
+        }}
+        onFilterChange={setFilters}
+      />
+
+      {/* Table */}
+      {!filteredTransactions || filteredTransactions.length === 0 ? (
+        <div className="p-12 text-center">
+          <p className="text-gray-600">No transactions found</p>
+          <p className="text-gray-400 text-sm mt-1">
+            {transactions.length > 0 
+              ? 'Try adjusting your filters'
+              : 'Create your first transaction to get started'
+            }
+          </p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
@@ -277,7 +336,8 @@ export default function TransactionsTable({
             })}
           </tbody>
         </table>
-      </div>
+        </div>
+      )}
     </div>
   )
 }

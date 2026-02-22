@@ -7,10 +7,12 @@ import TransactionsTable from './transactions-table'
 
 export default function TransactionsView({ 
   transactions, 
-  userRole 
+  userRole,
+  agents
 }: { 
   transactions: any[]
   userRole: string
+  agents?: Array<{ id: string; first_name: string; last_name: string }>
 }) {
   const [displayCount, setDisplayCount] = useState(transactions.length)
 
@@ -24,6 +26,7 @@ export default function TransactionsView({
       <TransactionsTable 
         transactions={transactions} 
         userRole={userRole}
+        agents={agents}
         onFilterChange={setDisplayCount}
       />
     </div>
