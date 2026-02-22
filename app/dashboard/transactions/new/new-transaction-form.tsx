@@ -67,10 +67,10 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
         </div>
       )}
 
-      <div className="bg-white p-6 rounded-lg shadow space-y-4">
-        <h2 className="text-lg font-semibold border-b pb-2">Agreement Type</h2>
-        
-        {!isAgent && (
+      {!isAgent && (
+        <div className="bg-white p-6 rounded-lg shadow space-y-4">
+          <h2 className="text-lg font-semibold border-b pb-2">Agent</h2>
+          
           <div>
             <label className="block text-sm font-medium mb-2">Agent</label>
             <select
@@ -86,26 +86,8 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               ))}
             </select>
           </div>
-        )}
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Property Type</label>
-          <select 
-            name="property_type" 
-            required
-            className="w-full px-3 py-2 border rounded-lg"
-          >
-            <option value="">Select type...</option>
-            <option value="residential">Residential</option>
-            <option value="vacant_land">Vacant Land</option>
-            <option value="mobile_home">Mobile Home</option>
-            <option value="commercial">Commercial</option>
-            <option value="multi_unit">Multi-Unit</option>
-            <option value="farm">Farm</option>
-            <option value="residential_lease">Residential Lease</option>
-          </select>
         </div>
-      </div>
+      )}
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-lg font-semibold border-b pb-2">Buyer Information</h2>
@@ -198,6 +180,24 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-lg font-semibold border-b pb-2">Property Information</h2>
         
+        <div>
+          <label className="block text-sm font-medium mb-2">Property Type</label>
+          <select 
+            name="property_type" 
+            required
+            className="w-full px-3 py-2 border rounded-lg"
+          >
+            <option value="">Select type...</option>
+            <option value="residential">Residential</option>
+            <option value="vacant_land">Vacant Land</option>
+            <option value="mobile_home">Mobile Home</option>
+            <option value="commercial">Commercial</option>
+            <option value="multi_unit">Multi-Unit</option>
+            <option value="farm">Farm</option>
+            <option value="residential_lease">Residential Lease</option>
+          </select>
+        </div>
+
         <div>
           <label className="block text-sm font-medium mb-2">Property Address</label>
           <input
