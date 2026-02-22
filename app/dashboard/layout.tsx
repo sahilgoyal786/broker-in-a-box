@@ -55,7 +55,7 @@ export default async function DashboardLayout({
   ].filter(item => item.roles.includes(userContext.role))
 
   return (
-    <div className="min-h-screen bg-slate-950 flex">
+    <div className="min-h-screen bg-white flex">
       {/* Sidebar */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
         {/* Logo */}
@@ -113,7 +113,7 @@ export default async function DashboardLayout({
       <main className="flex-1 overflow-auto flex flex-col">
         {/* Header with agent switcher */}
         {userContext.role === 'broker' && agents && agents.length > 0 && (
-          <div className="bg-slate-900 border-b border-slate-800 px-8 py-4 flex justify-end">
+          <div className="bg-white border-b border-gray-200 px-8 py-4 flex justify-end">
             <AgentSwitcher agents={agents} currentRole={userContext.role} />
           </div>
         )}

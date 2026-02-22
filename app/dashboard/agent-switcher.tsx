@@ -47,8 +47,8 @@ export default function AgentSwitcher({ agents, currentRole }: { agents: Agent[]
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
           selectedAgentId 
-            ? 'bg-orange-500/20 border-orange-500/30 text-orange-400 hover:bg-orange-500/30' 
-            : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
+            ? 'bg-orange-100 border-orange-300 text-orange-700 hover:bg-orange-200' 
+            : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
         }`}
       >
         <UserCircle className="w-4 h-4" />
