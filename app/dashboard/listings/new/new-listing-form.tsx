@@ -26,6 +26,7 @@ type Agency = {
   list_price?: number
   agreement_date?: string
   expiration_date?: string
+  tax_id?: string
   agent: {
     id: string
     first_name: string
@@ -313,6 +314,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           <input
             type="text"
             name="tax_id"
+            defaultValue={agencyAgreement?.tax_id || ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
             placeholder="Required if no street address"
           />
