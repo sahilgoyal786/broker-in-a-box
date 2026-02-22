@@ -317,8 +317,8 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
         </div>
 
-        {/* Show list prices only if NOT listing agent */}
-        {transactionType && transactionType !== 'listing' && (
+        {/* Show list prices only if listing agent or dual agency */}
+        {transactionType && (transactionType === 'listing' || transactionType === 'seller_purchase') && (
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">Original List Price</label>
