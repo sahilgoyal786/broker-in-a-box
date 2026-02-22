@@ -21,6 +21,8 @@ interface Transaction {
   updated_at: string
   contract_date: string | null
   purchase_price: number | null
+  anticipated_closing_date: string | null
+  county: string | null
   agent_id: string
   agents: {
     first_name: string
@@ -28,7 +30,7 @@ interface Transaction {
   }
 }
 
-type SortField = 'agent' | 'buyer' | 'seller' | 'address' | 'type' | 'status' | 'contract_date' | 'price'
+type SortField = 'agent' | 'role' | 'type' | 'client' | 'address' | 'county' | 'price' | 'settlement'
 type SortDirection = 'asc' | 'desc'
 
 export default function TransactionsTable({ 
@@ -41,8 +43,8 @@ export default function TransactionsTable({
   onFilterChange?: (count: number) => void
 }) {
   const [filteredTransactions, setFilteredTransactions] = useState(transactions)
-  const [sortField, setSortField] = useState<SortField>('contract_date')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [sortField, setSortField] = useState<SortField>('settlement')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
   useEffect(() => {
     const { viewingAsAgent, impersonateAgentId } = getViewContext()
@@ -77,33 +79,42 @@ export default function TransactionsTable({
         aVal = `${a.agents.last_name} ${a.agents.first_name}`
         bVal = `${b.agents.last_name} ${b.agents.first_name}`
         break
-      case 'buyer':
-        aVal = `${a.buyer_last_name} ${a.buyer_first_name}`
-        bVal = `${b.buyer_last_name} ${b.buyer_first_name}`
-        break
-      case 'seller':
-        aVal = `${a.seller_last_name || ''} ${a.seller_first_name || ''}`
-        bVal = `${b.seller_last_name || ''} ${b.seller_first_name || ''}`
-        break
-      case 'address':
-        aVal = a.property_address || ''
-        bVal = b.property_address || ''
+      case 'role':
+        aVal = a.transaction_type
+        bVal = b.transaction_type
         break
       case 'type':
         aVal = a.property_type
         bVal = b.property_type
         break
-      case 'status':
-        aVal = a.status
-        bVal = b.status
+      case 'client':
+        // Sort by client name (buyer for buyer_agency, seller for listing)
+        if (a.transaction_type === 'listing') {
+          aVal = `${a.seller_last_name || ''} ${a.seller_first_name || ''}`
+        } else {
+          aVal = `${a.buyer_last_name} ${a.buyer_first_name}`
+        }
+        if (b.transaction_type === 'listing') {
+          bVal = `${b.seller_last_name || ''} ${b.seller_first_name || ''}`
+        } else {
+          bVal = `${b.buyer_last_name} ${b.buyer_first_name}`
+        }
         break
-      case 'contract_date':
-        aVal = a.contract_date || ''
-        bVal = b.contract_date || ''
+      case 'address':
+        aVal = a.property_address || ''
+        bVal = b.property_address || ''
+        break
+      case 'county':
+        aVal = a.county || ''
+        bVal = b.county || ''
         break
       case 'price':
         aVal = a.purchase_price || 0
         bVal = b.purchase_price || 0
+        break
+      case 'settlement':
+        aVal = a.anticipated_closing_date || ''
+        bVal = b.anticipated_closing_date || ''
         break
       default:
         return 0
@@ -145,16 +156,9 @@ export default function TransactionsTable({
   }
 
   const roleLabels: Record<string, string> = {
-    listing: 'Listing Agent',
-    buyer_agency: 'Buyer\'s Agent',
-    limited_agency: 'Limited Agency',
-  }
-
-  const statusLabels: Record<string, string> = {
-    pending: 'Pending',
-    under_contract: 'Under Contract',
-    closed: 'Closed',
-    cancelled: 'Cancelled',
+    listing: 'Listing',
+    buyer_agency: 'Buyer',
+    limited_agency: 'Limited',
   }
 
   if (!filteredTransactions || filteredTransactions.length === 0) {
@@ -173,80 +177,75 @@ export default function TransactionsTable({
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               {userRole === 'broker' && <SortableHeader field="agent">Agent</SortableHeader>}
-              <SortableHeader field="buyer">Buyer</SortableHeader>
-              <SortableHeader field="seller">Seller</SortableHeader>
-              <th className="text-left px-4 py-3 text-sm font-medium">Role</th>
-              <SortableHeader field="address">Property</SortableHeader>
+              <SortableHeader field="role">Role</SortableHeader>
               <SortableHeader field="type">Type</SortableHeader>
-              <SortableHeader field="status">Status</SortableHeader>
-              <SortableHeader field="contract_date">Contract Date</SortableHeader>
-              <SortableHeader field="price">Price</SortableHeader>
+              <SortableHeader field="client">Client</SortableHeader>
+              <SortableHeader field="address">Address</SortableHeader>
+              <SortableHeader field="county">County</SortableHeader>
+              <SortableHeader field="price">Sales Price</SortableHeader>
+              <SortableHeader field="settlement">Settlement Deadline</SortableHeader>
               <th className="text-left px-4 py-3 text-sm font-medium">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {sortedTransactions.map((tx) => (
-              <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
-                {userRole === 'broker' && (
-                  <td className="px-4 py-3 text-sm">
-                    {tx.agents.last_name}, {tx.agents.first_name}
-                  </td>
-                )}
-                <td className="px-4 py-3 text-sm">
-                  {tx.buyer_last_name}, {tx.buyer_first_name}
-                </td>
-                <td className="px-4 py-3 text-sm">
-                  {tx.seller_last_name && tx.seller_first_name
+            {sortedTransactions.map((tx) => {
+              // Determine client name based on role
+              const clientName = tx.transaction_type === 'listing'
+                ? (tx.seller_last_name && tx.seller_first_name 
                     ? `${tx.seller_last_name}, ${tx.seller_first_name}`
-                    : <span className="text-gray-400">—</span>
-                  }
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-600">
-                  {roleLabels[tx.transaction_type] || tx.transaction_type}
-                </td>
-                <td className="px-4 py-3 text-sm">
-                  <div>{tx.property_address || <span className="text-gray-400">—</span>}</div>
-                  {tx.property_city && (
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {tx.property_city}, UT {tx.property_zip}
-                    </div>
+                    : '—')
+                : `${tx.buyer_last_name}, ${tx.buyer_first_name}`
+
+              return (
+                <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+                  {userRole === 'broker' && (
+                    <td className="px-4 py-3 text-sm">
+                      {tx.agents.last_name}, {tx.agents.first_name}
+                    </td>
                   )}
-                </td>
-                <td className="px-4 py-3 text-sm">
-                  {propTypeLabels[tx.property_type]}
-                </td>
-                <td className="px-4 py-3 text-sm">
-                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${
-                    tx.status === 'closed' ? 'bg-green-100 text-green-800' :
-                    tx.status === 'under_contract' ? 'bg-blue-100 text-blue-800' :
-                    tx.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {statusLabels[tx.status] || tx.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-600">
-                  {tx.contract_date 
-                    ? new Date(tx.contract_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                    : <span className="text-gray-400">—</span>
-                  }
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-900 font-medium">
-                  {tx.purchase_price 
-                    ? `$${tx.purchase_price.toLocaleString()}`
-                    : <span className="text-gray-400">—</span>
-                  }
-                </td>
-                <td className="px-4 py-3 text-sm">
-                  <Link
-                    href={`/dashboard/transactions/${tx.id}`}
-                    className="text-blue-600 hover:text-blue-800 font-medium"
-                  >
-                    View
-                  </Link>
-                </td>
-              </tr>
-            ))}
+                  <td className="px-4 py-3 text-sm">
+                    {roleLabels[tx.transaction_type] || tx.transaction_type}
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    {propTypeLabels[tx.property_type]}
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium">
+                    {clientName}
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    <div>{tx.property_address || <span className="text-gray-400">—</span>}</div>
+                    {tx.property_city && (
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {tx.property_city}, UT {tx.property_zip}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    {tx.county ? tx.county.replace(' County', '') : <span className="text-gray-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium">
+                    {tx.purchase_price 
+                      ? `$${tx.purchase_price.toLocaleString()}`
+                      : <span className="text-gray-400">—</span>
+                    }
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    {tx.anticipated_closing_date 
+                      ? new Date(tx.anticipated_closing_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                      : <span className="text-gray-400">—</span>
+                    }
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    <Link
+                      href={`/dashboard/transactions/${tx.id}`}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

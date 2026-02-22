@@ -25,6 +25,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       property_city: formData.get('property_city'),
       property_state: formData.get('property_state'),
       property_zip: formData.get('property_zip'),
+      county: formData.get('county') || null,
       property_type: formData.get('property_type'),
       transaction_type: formData.get('transaction_type'),
       contract_type: formData.get('contract_type'),
@@ -260,6 +261,45 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             required
             className="w-full px-3 py-2 border rounded-lg"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">County</label>
+          <select
+            name="county"
+            className="w-full px-3 py-2 border rounded-lg"
+          >
+            <option value="">Select county...</option>
+            <option value="Beaver County">Beaver</option>
+            <option value="Box Elder County">Box Elder</option>
+            <option value="Cache County">Cache</option>
+            <option value="Carbon County">Carbon</option>
+            <option value="Daggett County">Daggett</option>
+            <option value="Davis County">Davis</option>
+            <option value="Duchesne County">Duchesne</option>
+            <option value="Emery County">Emery</option>
+            <option value="Garfield County">Garfield</option>
+            <option value="Grand County">Grand</option>
+            <option value="Iron County">Iron</option>
+            <option value="Juab County">Juab</option>
+            <option value="Kane County">Kane</option>
+            <option value="Millard County">Millard</option>
+            <option value="Morgan County">Morgan</option>
+            <option value="Piute County">Piute</option>
+            <option value="Rich County">Rich</option>
+            <option value="Salt Lake County">Salt Lake</option>
+            <option value="San Juan County">San Juan</option>
+            <option value="Sanpete County">Sanpete</option>
+            <option value="Sevier County">Sevier</option>
+            <option value="Summit County">Summit</option>
+            <option value="Tooele County">Tooele</option>
+            <option value="Uintah County">Uintah</option>
+            <option value="Utah County">Utah</option>
+            <option value="Wasatch County">Wasatch</option>
+            <option value="Washington County">Washington</option>
+            <option value="Wayne County">Wayne</option>
+            <option value="Weber County">Weber</option>
+          </select>
         </div>
 
         <div className="grid grid-cols-3 gap-4">

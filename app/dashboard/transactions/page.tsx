@@ -31,13 +31,15 @@ export default async function TransactionsPage() {
       updated_at,
       contract_date,
       purchase_price,
+      anticipated_closing_date,
+      county,
       agent_id,
       agents (
         first_name,
         last_name
       )
     `)
-    .order('updated_at', { ascending: false })
+    .order('anticipated_closing_date', { ascending: true })
 
   if (userContext.role === 'broker') {
     // Brokers see all transactions for their brokerage
