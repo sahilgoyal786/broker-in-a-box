@@ -26,11 +26,11 @@ export default async function TransactionsPage() {
       property_zip,
       property_type,
       transaction_type,
-      agency_role,
       status,
       created_at,
       updated_at,
       contract_date,
+      purchase_price,
       agent_id,
       agents (
         first_name,
