@@ -185,6 +185,28 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           </div>
         )}
 
+        {/* Property Type - At Top */}
+        <div className="col-span-2">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Property Type *
+          </label>
+          <select
+            name="property_type"
+            required
+            value={propertyType}
+            onChange={(e) => setPropertyType(e.target.value)}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          >
+            <option value="">Select type...</option>
+            <option value="residential">Residential</option>
+            <option value="vacant_land">Vacant Land</option>
+            <option value="commercial">Commercial</option>
+            <option value="multi_unit">Multi-Unit</option>
+            <option value="farm">Farm</option>
+            <option value="residential_lease">Residential Lease</option>
+          </select>
+        </div>
+
         {/* Property Address */}
         <div className="col-span-2">
           <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -238,27 +260,6 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
             defaultValue={agencyAgreement?.property_zip || ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
           />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Property Type *
-          </label>
-          <select
-            name="property_type"
-            required
-            value={propertyType}
-            onChange={(e) => setPropertyType(e.target.value)}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          >
-            <option value="">Select type...</option>
-            <option value="residential">Residential</option>
-            <option value="vacant_land">Vacant Land</option>
-            <option value="commercial">Commercial</option>
-            <option value="multi_unit">Multi-Unit</option>
-            <option value="farm">Farm</option>
-            <option value="residential_lease">Residential Lease</option>
-          </select>
         </div>
 
         {/* County - All Property Types */}
