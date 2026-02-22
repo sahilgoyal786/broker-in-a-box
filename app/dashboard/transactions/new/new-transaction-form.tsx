@@ -46,14 +46,15 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       buyer_title_contact_name: formData.get('buyer_title_contact_name') || null,
       buyer_title_contact_email: formData.get('buyer_title_contact_email') || null,
       buyer_title_contact_phone: formData.get('buyer_title_contact_phone') || null,
-      inspection_deadline: formData.get('inspection_deadline') || null,
-      loan_approval_deadline: formData.get('loan_approval_deadline') || null,
-      appraisal_deadline: formData.get('appraisal_deadline') || null,
+      seller_disclosure_deadline: formData.get('seller_disclosure_deadline') || null,
+      due_diligence_deadline: formData.get('due_diligence_deadline') || null,
+      financing_appraisal_deadline: formData.get('financing_appraisal_deadline') || null,
+      settlement_deadline: formData.get('settlement_deadline') || null,
+      anticipated_closing_date: formData.get('settlement_deadline') || null,
       custom_deadline_1_label: formData.get('custom_deadline_1_label') || null,
       custom_deadline_1_date: formData.get('custom_deadline_1_date') || null,
       custom_deadline_2_label: formData.get('custom_deadline_2_label') || null,
       custom_deadline_2_date: formData.get('custom_deadline_2_date') || null,
-      anticipated_closing_date: formData.get('anticipated_closing_date') || null,
       buyer_first_name: formData.get('buyer_first_name'),
       buyer_last_name: formData.get('buyer_last_name'),
       buyer_email: formData.get('buyer_email') || null,
@@ -539,18 +540,18 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
         
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Inspection Deadline</label>
+            <label className="block text-sm font-medium mb-2">(a) Seller Disclosure Deadline</label>
             <input
               type="date"
-              name="inspection_deadline"
+              name="seller_disclosure_deadline"
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Loan Approval Deadline</label>
+            <label className="block text-sm font-medium mb-2">(b) Due Diligence Deadline</label>
             <input
               type="date"
-              name="loan_approval_deadline"
+              name="due_diligence_deadline"
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
@@ -558,18 +559,18 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Appraisal Deadline</label>
+            <label className="block text-sm font-medium mb-2">(c) Financing & Appraisal Deadline</label>
             <input
               type="date"
-              name="appraisal_deadline"
+              name="financing_appraisal_deadline"
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Settlement Deadline</label>
+            <label className="block text-sm font-medium mb-2">(d) Settlement Deadline</label>
             <input
               type="date"
-              name="anticipated_closing_date"
+              name="settlement_deadline"
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
