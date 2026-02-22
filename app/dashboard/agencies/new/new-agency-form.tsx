@@ -10,7 +10,6 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
   const [loading, setLoading] = useState(false)
   const [agreementType, setAgreementType] = useState(initialType || 'listing_agreement')
   const [selectedAgentId, setSelectedAgentId] = useState(currentAgentId || '')
-  const [propertyType, setPropertyType] = useState('residential')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -64,7 +63,7 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
       propertyType
     )
 
-    // If listing agreement, also create the listing with property details
+    // If listing agreement, also create the basic listing record
     if (agreementType === 'listing_agreement') {
       const listingData: any = {
         broker_id: brokerId,
@@ -83,24 +82,6 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
         seller_email: formData.get('client_email') || null,
         seller_phone: formData.get('client_phone') || null,
         status: 'active'
-      }
-
-      // Add property-type-specific fields
-      if (propertyType === 'residential') {
-        listingData.bedrooms = formData.get('bedrooms') || null
-        listingData.bathrooms = formData.get('bathrooms') || null
-        listingData.square_feet = formData.get('square_feet') || null
-        listingData.lot_size = formData.get('lot_size') || null
-        listingData.year_built = formData.get('year_built') || null
-      } else if (propertyType === 'vacant_land') {
-        listingData.lot_size_land = formData.get('lot_size_land') || null
-        listingData.zoning = formData.get('zoning') || null
-      } else if (propertyType === 'multi_unit') {
-        listingData.number_of_units = formData.get('number_of_units') || null
-        listingData.total_bedrooms = formData.get('total_bedrooms') || null
-        listingData.total_bathrooms = formData.get('total_bathrooms') || null
-      } else if (propertyType === 'commercial') {
-        listingData.commercial_use = formData.get('commercial_use') || null
       }
 
       const { error: listingError } = await supabase
@@ -162,8 +143,6 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
             <label className="block text-sm font-medium mb-2">Property Type</label>
             <select 
               name="property_type" 
-              value={propertyType}
-              onChange={(e) => setPropertyType(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
             >
               <option value="residential">Residential</option>
@@ -285,151 +264,6 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
               />
             </div>
           </div>
-
-          {/* Property Details - Conditional by Type */}
-          <h3 className="text-md font-semibold mt-4 pt-4 border-t">Property Details</h3>
-
-          {propertyType === 'residential' && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Bedrooms</label>
-                <input
-                  type="number"
-                  name="bedrooms"
-                  min="0"
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Bathrooms</label>
-                <input
-                  type="number"
-                  name="bathrooms"
-                  step="0.5"
-                  min="0"
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Square Feet</label>
-                <input
-                  type="number"
-                  name="square_feet"
-                  min="0"
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Lot Size</label>
-                <input
-                  type="text"
-                  name="lot_size"
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="0.25 acres"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Year Built</label>
-                <input
-                  type="number"
-                  name="year_built"
-                  min="1800"
-                  max={new Date().getFullYear()}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-            </div>
-          )}
-
-          {propertyType === 'vacant_land' && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Lot Size</label>
-                <input
-                  type="text"
-                  name="lot_size_land"
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="2.5 acres or 10,890 sq ft"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Zoning</label>
-                <select
-                  name="zoning"
-                  className="w-full px-3 py-2 border rounded-lg"
-                >
-                  <option value="">Select zoning...</option>
-                  <option value="Agricultural">Agricultural</option>
-                  <option value="Commercial">Commercial</option>
-                  <option value="Industrial">Industrial</option>
-                  <option value="Multi-Family">Multi-Family</option>
-                  <option value="Short Term Rental Allowed">Short Term Rental Allowed</option>
-                  <option value="Single-Family">Single-Family</option>
-                  <option value="See Remarks">See Remarks</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          {propertyType === 'multi_unit' && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Number of Units</label>
-                <input
-                  type="number"
-                  name="number_of_units"
-                  min="2"
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="e.g., 4"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Total Bedrooms</label>
-                <input
-                  type="number"
-                  name="total_bedrooms"
-                  min="0"
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="Across all units"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Total Bathrooms</label>
-                <input
-                  type="number"
-                  name="total_bathrooms"
-                  step="0.5"
-                  min="0"
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="Across all units"
-                />
-              </div>
-            </div>
-          )}
-
-          {propertyType === 'commercial' && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Commercial Use</label>
-                <select
-                  name="commercial_use"
-                  className="w-full px-3 py-2 border rounded-lg"
-                >
-                  <option value="">Select use...</option>
-                  <option value="Office">Office</option>
-                  <option value="Retail">Retail</option>
-                  <option value="Industrial">Industrial</option>
-                  <option value="Flex">Flex</option>
-                  <option value="Medical">Medical</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          {(propertyType === 'farm' || propertyType === 'residential_lease') && (
-            <p className="text-sm text-gray-500 italic">No additional property details required for this type.</p>
-          )}
         </div>
       )}
 
