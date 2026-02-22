@@ -81,13 +81,13 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
     router.push(`/dashboard/transactions/${transaction.id}`)
   }
 
-  const inputClass = 'w-full px-3 py-2 bg-slate-900 border border-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600'
-  const labelClass = 'block text-sm font-medium text-slate-300 mb-2'
+  const inputClass = 'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600'
+  const labelClass = 'block text-sm font-medium mb-2'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Transaction Type</h2>
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Transaction Type</h2>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -126,7 +126,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               ))}
             </select>
             {isAgent && (
-              <p className="text-xs text-slate-500 mt-1">Agents cannot reassign transactions</p>
+              <p className="text-xs text-gray-600 mt-1">Agents cannot reassign transactions</p>
             )}
           </div>
         </div>
@@ -142,16 +142,16 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
                 defaultChecked={transaction.limited_agency_disclosure_received}
               />
               <div>
-                <span className="text-sm font-medium text-orange-400">Limited Agency Disclosure and Agreement Received</span>
-                <p className="text-xs text-orange-300/70 mt-1">Disclosure must be signed and dated no later than the offer reference date</p>
+                <span className="text-sm font-medium text-orange-600">Limited Agency Disclosure and Agreement Received</span>
+                <p className="text-xs text-orange-600/70 mt-1">Disclosure must be signed and dated no later than the offer reference date</p>
               </div>
             </label>
           </div>
         )}
       </div>
 
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Property</h2>
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Property</h2>
         
         <div>
           <label className={labelClass}>Address</label>
@@ -249,8 +249,8 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
         </div>
       </div>
 
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Buyer</h2>
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Buyer</h2>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -297,8 +297,8 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
         </div>
       </div>
 
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Seller</h2>
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Seller</h2>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -343,8 +343,8 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
         </div>
       </div>
 
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">
           Cooperating Broker
         </h2>
         
@@ -394,8 +394,8 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
         </div>
       </div>
 
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">REPC Summary</h2>
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">REPC Summary</h2>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -409,7 +409,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               required
               defaultValue={transaction.offer_reference_date || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">REPC front page - before acceptance</p>
+            <p className="text-xs text-gray-600 mt-1">REPC front page - before acceptance</p>
           </div>
           <div>
             <label className={labelClass}>
@@ -422,7 +422,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               required
               defaultValue={transaction.contract_date || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">Date accepted/signed by all parties</p>
+            <p className="text-xs text-gray-600 mt-1">Date accepted/signed by all parties</p>
           </div>
         </div>
 
@@ -448,7 +448,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               placeholder="$"
               defaultValue={transaction.earnest_money_amount || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">Due within 4 days of contract date</p>
+            <p className="text-xs text-gray-600 mt-1">Due within 4 days of contract date</p>
           </div>
         </div>
 
@@ -467,7 +467,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
             <option value="listing_broker">Listing Broker</option>
             <option value="other">Other</option>
           </select>
-          <p className="text-xs text-slate-500 mt-1">Where the earnest money deposit is being held</p>
+          <p className="text-xs text-gray-600 mt-1">Where the earnest money deposit is being held</p>
         </div>
 
         {earnestMoneyLocation === 'other' && (
@@ -483,7 +483,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
         )}
 
-        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Seller's Title Company</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-3">Seller's Title Company</h3>
         
         <div>
           <label className={labelClass}>Company Name</label>
@@ -529,7 +529,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
         </div>
 
-        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Buyer's Title Company</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-3">Buyer's Title Company</h3>
         
         <div>
           <label className={labelClass}>Company Name</label>
@@ -575,7 +575,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
         </div>
 
-        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Section 24 Deadlines</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-3">Section 24 Deadlines</h3>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -586,7 +586,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               className={inputClass}
               defaultValue={transaction.seller_disclosure_deadline || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24(a)</p>
+            <p className="text-xs text-gray-600 mt-1">Section 24(a)</p>
           </div>
           <div>
             <label className={labelClass}>Due Diligence Deadline</label>
@@ -596,7 +596,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               className={inputClass}
               defaultValue={transaction.due_diligence_deadline || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24(b)</p>
+            <p className="text-xs text-gray-600 mt-1">Section 24(b)</p>
           </div>
           <div>
             <label className={labelClass}>Financing & Appraisal Deadline</label>
@@ -606,7 +606,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               className={inputClass}
               defaultValue={transaction.financing_appraisal_deadline || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24(c)</p>
+            <p className="text-xs text-gray-600 mt-1">Section 24(c)</p>
           </div>
           <div>
             <label className={labelClass}>
@@ -619,12 +619,12 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
               required
               defaultValue={transaction.settlement_deadline || ''}
             />
-            <p className="text-xs text-slate-500 mt-1">Section 24(d)</p>
+            <p className="text-xs text-gray-600 mt-1">Section 24(d)</p>
           </div>
         </div>
 
-        <h3 className="text-sm font-semibold text-slate-300 mt-6 mb-3">Additional Deadlines (Optional)</h3>
-        <p className="text-xs text-slate-500 mb-3">For contingencies in addendums or special conditions</p>
+        <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-3">Additional Deadlines (Optional)</h3>
+        <p className="text-xs text-gray-600 mb-3">For contingencies in addendums or special conditions</p>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -672,14 +672,14 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:text-blue-400 text-white font-semibold rounded-xl transition-colors"
+          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold rounded-lg transition-colors"
         >
           {loading ? 'Saving...' : 'Save Changes'}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-6 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors"
+          className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-colors"
         >
           Cancel
         </button>
