@@ -1,15 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { FileText, CheckCircle, Clock, AlertCircle, Users, GraduationCap } from 'lucide-react'
+import { getUserContext } from '@/lib/supabase/get-user-role'
+import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const userContext = await getUserContext()
+  
+  if (!userContext) redirect('/auth/login')
 
   const { data: broker } = await supabase
     .from('brokers')
     .select('id, name')
-    .eq('auth_user_id', user!.id)
+    .eq('id', userContext.brokerId)
     .single() as any
 
   // Stats
@@ -21,22 +25,22 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     // Listings pending (includes CTP review and cancellation review - still pending until approved)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
-      .eq('broker_id', broker?.id ?? '')
+      .eq('broker_id', userContext.brokerId)
       .eq('transaction_type', 'listing')
       .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation']),
     // Buyers pending (includes CTP review and cancellation review - still pending until approved)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
-      .eq('broker_id', broker?.id ?? '')
+      .eq('broker_id', userContext.brokerId)
       .in('transaction_type', ['buyer_agency', 'limited_agency'])
       .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation']),
     // Listings closed (only when office marks it closed)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
-      .eq('broker_id', broker?.id ?? '')
+      .eq('broker_id', userContext.brokerId)
       .eq('transaction_type', 'listing')
       .eq('status', 'closed'),
     // Buyers closed (only when office marks it closed)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
-      .eq('broker_id', broker?.id ?? '')
+      .eq('broker_id', userContext.brokerId)
       .in('transaction_type', ['buyer_agency', 'limited_agency'])
       .eq('status', 'closed'),
   ])
@@ -45,14 +49,14 @@ export default async function DashboardPage() {
   const { data: allListingAgreements } = await supabase
     .from('agency_agreements')
     .select('id')
-    .eq('broker_id', broker?.id ?? '')
+    .eq('broker_id', userContext.brokerId)
     .eq('agreement_type', 'listing_agreement')
     .eq('status', 'active') as any
 
   const { data: closedListings } = await supabase
     .from('transactions')
     .select('agency_agreement_id')
-    .eq('broker_id', broker?.id ?? '')
+    .eq('broker_id', userContext.brokerId)
     .eq('transaction_type', 'listing')
     .eq('status', 'closed')
     .not('agency_agreement_id', 'is', null) as any
@@ -64,14 +68,14 @@ export default async function DashboardPage() {
   const { data: allBuyerAgreements } = await supabase
     .from('agency_agreements')
     .select('id')
-    .eq('broker_id', broker?.id ?? '')
+    .eq('broker_id', userContext.brokerId)
     .eq('agreement_type', 'buyer_agency_agreement')
     .eq('status', 'active') as any
 
   const { data: closedBuyers } = await supabase
     .from('transactions')
     .select('agency_agreement_id')
-    .eq('broker_id', broker?.id ?? '')
+    .eq('broker_id', userContext.brokerId)
     .in('transaction_type', ['buyer_agency', 'limited_agency'])
     .eq('status', 'closed')
     .not('agency_agreement_id', 'is', null) as any
@@ -83,7 +87,7 @@ export default async function DashboardPage() {
   const { data: allAgents } = await supabase
     .from('agents')
     .select('id, license_expiration, mandatory_course_completed')
-    .eq('broker_id', broker?.id ?? '')
+    .eq('broker_id', userContext.brokerId)
     .eq('status', 'active') as any
 
   const ceNeedsAttention = allAgents?.filter((agent: any) => {
@@ -99,7 +103,7 @@ export default async function DashboardPage() {
   const { data: recentTransactions } = await supabase
     .from('transactions')
     .select('id, buyer_first_name, buyer_last_name, seller_first_name, seller_last_name, property_address, property_city, property_type, transaction_type, status, created_at')
-    .eq('broker_id', broker?.id ?? '')
+    .eq('broker_id', userContext.brokerId)
     .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
     .order('created_at', { ascending: false })
     .limit(5) as any
