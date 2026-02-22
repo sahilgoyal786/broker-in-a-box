@@ -201,6 +201,24 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
               <option value="Box Elder County">Box Elder County</option>
               <option value="Iron County">Iron County</option>
               <option value="Wasatch County">Wasatch County</option>
+              <option value="Carbon County">Carbon County</option>
+              <option value="Sanpete County">Sanpete County</option>
+              <option value="Sevier County">Sevier County</option>
+              <option value="Uintah County">Uintah County</option>
+              <option value="Duchesne County">Duchesne County</option>
+              <option value="Juab County">Juab County</option>
+              <option value="Millard County">Millard County</option>
+              <option value="Morgan County">Morgan County</option>
+              <option value="Grand County">Grand County</option>
+              <option value="Emery County">Emery County</option>
+              <option value="San Juan County">San Juan County</option>
+              <option value="Rich County">Rich County</option>
+              <option value="Beaver County">Beaver County</option>
+              <option value="Wayne County">Wayne County</option>
+              <option value="Piute County">Piute County</option>
+              <option value="Garfield County">Garfield County</option>
+              <option value="Kane County">Kane County</option>
+              <option value="Daggett County">Daggett County</option>
             </select>
           </div>
 
