@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { initializeAgencyCompliance } from '@/lib/compliance/initialize-agency-compliance'
+import { initializeAgencyCompliance, addLeadPaintDisclosure } from '@/lib/compliance/initialize-agency-compliance'
 
 export async function POST(
   request: NextRequest,
@@ -46,9 +46,27 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to create compliance items' }, { status: 500 })
   }
 
+  let totalItemsCreated = result.items?.length || 0
+
+  // Check if there's a linked listing with pre-1978 year built
+  if (agency.agreement_type === 'listing_agreement') {
+    const { data: listing } = await supabase
+      .from('listings')
+      .select('year_built')
+      .eq('agency_agreement_id', id)
+      .maybeSingle()
+
+    if (listing && listing.year_built && listing.year_built < 1978) {
+      const leadPaintResult = await addLeadPaintDisclosure(supabase, id, listing.year_built)
+      if (leadPaintResult.added) {
+        totalItemsCreated++
+      }
+    }
+  }
+
   return NextResponse.json({ 
     success: true,
-    itemsCreated: result.items?.length || 0,
+    itemsCreated: totalItemsCreated,
     items: result.items
   })
 }
