@@ -94,10 +94,16 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
       ? agencyAgreement.agent.id 
       : (role === 'agent' ? currentAgentId : formData.get('agent_id'))
 
+    const originalListPrice = parseFloat(formData.get('original_list_price') as string)
+    const currentListPrice = parseFloat(formData.get('current_list_price') as string)
+
     const { error: insertError} = await supabase
       .from('listings')
       .insert({
         broker_id: brokerId,
+        original_list_price: originalListPrice,
+        current_list_price: currentListPrice,
+        listing_price: currentListPrice, // Legacy field - keep in sync with current
         agent_id: agentId,
         agency_agreement_id: agencyAgreement?.id || null,
         property_address: formData.get('property_address'),
@@ -107,7 +113,6 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
         county: formData.get('county') || null,
         tax_id: formData.get('tax_id') || null,
         property_type: formData.get('property_type'),
-        listing_price: formData.get('listing_price'),
         mls_number: formData.get('mls_number') || null,
         listing_start_date: formData.get('listing_start_date'),
         listing_end_date: formData.get('listing_end_date'),
@@ -517,20 +522,36 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           <h3 className="text-lg font-bold mb-4 mt-6">Listing Information</h3>
         </div>
 
-        {/* Listing Price */}
+        {/* Listing Prices */}
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            Listing Price *
+            Original List Price *
           </label>
           <input
             type="number"
-            name="listing_price"
+            name="original_list_price"
             required
             step="0.01"
             defaultValue={agencyAgreement?.list_price || ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
             placeholder="500000"
           />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Current List Price *
+          </label>
+          <input
+            type="number"
+            name="current_list_price"
+            required
+            step="0.01"
+            defaultValue={agencyAgreement?.list_price || ''}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+            placeholder="500000"
+          />
+          <p className="text-xs text-gray-500 mt-1">Start with same as original, update if price reduced</p>
         </div>
 
         <div>

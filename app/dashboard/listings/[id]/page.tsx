@@ -64,20 +64,39 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
               <span className="font-semibold">Property Type:</span>
               <p className="capitalize">{listing.property_type.replace('_', ' ')}</p>
             </div>
-            <div>
-              <span className="font-semibold">List Price:</span>
-              <p className="text-xl font-bold text-green-600">
-                ${listing.listing_price?.toLocaleString()}
-              </p>
-            </div>
-            {listing.sales_price && (
-              <div>
-                <span className="font-semibold">Sales Price:</span>
-                <p className="text-xl font-bold text-blue-600">
-                  ${listing.sales_price.toLocaleString()}
-                </p>
+            <div className="col-span-2">
+              <h3 className="font-semibold text-lg mb-3 text-gray-700">Pricing</h3>
+              <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
+                <div>
+                  <span className="text-sm text-gray-600">Original List Price</span>
+                  <p className="text-lg font-bold text-gray-900">
+                    ${(listing.original_list_price || listing.listing_price)?.toLocaleString() || '—'}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-sm text-gray-600">Current List Price</span>
+                  <p className="text-lg font-bold text-green-600">
+                    ${(listing.current_list_price || listing.listing_price)?.toLocaleString() || '—'}
+                  </p>
+                  {listing.original_list_price && listing.current_list_price && listing.current_list_price !== listing.original_list_price && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {((listing.current_list_price / listing.original_list_price) * 100).toFixed(1)}% of original
+                    </p>
+                  )}
+                </div>
+                {listing.sales_price && (
+                  <div>
+                    <span className="text-sm text-gray-600">Sales Price</span>
+                    <p className="text-lg font-bold text-blue-600">
+                      ${listing.sales_price.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {(((listing.sales_price / (listing.current_list_price || listing.listing_price)) * 100).toFixed(1))}% of list
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
             <div>
               <span className="font-semibold">MLS Number:</span>
               <p>{listing.mls_number || '—'}</p>
