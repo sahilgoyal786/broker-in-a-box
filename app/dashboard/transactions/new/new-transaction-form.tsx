@@ -8,6 +8,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [earnestMoneyLocation, setEarnestMoneyLocation] = useState('')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -63,6 +64,10 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       seller_last_name: formData.get('seller_last_name'),
       seller_email: formData.get('seller_email') || null,
       seller_phone: formData.get('seller_phone') || null,
+      cooperating_brokerage: formData.get('cooperating_brokerage') || null,
+      cooperating_agent_name: formData.get('cooperating_agent_name') || null,
+      cooperating_agent_phone: formData.get('cooperating_agent_phone') || null,
+      cooperating_agent_email: formData.get('cooperating_agent_email') || null,
       status: 'pending',
       client_first_name: formData.get('buyer_first_name'), // Required field
       client_last_name: formData.get('buyer_last_name'), // Required field
@@ -263,6 +268,51 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-lg font-semibold border-b pb-2">Cooperating Broker</h2>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2">Brokerage Name</label>
+          <input
+            type="text"
+            name="cooperating_brokerage"
+            className="w-full px-3 py-2 border rounded-lg"
+            placeholder="e.g., Keller Williams Realty"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Agent Name</label>
+            <input
+              type="text"
+              name="cooperating_agent_name"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="e.g., John Smith"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Agent Phone</label>
+            <input
+              type="tel"
+              name="cooperating_agent_phone"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="(801) 555-1234"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Agent Email</label>
+          <input
+            type="email"
+            name="cooperating_agent_email"
+            className="w-full px-3 py-2 border rounded-lg"
+            placeholder="agent@example.com"
+          />
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-lg font-semibold border-b pb-2">Property Information</h2>
         
         <div>
@@ -401,6 +451,8 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           <select 
             name="earnest_money_location" 
             className="w-full px-3 py-2 border rounded-lg"
+            value={earnestMoneyLocation}
+            onChange={(e) => setEarnestMoneyLocation(e.target.value)}
           >
             <option value="">Select location...</option>
             <option value="buyer_title">Buyer's Title Company</option>
@@ -411,44 +463,48 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Held By (Company Name)</label>
-            <input
-              type="text"
-              name="earnest_money_held_by"
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="e.g., First American Title"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Contact Person</label>
-            <input
-              type="text"
-              name="earnest_money_contact_name"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-        </div>
+        {earnestMoneyLocation === 'other' && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Held By (Company Name)</label>
+                <input
+                  type="text"
+                  name="earnest_money_held_by"
+                  className="w-full px-3 py-2 border rounded-lg"
+                  placeholder="e.g., ABC Escrow Company"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Contact Person</label>
+                <input
+                  type="text"
+                  name="earnest_money_contact_name"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+            </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Contact Email</label>
-            <input
-              type="email"
-              name="earnest_money_contact_email"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Contact Phone</label>
-            <input
-              type="tel"
-              name="earnest_money_contact_phone"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-        </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Contact Email</label>
+                <input
+                  type="email"
+                  name="earnest_money_contact_email"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Contact Phone</label>
+                <input
+                  type="tel"
+                  name="earnest_money_contact_phone"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">

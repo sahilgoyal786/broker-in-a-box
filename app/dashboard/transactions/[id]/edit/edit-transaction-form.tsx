@@ -350,9 +350,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
 
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
         <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">
-          {agencyRole === 'listing_agent' ? "Buyer's Agent (Cooperating Broker)" : 
-           agencyRole === 'buyer_agent' ? "Listing Agent (Cooperating Broker)" :
-           "Other Agent (Cooperating Broker)"}
+          Cooperating Broker
         </h2>
         
         <div>
