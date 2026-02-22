@@ -51,8 +51,62 @@ export default async function AgenciesPage() {
 
   const { data: allAgreements } = await query
 
-  // Split into listings and buyer agreements
-  const listings = allAgreements?.filter(a => a.agreement_type === 'listing_agreement') || []
+  // Fetch listings from listings table (has county and mls_number)
+  let listingsQuery = supabase
+    .from('listings')
+    .select(`
+      id,
+      property_address,
+      property_city,
+      property_state,
+      county,
+      mls_number,
+      listing_price,
+      status,
+      listing_start_date,
+      listing_end_date,
+      seller_name,
+      agent:agents(first_name, last_name),
+      agency_agreement:agency_agreements!inner(
+        id,
+        client_first_name,
+        client_last_name
+      )
+    `)
+    .order('created_at', { ascending: false })
+
+  if (role === 'agent') {
+    const { data: agent } = await supabase
+      .from('agents')
+      .select('id')
+      .eq('email', user.email)
+      .single()
+    
+    if (agent) {
+      listingsQuery = listingsQuery.eq('agent_id', agent.id)
+    }
+  }
+
+  const { data: listingsData } = await listingsQuery
+
+  // Map listings data to match Agreement type
+  const listings = listingsData?.map(l => ({
+    id: l.agency_agreement?.id || l.id,
+    agreement_type: 'listing_agreement',
+    client_first_name: l.agency_agreement?.client_first_name || '',
+    client_last_name: l.agency_agreement?.client_last_name || '',
+    property_address: l.property_address,
+    property_city: l.property_city,
+    property_state: l.property_state,
+    county: l.county,
+    mls_number: l.mls_number,
+    list_price: l.listing_price,
+    status: l.status,
+    agreement_date: l.listing_start_date,
+    expiration_date: l.listing_end_date,
+    agent: l.agent
+  })) || []
+
   const buyerAgreements = allAgreements?.filter(a => a.agreement_type === 'buyer_agency_agreement') || []
 
   return (
