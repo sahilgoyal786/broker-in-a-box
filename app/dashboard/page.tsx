@@ -241,10 +241,10 @@ export default async function DashboardPage() {
             </p>
           </Link>
 
-          {/* Agents with Pending Sales */}
+          {/* Agents with U/C Sales */}
           <Link href="/dashboard/agents" className="bg-white rounded-lg border border-gray-200 shadow p-6 hover:border-gray-300 transition-colors">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">Agents with Pending Sales</p>
+              <p className="text-sm font-medium text-gray-600">Agents with U/C Sales</p>
               <Clock className="w-5 h-5 text-orange-600" />
             </div>
             <p className="text-3xl font-bold text-gray-900">{agentsWithPending}</p>
@@ -254,7 +254,7 @@ export default async function DashboardPage() {
           {/* Top 3 Agents */}
           <div className="bg-white rounded-lg border border-gray-200 shadow p-6">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-gray-600">Top Agents (Pending)</p>
+              <p className="text-sm font-medium text-gray-600">Top Agents (U/C)</p>
               <CheckCircle className="w-5 h-5 text-yellow-600" />
             </div>
             <div className="space-y-2">
@@ -268,7 +268,7 @@ export default async function DashboardPage() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-400">No pending sales yet</p>
+                <p className="text-sm text-gray-400">No deals under contract yet</p>
               )}
             </div>
           </div>
