@@ -12,7 +12,10 @@ type Agreement = {
   property_address?: string
   property_city?: string
   property_state?: string
+  property_zip?: string
+  county?: string
   list_price?: number
+  mls_number?: string
   status: string
   agreement_date: string
   expiration_date?: string
@@ -82,51 +85,52 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agent</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
               {activeTab === 'listings' && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property</th>
-              )}
-              {role === 'broker' && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agent</th>
+                <>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">County</th>
+                </>
               )}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agreement Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expires</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dates</th>
+              {activeTab === 'listings' && (
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MLS #</th>
+              )}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {agreements.map((agreement) => (
               <tr key={agreement.id}>
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  {agreement.agent.first_name} {agreement.agent.last_name}
+                </td>
                 <td className="px-6 py-4">
                   <div className="text-sm font-medium text-gray-900">
                     {agreement.client_last_name}, {agreement.client_first_name}
                   </div>
                 </td>
                 {activeTab === 'listings' && (
-                  <td className="px-6 py-4">
-                    {agreement.property_address ? (
-                      <div>
-                        <div className="text-sm text-gray-900">{agreement.property_address}</div>
-                        <div className="text-sm text-gray-500">
-                          {agreement.property_city && `${agreement.property_city}, `}
-                          {agreement.property_state || 'UT'}
-                        </div>
-                        {agreement.list_price && (
+                  <>
+                    <td className="px-6 py-4">
+                      {agreement.property_address ? (
+                        <div>
+                          <div className="text-sm text-gray-900">{agreement.property_address}</div>
                           <div className="text-sm text-gray-500">
-                            ${agreement.list_price.toLocaleString()}
+                            {agreement.property_city && `${agreement.property_city}, `}
+                            {agreement.property_state || 'UT'}
                           </div>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-sm text-gray-400">—</span>
-                    )}
-                  </td>
-                )}
-                {role === 'broker' && (
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {agreement.agent.first_name} {agreement.agent.last_name}
-                  </td>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-400">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {agreement.county ? agreement.county.replace(' County', '') : '—'}
+                    </td>
+                  </>
                 )}
                 <td className="px-6 py-4">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -138,14 +142,18 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
-                  {new Date(agreement.agreement_date).toLocaleDateString()}
+                  <div>{new Date(agreement.agreement_date).toLocaleDateString()}</div>
+                  {agreement.expiration_date && (
+                    <div className="text-xs text-gray-400">
+                      exp {new Date(agreement.expiration_date).toLocaleDateString()}
+                    </div>
+                  )}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  {agreement.expiration_date 
-                    ? new Date(agreement.expiration_date).toLocaleDateString()
-                    : '—'
-                  }
-                </td>
+                {activeTab === 'listings' && (
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {agreement.mls_number || '—'}
+                  </td>
+                )}
                 <td className="px-6 py-4 text-sm">
                   <Link
                     href={`/dashboard/agencies/${agreement.id}`}
@@ -158,7 +166,7 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
             ))}
             {agreements.length === 0 && (
               <tr>
-                <td colSpan={activeTab === 'listings' ? (role === 'broker' ? 7 : 6) : (role === 'broker' ? 6 : 5)} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={activeTab === 'listings' ? 8 : 5} className="px-6 py-8 text-center text-gray-500">
                   No {activeTab === 'listings' ? 'listings' : 'buyer agreements'} yet. Click the button above to create one.
                 </td>
               </tr>

@@ -34,6 +34,7 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
     // Only include property info for listing agreements
     if (agreementType === 'listing_agreement') {
       data.property_address = formData.get('property_address')
+      data.county = formData.get('county') || null
       data.property_city = formData.get('property_city')
       data.property_state = formData.get('property_state')
       data.property_zip = formData.get('property_zip')
@@ -225,6 +226,42 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="Required if no street address"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">County</label>
+            <select name="county" className="w-full px-3 py-2 border rounded-lg">
+              <option value="">Select county...</option>
+              <option value="Salt Lake County">Salt Lake County</option>
+              <option value="Utah County">Utah County</option>
+              <option value="Davis County">Davis County</option>
+              <option value="Weber County">Weber County</option>
+              <option value="Washington County">Washington County</option>
+              <option value="Summit County">Summit County</option>
+              <option value="Cache County">Cache County</option>
+              <option value="Tooele County">Tooele County</option>
+              <option value="Box Elder County">Box Elder County</option>
+              <option value="Iron County">Iron County</option>
+              <option value="Wasatch County">Wasatch County</option>
+              <option value="Carbon County">Carbon County</option>
+              <option value="Sanpete County">Sanpete County</option>
+              <option value="Sevier County">Sevier County</option>
+              <option value="Uintah County">Uintah County</option>
+              <option value="Duchesne County">Duchesne County</option>
+              <option value="Juab County">Juab County</option>
+              <option value="Millard County">Millard County</option>
+              <option value="Morgan County">Morgan County</option>
+              <option value="Grand County">Grand County</option>
+              <option value="Emery County">Emery County</option>
+              <option value="San Juan County">San Juan County</option>
+              <option value="Rich County">Rich County</option>
+              <option value="Beaver County">Beaver County</option>
+              <option value="Wayne County">Wayne County</option>
+              <option value="Piute County">Piute County</option>
+              <option value="Garfield County">Garfield County</option>
+              <option value="Kane County">Kane County</option>
+              <option value="Daggett County">Daggett County</option>
+            </select>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
