@@ -23,6 +23,8 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       transaction_type: formData.get('transaction_type'),
       property_type: formData.get('property_type'),
       limited_agency_disclosure_received: formData.get('limited_agency_disclosure_received') === 'on',
+      client_first_name: formData.get('buyer_first_name'),
+      client_last_name: formData.get('buyer_last_name'),
       property_address: formData.get('property_address'),
       property_city: formData.get('property_city'),
       property_state: formData.get('property_state'),
@@ -87,15 +89,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
         <h2 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">Transaction Type</h2>
         
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className={labelClass}>Transaction</label>
-            <select name="transaction_type" className={inputClass} required defaultValue={transaction.transaction_type}>
-              <option value="purchase">Purchase</option>
-              <option value="lease">Lease</option>
-            </select>
-          </div>
-
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Your Role</label>
             <select 

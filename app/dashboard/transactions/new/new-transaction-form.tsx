@@ -29,8 +29,9 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       county: formData.get('county') || null,
       property_type: formData.get('property_type'),
       transaction_type: formData.get('transaction_type'),
-      contract_type: formData.get('contract_type'),
       offer_reference_date: formData.get('offer_reference_date') || null,
+      client_first_name: formData.get('buyer_first_name'),
+      client_last_name: formData.get('buyer_last_name'),
       contract_date: formData.get('contract_date'),
       purchase_price: formData.get('purchase_price') || null,
       earnest_money_amount: formData.get('earnest_money_amount') || null,
@@ -156,19 +157,6 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             <option value="multi_unit">Multi-Unit</option>
             <option value="farm">Farm</option>
             <option value="residential_lease">Residential Lease</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Contract Type</label>
-          <select 
-            name="contract_type" 
-            required
-            className="w-full px-3 py-2 border rounded-lg"
-          >
-            <option value="">Select type...</option>
-            <option value="purchase">Purchase</option>
-            <option value="lease">Lease</option>
           </select>
         </div>
       </div>
