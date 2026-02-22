@@ -40,6 +40,7 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
       data.property_type = formData.get('property_type')
       data.list_price = formData.get('list_price') || null
       data.tax_id = formData.get('tax_id') || null
+      data.mls_number = formData.get('mls_number') || null
     }
 
     const { data: agency, error } = await supabase
@@ -75,6 +76,7 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
         property_zip: formData.get('property_zip'),
         property_type: formData.get('property_type'),
         tax_id: formData.get('tax_id') || null,
+        mls_number: formData.get('mls_number') || null,
         listing_price: formData.get('list_price'),
         listing_start_date: formData.get('agreement_date'),
         listing_end_date: formData.get('expiration_date') || null,
@@ -255,14 +257,24 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">List Price</label>
+              <label className="block text-sm font-medium mb-2">MLS Number</label>
               <input
-                type="number"
-                name="list_price"
-                step="0.01"
+                type="text"
+                name="mls_number"
                 className="w-full px-3 py-2 border rounded-lg"
+                placeholder="Optional"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">List Price</label>
+            <input
+              type="number"
+              name="list_price"
+              step="0.01"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
           </div>
         </div>
       )}
