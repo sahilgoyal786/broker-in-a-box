@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Home, Users, ChevronUp, ChevronDown } from 'lucide-react'
+import AgencyFilters from './agency-filters'
 
 type Agreement = {
   id: string
   agreement_type: string
+  agent_id?: string
   client_first_name: string
   client_last_name: string
   property_address?: string
@@ -30,12 +32,66 @@ type Props = {
   listings: Agreement[]
   buyerAgreements: Agreement[]
   role: string
+  agents?: Array<{ id: string; first_name: string; last_name: string }>
 }
 
-export default function AgenciesTabs({ listings, buyerAgreements, role }: Props) {
+export default function AgenciesTabs({ listings, buyerAgreements, role, agents }: Props) {
   const [activeTab, setActiveTab] = useState<'listings' | 'buyers'>('listings')
   const [sortField, setSortField] = useState<string>('agreement_date')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+  const [filters, setFilters] = useState<any>({})
+  const [filteredListings, setFilteredListings] = useState(listings)
+  const [filteredBuyerAgreements, setFilteredBuyerAgreements] = useState(buyerAgreements)
+
+  // Apply filters whenever they change or data changes
+  useEffect(() => {
+    const applyFilters = (agreements: Agreement[]) => {
+      let filtered = agreements
+
+      if (filters.agent) {
+        filtered = filtered.filter(a => a.agent_id === filters.agent)
+      }
+
+      if (filters.client) {
+        const clientSearch = filters.client.toLowerCase()
+        filtered = filtered.filter(a => 
+          `${a.client_first_name} ${a.client_last_name}`.toLowerCase().includes(clientSearch)
+        )
+      }
+
+      if (filters.city) {
+        const citySearch = filters.city.toLowerCase()
+        filtered = filtered.filter(a => 
+          a.property_city?.toLowerCase().includes(citySearch)
+        )
+      }
+
+      if (filters.county) {
+        filtered = filtered.filter(a => a.county === filters.county)
+      }
+
+      if (filters.status) {
+        filtered = filtered.filter(a => a.status === filters.status)
+      }
+
+      if (filters.dateFrom) {
+        filtered = filtered.filter(a => 
+          a.agreement_date && a.agreement_date >= filters.dateFrom
+        )
+      }
+
+      if (filters.dateTo) {
+        filtered = filtered.filter(a => 
+          a.agreement_date && a.agreement_date <= filters.dateTo
+        )
+      }
+
+      return filtered
+    }
+
+    setFilteredListings(applyFilters(listings))
+    setFilteredBuyerAgreements(applyFilters(buyerAgreements))
+  }, [filters, listings, buyerAgreements])
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -46,7 +102,7 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
     }
   }
 
-  const sortedAgreements = [...(activeTab === 'listings' ? listings : buyerAgreements)].sort((a, b) => {
+  const sortedAgreements = [...(activeTab === 'listings' ? filteredListings : filteredBuyerAgreements)].sort((a, b) => {
     let aVal: any = a[sortField as keyof Agreement]
     let bVal: any = b[sortField as keyof Agreement]
 
@@ -101,7 +157,7 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
               <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
                 activeTab === 'listings' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
               }`}>
-                {listings.length}
+                {filteredListings.length}
               </span>
             </div>
           </button>
@@ -119,15 +175,25 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
               <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
                 activeTab === 'buyers' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
               }`}>
-                {buyerAgreements.length}
+                {filteredBuyerAgreements.length}
               </span>
             </div>
           </button>
         </nav>
       </div>
 
-      {/* Table */}
+      {/* Filters and Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
+        {/* Filters */}
+        <AgencyFilters
+          options={{
+            agents: agents || [],
+            showAgentFilter: role === 'broker'
+          }}
+          onFilterChange={setFilters}
+        />
+
+        {/* Table */}
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -256,8 +322,14 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
             ))}
             {sortedAgreements.length === 0 && (
               <tr>
-                <td colSpan={activeTab === 'listings' ? 9 : 5} className="px-6 py-8 text-center text-gray-500">
-                  No {activeTab === 'listings' ? 'listings' : 'buyer agreements'} yet. Click the button above to create one.
+                <td colSpan={activeTab === 'listings' ? 9 : 5} className="px-6 py-8 text-center">
+                  <p className="text-gray-600">No {activeTab === 'listings' ? 'listings' : 'buyer agreements'} found</p>
+                  <p className="text-gray-400 text-sm mt-1">
+                    {(activeTab === 'listings' ? listings.length : buyerAgreements.length) > 0 
+                      ? 'Try adjusting your filters'
+                      : 'Click the button above to create one'
+                    }
+                  </p>
                 </td>
               </tr>
             )}

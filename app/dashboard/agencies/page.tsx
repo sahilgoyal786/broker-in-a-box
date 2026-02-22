@@ -20,6 +20,7 @@ export default async function AgenciesPage() {
     .select(`
       id,
       agreement_type,
+      agent_id,
       client_first_name,
       client_last_name,
       property_address,
@@ -56,6 +57,7 @@ export default async function AgenciesPage() {
     .from('listings')
     .select(`
       id,
+      agent_id,
       property_address,
       property_city,
       property_state,
@@ -94,6 +96,7 @@ export default async function AgenciesPage() {
   const listings = listingsData?.map(l => ({
     id: l.agency_agreement?.id || l.id,
     agreement_type: 'listing_agreement',
+    agent_id: l.agent_id,
     client_first_name: l.agency_agreement?.client_first_name || '',
     client_last_name: l.agency_agreement?.client_last_name || '',
     property_address: l.property_address,
@@ -110,6 +113,19 @@ export default async function AgenciesPage() {
   })) || []
 
   const buyerAgreements = allAgreements?.filter(a => a.agreement_type === 'buyer_agency_agreement') || []
+
+  // Get list of agents for broker filter
+  let agents: any[] = []
+  if (role === 'broker') {
+    const { data: agentsList } = await supabase
+      .from('agents')
+      .select('id, first_name, last_name')
+      .eq('broker_id', userContext.brokerId)
+      .eq('active', true)
+      .order('last_name', { ascending: true })
+    
+    agents = agentsList ?? []
+  }
 
   return (
     <div className="p-8">
@@ -135,6 +151,7 @@ export default async function AgenciesPage() {
         listings={listings} 
         buyerAgreements={buyerAgreements}
         role={role}
+        agents={agents}
       />
     </div>
   )
