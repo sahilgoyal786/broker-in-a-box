@@ -64,14 +64,12 @@ CREATE OR REPLACE FUNCTION populate_transaction_compliance()
 RETURNS TRIGGER AS $$
 DECLARE
   prop_type TEXT;
-  trans_role TEXT;
-  year_built_value INTEGER;
+  trans_type TEXT;
   sort_counter INTEGER := 0;
 BEGIN
-  -- Get property type and transaction role
+  -- Get property type and transaction type
   prop_type := NEW.property_type;
-  trans_role := NEW.transaction_role;
-  year_built_value := NEW.year_built;
+  trans_type := NEW.transaction_type;
 
   -- Skip farm and residential_lease (no compliance requirements)
   IF prop_type IN ('farm', 'residential_lease') THEN
@@ -104,22 +102,16 @@ BEGIN
   INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
   VALUES (NEW.id, 'CONFIRMATION OF RECEIPT OF EARNEST MONEY', 'pdf_auto', true, sort_counter);
 
-  -- Buyer-side forms (buyer_agency and limited_agency roles only)
+  -- Buyer-side forms (buyer_agency and limited_agency types only)
   -- Listing agents don't handle earnest money deposit - that's the buyer's agent's job
-  IF trans_role IN ('buyer_agency', 'limited_agency') THEN
+  IF trans_type IN ('buyer_agency', 'limited_agency') THEN
     sort_counter := sort_counter + 1;
     INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
     VALUES (NEW.id, 'Earnest Money Deposit Receipt', 'manual_upload', true, sort_counter);
   END IF;
 
-  -- Lead paint disclosure for pre-1978 residential/multi-unit properties
-  IF prop_type IN ('residential', 'mobile_home', 'multi_unit') 
-     AND year_built_value IS NOT NULL 
-     AND year_built_value < 1978 THEN
-    sort_counter := sort_counter + 1;
-    INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
-    VALUES (NEW.id, 'DISCLOSURE & ACKNOWLEDGEMENT REGARDING LEAD-BASED PAINT AND/OR LEAD-BASED PAINT HAZARDS SIGNED BY BUYER', 'pdf_auto', false, sort_counter);
-  END IF;
+  -- TODO: Add lead paint disclosure for pre-1978 residential/multi-unit properties
+  -- Need to add year_built field to transactions table first
 
   RETURN NEW;
 END;
@@ -132,13 +124,12 @@ CREATE TRIGGER trigger_populate_transaction_compliance
   FOR EACH ROW
   EXECUTE FUNCTION populate_transaction_compliance();
 
--- Also handle updates (if property_type or year_built changes)
+-- Also handle updates (if property_type changes)
 CREATE OR REPLACE FUNCTION update_transaction_compliance()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- If property type or year built changed, regenerate compliance items
-  IF OLD.property_type IS DISTINCT FROM NEW.property_type 
-     OR OLD.year_built IS DISTINCT FROM NEW.year_built THEN
+  -- If property type changed, regenerate compliance items
+  IF OLD.property_type IS DISTINCT FROM NEW.property_type THEN
     
     -- Delete existing items
     DELETE FROM transaction_compliance_items WHERE transaction_id = NEW.id;
@@ -148,7 +139,6 @@ BEGIN
   END IF;
   
   RETURN NEW;
-END;
 $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS trigger_update_transaction_compliance ON transactions;
