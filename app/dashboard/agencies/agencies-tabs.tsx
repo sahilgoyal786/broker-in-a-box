@@ -90,9 +90,9 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
               {activeTab === 'listings' && (
                 <>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">County</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                 </>
               )}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -116,6 +116,9 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
                 </td>
                 {activeTab === 'listings' && (
                   <>
+                    <td className="px-6 py-4 text-sm text-gray-500 capitalize">
+                      {agreement.property_type ? agreement.property_type.replace(/_/g, ' ') : '—'}
+                    </td>
                     <td className="px-6 py-4">
                       {agreement.property_address ? (
                         <div>
@@ -131,9 +134,6 @@ export default function AgenciesTabs({ listings, buyerAgreements, role }: Props)
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {agreement.county ? agreement.county.replace(' County', '') : '—'}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 capitalize">
-                      {agreement.property_type ? agreement.property_type.replace(/_/g, ' ') : '—'}
                     </td>
                   </>
                 )}
