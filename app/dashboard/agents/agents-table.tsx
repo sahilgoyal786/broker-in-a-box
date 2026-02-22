@@ -274,43 +274,43 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <div className="flex flex-col gap-1 text-sm">
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-gray-600">COE:</span>
+                    <div className="flex flex-col gap-1 text-sm items-center">
+                      <div className="flex items-center gap-1">
+                        <span className="text-gray-600 w-8 text-right">COE:</span>
                         {agent.nar_code_of_ethics_date ? (
                           agent.nar_code_of_ethics_cert_url ? (
                             <a 
                               href={agent.nar_code_of_ethics_cert_url} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-green-600 font-semibold hover:text-green-700"
+                              className="text-green-600 font-semibold hover:text-green-700 w-3"
                             >
                               Y
                             </a>
                           ) : (
-                            <span className="text-green-600 font-semibold">Y</span>
+                            <span className="text-green-600 font-semibold w-3">Y</span>
                           )
                         ) : (
-                          <span className="text-red-600 font-semibold">N</span>
+                          <span className="text-red-600 font-semibold w-3">N</span>
                         )}
                       </div>
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-gray-600">FH:</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-gray-600 w-8 text-right">FH:</span>
                         {agent.nar_fair_housing_date ? (
                           agent.nar_fair_housing_cert_url ? (
                             <a 
                               href={agent.nar_fair_housing_cert_url} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-green-600 font-semibold hover:text-green-700"
+                              className="text-green-600 font-semibold hover:text-green-700 w-3"
                             >
                               Y
                             </a>
                           ) : (
-                            <span className="text-green-600 font-semibold">Y</span>
+                            <span className="text-green-600 font-semibold w-3">Y</span>
                           )
                         ) : (
-                          <span className="text-red-600 font-semibold">N</span>
+                          <span className="text-red-600 font-semibold w-3">N</span>
                         )}
                       </div>
                     </div>

@@ -62,20 +62,7 @@ export default function ComplianceChecklist({
   }
 
   return (
-    <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-white">Agency Compliance Checklist</h2>
-        <div className="text-sm">
-          <span className="text-white font-semibold">{completeCount} of {totalCount}</span>
-          <span className="text-slate-400 ml-1">forms complete</span>
-          {missingRequired > 0 && (
-            <span className="ml-3 text-red-400 font-semibold">
-              {missingRequired} missing 🚨
-            </span>
-          )}
-        </div>
-      </div>
-
+    <div className="space-y-3">
       <div className="space-y-3">
         {checklist.map(item => (
           <div 
@@ -83,12 +70,12 @@ export default function ComplianceChecklist({
             className={`
               flex items-start gap-3 p-3 rounded-lg border
               ${item.is_complete 
-                ? 'bg-slate-900/50 border-green-900/30' 
+                ? 'bg-green-50 border-green-200' 
                 : item.is_required 
-                  ? 'bg-slate-900/50 border-red-900/30'
-                  : 'bg-slate-900/50 border-slate-700'
+                  ? 'bg-red-50 border-red-200'
+                  : 'bg-gray-50 border-gray-200'
               }
-              ${canEdit ? 'cursor-pointer hover:bg-slate-900' : 'cursor-default'}
+              ${canEdit ? 'cursor-pointer hover:shadow-sm' : 'cursor-default'}
               ${updating === item.id ? 'opacity-50' : ''}
             `}
             onClick={() => canEdit && toggleItem(item.id, item.is_complete)}
@@ -96,12 +83,12 @@ export default function ComplianceChecklist({
             {/* Checkbox */}
             <div className="flex-shrink-0 mt-0.5">
               {item.is_complete ? (
-                <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               ) : (
                 <div className={`w-5 h-5 border-2 rounded ${
-                  item.is_required ? 'border-red-500' : 'border-slate-500'
+                  item.is_required ? 'border-red-500' : 'border-gray-400'
                 }`} />
               )}
             </div>
@@ -109,24 +96,24 @@ export default function ComplianceChecklist({
             {/* Form name */}
             <div className="flex-1">
               <p className={`text-sm font-medium ${
-                item.is_complete ? 'text-slate-400 line-through' : 'text-white'
+                item.is_complete ? 'text-gray-500 line-through' : 'text-gray-900'
               }`}>
                 {item.form_name}
               </p>
               
               {item.is_required && !item.is_complete && (
-                <p className="text-xs text-red-400 mt-1">
+                <p className="text-xs text-red-600 mt-1">
                   🚨 Required
                 </p>
               )}
 
               {item.is_complete && item.completed_at && (
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   Completed {new Date(item.completed_at).toLocaleDateString()}
                 </p>
               )}
 
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 {item.tracking_type === 'manual_checkbox' ? 'Manual checkbox' :
                  item.tracking_type === 'pdf_auto' ? 'Auto-detected from email' :
                  item.tracking_type === 'manual_upload' ? 'Manual upload' : item.tracking_type}
@@ -137,7 +124,7 @@ export default function ComplianceChecklist({
       </div>
 
       {!canEdit && (
-        <p className="text-xs text-slate-500 mt-4 text-center">
+        <p className="text-xs text-gray-500 mt-4 text-center">
           View only - contact your broker to update compliance status
         </p>
       )}
