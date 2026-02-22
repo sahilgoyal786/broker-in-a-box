@@ -147,8 +147,8 @@ export default async function DashboardPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-slate-400 mt-1">Welcome back, {broker?.name}</p>
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-600 mt-1">Welcome back, {broker?.name}</p>
       </div>
 
       {/* Stats */}
@@ -160,15 +160,15 @@ export default async function DashboardPage() {
             <Link 
               key={label} 
               href={href} 
-              className={`rounded-xl p-6 border transition-colors ${
+              className={`rounded-lg p-6 border transition-colors shadow ${
                 highlighted 
-                  ? 'bg-slate-700 border-slate-600 hover:border-slate-500 ring-1 ring-slate-600' 
-                  : 'bg-slate-800 border-slate-700 hover:border-slate-600'
+                  ? 'bg-blue-50 border-blue-200 hover:border-blue-300' 
+                  : 'bg-white border-gray-200 hover:border-gray-300'
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <p className={`text-sm font-medium ${highlighted ? 'text-slate-200' : 'text-slate-400'}`}>{label}</p>
-                <Icon className={`w-5 h-5 ${color}`} />
+                <p className={`text-sm font-medium ${highlighted ? 'text-gray-700' : 'text-gray-600'}`}>{label}</p>
+                <Icon className={`w-5 h-5 ${color.replace('text-', 'text-')}`} />
               </div>
               
               {split && rows ? (
@@ -176,14 +176,14 @@ export default async function DashboardPage() {
                 <div className="space-y-2">
                   {rows.map((row: any, idx: number) => (
                     <div key={idx} className="flex items-baseline justify-between">
-                      <span className="text-sm text-slate-400">{row.label}</span>
-                      <span className="text-2xl font-bold text-white">{row.value}</span>
+                      <span className="text-sm text-gray-600">{row.label}</span>
+                      <span className="text-2xl font-bold text-gray-900">{row.value}</span>
                     </div>
                   ))}
                 </div>
               ) : (
                 // Regular single value card
-                <p className="text-3xl font-bold text-white">{value}</p>
+                <p className="text-3xl font-bold text-gray-900">{value}</p>
               )}
             </Link>
           )
@@ -191,15 +191,15 @@ export default async function DashboardPage() {
       </div>
 
       {/* Active Deals */}
-      <div className="bg-slate-800 rounded-xl border border-slate-700">
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+      <div className="bg-white rounded-lg border border-gray-200 shadow">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
-            <h2 className="text-white font-semibold">Active Deals</h2>
-            <p className="text-slate-400 text-sm mt-0.5">Under contract or in review</p>
+            <h2 className="text-gray-900 font-semibold">Active Deals</h2>
+            <p className="text-gray-600 text-sm mt-0.5">Under contract or in review</p>
           </div>
           <Link
             href="/dashboard/transactions"
-            className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+            className="text-blue-600 hover:text-blue-700 text-sm transition-colors"
           >
             View all →
           </Link>
@@ -207,12 +207,12 @@ export default async function DashboardPage() {
 
         {!recentTransactions || recentTransactions.length === 0 ? (
           <div className="p-12 text-center">
-            <AlertCircle className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400">No active deals</p>
-            <p className="text-slate-500 text-sm mt-2">Transactions under contract or in review will appear here</p>
+            <AlertCircle className="w-8 h-8 text-gray-400 mx-auto mb-3" />
+            <p className="text-gray-600">No active deals</p>
+            <p className="text-gray-500 text-sm mt-2">Transactions under contract or in review will appear here</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-700">
+          <div className="divide-y divide-gray-200">
             {recentTransactions.map((tx: any) => {
               // Client = whoever we represent
               const clientFirstName = tx.agency_role === 'listing_agent' ? tx.seller_first_name : tx.buyer_first_name
@@ -223,13 +223,13 @@ export default async function DashboardPage() {
                 <Link
                   key={tx.id}
                   href={`/dashboard/transactions/${tx.id}`}
-                  className="flex items-center justify-between p-4 hover:bg-slate-700/50 transition-colors"
+                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
                 >
                   <div>
-                    <p className="text-white font-medium text-sm">
+                    <p className="text-gray-900 font-medium text-sm">
                       {clientLastName}, {clientFirstName}
                     </p>
-                    <p className="text-slate-400 text-xs mt-0.5">
+                    <p className="text-gray-600 text-xs mt-0.5">
                       {tx.property_address ?? 'No address'} {tx.property_city && `· ${tx.property_city}`} · {roleLabel} Side
                     </p>
                   </div>
