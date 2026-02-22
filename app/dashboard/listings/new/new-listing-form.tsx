@@ -317,136 +317,9 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           />
         </div>
 
-        {/* Listing Price */}
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Listing Price *
-          </label>
-          <input
-            type="number"
-            name="listing_price"
-            required
-            step="0.01"
-            defaultValue={agencyAgreement?.list_price || ''}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-            placeholder="500000"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            MLS Number (if published)
-          </label>
-          <input
-            type="text"
-            name="mls_number"
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
-
-        {/* Listing Period */}
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Listing Start Date *
-          </label>
-          <input
-            type="date"
-            name="listing_start_date"
-            required
-            defaultValue={agencyAgreement?.agreement_date ? agencyAgreement.agreement_date.split('T')[0] : ''}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Listing End Date *
-          </label>
-          <input
-            type="date"
-            name="listing_end_date"
-            required
-            defaultValue={agencyAgreement?.expiration_date ? agencyAgreement.expiration_date.split('T')[0] : ''}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
-
-        {/* Commission */}
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Total Commission %
-          </label>
-          <input
-            type="number"
-            name="commission_percentage"
-            step="0.01"
-            min="0"
-            max="100"
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-            placeholder="6.00"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Buyer Agent Commission %
-          </label>
-          <input
-            type="number"
-            name="buyer_agent_commission_percentage"
-            step="0.01"
-            min="0"
-            max="100"
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-            placeholder="3.00"
-          />
-        </div>
-
-        {/* Seller Information */}
+        {/* Property Details Header */}
         <div className="col-span-2">
-          <h3 className="text-lg font-bold mb-4 mt-6">Seller Information</h3>
-        </div>
-
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Seller Name *
-          </label>
-          <input
-            type="text"
-            name="seller_name"
-            required
-            defaultValue={agencyAgreement ? `${agencyAgreement.client_first_name} ${agencyAgreement.client_last_name}` : ''}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Seller Email
-          </label>
-          <input
-            type="email"
-            name="seller_email"
-            defaultValue={agencyAgreement?.client_email || ''}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Seller Phone
-          </label>
-          <input
-            type="tel"
-            name="seller_phone"
-            defaultValue={agencyAgreement?.client_phone || ''}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
-
-        {/* Property Details - Conditional Based on Property Type */}
-        <div className="col-span-2">
-          <h3 className="text-lg font-bold mb-4 mt-6">Property Details (Optional)</h3>
+          <h3 className="text-lg font-bold mb-4 mt-6">Property Details</h3>
         </div>
 
         {/* RESIDENTIAL */}
@@ -617,6 +490,138 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
             </select>
           </div>
         )}
+
+        {/* Listing Information Header */}
+        <div className="col-span-2">
+          <h3 className="text-lg font-bold mb-4 mt-6">Listing Information</h3>
+        </div>
+
+        {/* Listing Price */}
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Listing Price *
+          </label>
+          <input
+            type="number"
+            name="listing_price"
+            required
+            step="0.01"
+            defaultValue={agencyAgreement?.list_price || ''}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+            placeholder="500000"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            MLS Number (if published)
+          </label>
+          <input
+            type="text"
+            name="mls_number"
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          />
+        </div>
+
+        {/* Listing Period */}
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Listing Start Date *
+          </label>
+          <input
+            type="date"
+            name="listing_start_date"
+            required
+            defaultValue={agencyAgreement?.agreement_date ? agencyAgreement.agreement_date.split('T')[0] : ''}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Listing End Date *
+          </label>
+          <input
+            type="date"
+            name="listing_end_date"
+            required
+            defaultValue={agencyAgreement?.expiration_date ? agencyAgreement.expiration_date.split('T')[0] : ''}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          />
+        </div>
+
+        {/* Commission */}
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Total Commission %
+          </label>
+          <input
+            type="number"
+            name="commission_percentage"
+            step="0.01"
+            min="0"
+            max="100"
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+            placeholder="6.00"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Buyer Agent Commission %
+          </label>
+          <input
+            type="number"
+            name="buyer_agent_commission_percentage"
+            step="0.01"
+            min="0"
+            max="100"
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+            placeholder="3.00"
+          />
+        </div>
+
+        {/* Seller Information */}
+        <div className="col-span-2">
+          <h3 className="text-lg font-bold mb-4 mt-6">Seller Information</h3>
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Seller Name *
+          </label>
+          <input
+            type="text"
+            name="seller_name"
+            required
+            defaultValue={agencyAgreement ? `${agencyAgreement.client_first_name} ${agencyAgreement.client_last_name}` : ''}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Seller Email
+          </label>
+          <input
+            type="email"
+            name="seller_email"
+            defaultValue={agencyAgreement?.client_email || ''}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Seller Phone
+          </label>
+          <input
+            type="tel"
+            name="seller_phone"
+            defaultValue={agencyAgreement?.client_phone || ''}
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          />
+        </div>
 
         {/* Notes */}
         <div className="col-span-2">
