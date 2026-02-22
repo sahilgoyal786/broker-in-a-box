@@ -20,6 +20,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
     const data: any = {
       broker_id: brokerId,
       agent_id: formData.get('agent_id') || currentAgentId,
+      agency_agreement_id: prefillData?.agency_agreement_id || null,
       property_address: formData.get('property_address'),
       property_city: formData.get('property_city'),
       property_state: formData.get('property_state'),
@@ -77,6 +78,14 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       setError(insertError.message)
       setLoading(false)
       return
+    }
+
+    // If this transaction was created from a listing, update the listing's sales price
+    if (prefillData?.agency_agreement_id && data.purchase_price) {
+      await supabase
+        .from('listings')
+        .update({ sales_price: data.purchase_price })
+        .eq('agency_agreement_id', prefillData.agency_agreement_id)
     }
 
     router.push(`/dashboard/transactions/${transaction.id}`)

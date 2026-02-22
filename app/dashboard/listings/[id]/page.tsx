@@ -65,11 +65,19 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
               <p className="capitalize">{listing.property_type.replace('_', ' ')}</p>
             </div>
             <div>
-              <span className="font-semibold">Listing Price:</span>
+              <span className="font-semibold">List Price:</span>
               <p className="text-xl font-bold text-green-600">
                 ${listing.listing_price?.toLocaleString()}
               </p>
             </div>
+            {listing.sales_price && (
+              <div>
+                <span className="font-semibold">Sales Price:</span>
+                <p className="text-xl font-bold text-blue-600">
+                  ${listing.sales_price.toLocaleString()}
+                </p>
+              </div>
+            )}
             <div>
               <span className="font-semibold">MLS Number:</span>
               <p>{listing.mls_number || '—'}</p>

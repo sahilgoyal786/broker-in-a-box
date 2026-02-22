@@ -75,6 +75,7 @@ export default async function NewTransactionPage({
         .maybeSingle() as any
 
       prefillData = {
+        agency_agreement_id: params.from_listing, // Link back to the listing
         agent_id: agency.agent_id,
         seller_first_name: agency.client_first_name,
         seller_last_name: agency.client_last_name,
