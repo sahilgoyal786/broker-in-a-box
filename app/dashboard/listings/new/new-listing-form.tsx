@@ -44,6 +44,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [propertyType, setPropertyType] = useState(agencyAgreement?.property_type || 'residential')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -92,7 +93,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
       ? agencyAgreement.agent.id 
       : (role === 'agent' ? currentAgentId : formData.get('agent_id'))
 
-    const { error: insertError } = await supabase
+    const { error: insertError} = await supabase
       .from('listings')
       .insert({
         broker_id: brokerId,
@@ -102,6 +103,8 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
         property_city: formData.get('property_city'),
         property_state: formData.get('property_state'),
         property_zip: formData.get('property_zip'),
+        county: formData.get('county') || null,
+        tax_id: formData.get('tax_id') || null,
         property_type: formData.get('property_type'),
         listing_price: formData.get('listing_price'),
         mls_number: formData.get('mls_number') || null,
@@ -117,6 +120,12 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
         square_feet: formData.get('square_feet') || null,
         lot_size: formData.get('lot_size') || null,
         year_built: formData.get('year_built') || null,
+        lot_size_land: formData.get('lot_size_land') || null,
+        zoning: formData.get('zoning') || null,
+        number_of_units: formData.get('number_of_units') || null,
+        total_bedrooms: formData.get('total_bedrooms') || null,
+        total_bathrooms: formData.get('total_bathrooms') || null,
+        commercial_use: formData.get('commercial_use') || null,
         notes: formData.get('notes') || null,
         status: 'active'
       })
@@ -238,17 +247,74 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           <select
             name="property_type"
             required
-            defaultValue={agencyAgreement?.property_type || ''}
+            value={propertyType}
+            onChange={(e) => setPropertyType(e.target.value)}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"
           >
             <option value="">Select type...</option>
             <option value="residential">Residential</option>
             <option value="vacant_land">Vacant Land</option>
-            <option value="mobile_home">Mobile Home</option>
             <option value="commercial">Commercial</option>
             <option value="multi_unit">Multi-Unit</option>
             <option value="farm">Farm</option>
+            <option value="residential_lease">Residential Lease</option>
           </select>
+        </div>
+
+        {/* County - All Property Types */}
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            County *
+          </label>
+          <select
+            name="county"
+            required
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+          >
+            <option value="">Select county...</option>
+            <option value="Beaver County">Beaver County</option>
+            <option value="Box Elder County">Box Elder County</option>
+            <option value="Cache County">Cache County</option>
+            <option value="Carbon County">Carbon County</option>
+            <option value="Daggett County">Daggett County</option>
+            <option value="Davis County">Davis County</option>
+            <option value="Duchesne County">Duchesne County</option>
+            <option value="Emery County">Emery County</option>
+            <option value="Garfield County">Garfield County</option>
+            <option value="Grand County">Grand County</option>
+            <option value="Iron County">Iron County</option>
+            <option value="Juab County">Juab County</option>
+            <option value="Kane County">Kane County</option>
+            <option value="Millard County">Millard County</option>
+            <option value="Morgan County">Morgan County</option>
+            <option value="Piute County">Piute County</option>
+            <option value="Rich County">Rich County</option>
+            <option value="Salt Lake County">Salt Lake County</option>
+            <option value="San Juan County">San Juan County</option>
+            <option value="Sanpete County">Sanpete County</option>
+            <option value="Sevier County">Sevier County</option>
+            <option value="Summit County">Summit County</option>
+            <option value="Tooele County">Tooele County</option>
+            <option value="Uintah County">Uintah County</option>
+            <option value="Utah County">Utah County</option>
+            <option value="Wasatch County">Wasatch County</option>
+            <option value="Washington County">Washington County</option>
+            <option value="Wayne County">Wayne County</option>
+            <option value="Weber County">Weber County</option>
+          </select>
+        </div>
+
+        {/* Tax ID - All Property Types */}
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Tax ID Number
+          </label>
+          <input
+            type="text"
+            name="tax_id"
+            className="shadow border rounded w-full py-2 px-3 text-gray-700"
+            placeholder="Required if no street address"
+          />
         </div>
 
         {/* Listing Price */}
@@ -378,72 +444,179 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           />
         </div>
 
-        {/* Property Details */}
+        {/* Property Details - Conditional Based on Property Type */}
         <div className="col-span-2">
           <h3 className="text-lg font-bold mb-4 mt-6">Property Details (Optional)</h3>
         </div>
 
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Bedrooms
-          </label>
-          <input
-            type="number"
-            name="bedrooms"
-            min="0"
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
+        {/* RESIDENTIAL */}
+        {propertyType === 'residential' && (
+          <>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Bedrooms
+              </label>
+              <input
+                type="number"
+                name="bedrooms"
+                min="0"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+              />
+            </div>
 
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Bathrooms
-          </label>
-          <input
-            type="number"
-            name="bathrooms"
-            step="0.5"
-            min="0"
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Bathrooms
+              </label>
+              <input
+                type="number"
+                name="bathrooms"
+                step="0.5"
+                min="0"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+              />
+            </div>
 
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Square Feet
-          </label>
-          <input
-            type="number"
-            name="square_feet"
-            min="0"
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Square Feet
+              </label>
+              <input
+                type="number"
+                name="square_feet"
+                min="0"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+              />
+            </div>
 
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Lot Size
-          </label>
-          <input
-            type="text"
-            name="lot_size"
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-            placeholder="0.25 acres"
-          />
-        </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Lot Size
+              </label>
+              <input
+                type="text"
+                name="lot_size"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                placeholder="0.25 acres"
+              />
+            </div>
 
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Year Built
-          </label>
-          <input
-            type="number"
-            name="year_built"
-            min="1800"
-            max={new Date().getFullYear()}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700"
-          />
-        </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Year Built
+              </label>
+              <input
+                type="number"
+                name="year_built"
+                min="1800"
+                max={new Date().getFullYear()}
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+              />
+            </div>
+          </>
+        )}
+
+        {/* VACANT LAND */}
+        {propertyType === 'vacant_land' && (
+          <>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Lot Size
+              </label>
+              <input
+                type="text"
+                name="lot_size_land"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                placeholder="2.5 acres or 10,890 sq ft"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Zoning
+              </label>
+              <select
+                name="zoning"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+              >
+                <option value="">Select zoning...</option>
+                <option value="Agricultural">Agricultural</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Multi-Family">Multi-Family</option>
+                <option value="Short Term Rental Allowed">Short Term Rental Allowed</option>
+                <option value="Single-Family">Single-Family</option>
+                <option value="See Remarks">See Remarks</option>
+              </select>
+            </div>
+          </>
+        )}
+
+        {/* MULTI-UNIT */}
+        {propertyType === 'multi_unit' && (
+          <>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Number of Units
+              </label>
+              <input
+                type="number"
+                name="number_of_units"
+                min="2"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                placeholder="e.g., 4"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Total Bedrooms
+              </label>
+              <input
+                type="number"
+                name="total_bedrooms"
+                min="0"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                placeholder="Across all units"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Total Bathrooms
+              </label>
+              <input
+                type="number"
+                name="total_bathrooms"
+                step="0.5"
+                min="0"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                placeholder="Across all units"
+              />
+            </div>
+          </>
+        )}
+
+        {/* COMMERCIAL */}
+        {propertyType === 'commercial' && (
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Commercial Use
+            </label>
+            <select
+              name="commercial_use"
+              className="shadow border rounded w-full py-2 px-3 text-gray-700"
+            >
+              <option value="">Select use...</option>
+              <option value="Office">Office</option>
+              <option value="Retail">Retail</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Flex">Flex</option>
+              <option value="Medical">Medical</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        )}
 
         {/* Notes */}
         <div className="col-span-2">
