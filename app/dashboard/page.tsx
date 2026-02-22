@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { FileText, CheckCircle, Clock, AlertCircle, Users, GraduationCap } from 'lucide-react'
+import { FileText, CheckCircle, Clock, Users, GraduationCap } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 
@@ -83,12 +83,14 @@ export default async function DashboardPage() {
   const closedBuyersSet = new Set(closedBuyers?.map((t: any) => t.agency_agreement_id) ?? [])
   const activeBuyerBrokers = allBuyerAgreements?.filter((a: any) => !closedBuyersSet.has(a.id)).length ?? 0
 
-  // CE Compliance - count agents needing attention
+  // Agents KPIs
   const { data: allAgents } = await supabase
     .from('agents')
-    .select('id, license_expiration, mandatory_course_completed')
+    .select('id, first_name, last_name, license_expiration, mandatory_course_completed')
     .eq('broker_id', userContext.brokerId)
-    .eq('status', 'active') as any
+    .eq('active', true) as any
+
+  const totalAgents = allAgents?.length ?? 0
 
   const ceNeedsAttention = allAgents?.filter((agent: any) => {
     if (!agent.mandatory_course_completed) return true
@@ -99,14 +101,43 @@ export default async function DashboardPage() {
     return false
   }).length ?? 0
 
-  // Recent transactions (exclude cancelled and closed)
-  const { data: recentTransactions } = await supabase
+  // Get transaction counts per agent
+  const { data: allTransactions } = await supabase
     .from('transactions')
-    .select('id, buyer_first_name, buyer_last_name, seller_first_name, seller_last_name, property_address, property_city, property_type, transaction_type, status, created_at')
-    .eq('broker_id', userContext.brokerId)
-    .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
-    .order('created_at', { ascending: false })
-    .limit(5) as any
+    .select('agent_id, status')
+    .eq('broker_id', userContext.brokerId) as any
+
+  // Count agents with any transactions
+  const agentsWithTransactionsSet = new Set(allTransactions?.map((t: any) => t.agent_id) ?? [])
+  const agentsWithTransactions = agentsWithTransactionsSet.size
+
+  // Count agents with pending sales
+  const agentsWithPendingSet = new Set(
+    allTransactions?.filter((t: any) => 
+      ['pending', 'under_contract'].includes(t.status)
+    ).map((t: any) => t.agent_id) ?? []
+  )
+  const agentsWithPending = agentsWithPendingSet.size
+
+  // Calculate top agents by pending sales count
+  const agentPendingCounts = allTransactions
+    ?.filter((t: any) => ['pending', 'under_contract'].includes(t.status))
+    .reduce((acc: any, t: any) => {
+      acc[t.agent_id] = (acc[t.agent_id] || 0) + 1
+      return acc
+    }, {}) ?? {}
+
+  const topAgents = Object.entries(agentPendingCounts)
+    .sort(([, a]: any, [, b]: any) => b - a)
+    .slice(0, 3)
+    .map(([agentId, count]) => {
+      const agent = allAgents?.find((a: any) => a.id === agentId)
+      return {
+        id: agentId,
+        name: agent ? `${agent.first_name} ${agent.last_name}` : 'Unknown',
+        pendingCount: count
+      }
+    })
 
   // Calculate totals
   // Totals Pending = only transactions under contract (not active listings)
@@ -136,17 +167,6 @@ export default async function DashboardPage() {
     { label: 'Buyers Closed', value: buyersClosed ?? 0, icon: CheckCircle, color: 'text-green-400', href: '/dashboard/transactions' },
     { label: 'Totals Closed', value: totalsClosed, icon: CheckCircle, color: 'text-emerald-400', href: '/dashboard/transactions', highlighted: true },
   ]
-
-  const statusColors: Record<string, string> = {
-    active: 'bg-yellow-500/20 text-yellow-400',
-    under_contract: 'bg-yellow-500/20 text-yellow-400',
-    pending: 'bg-yellow-500/20 text-yellow-400',
-    pending_closure: 'bg-blue-500/20 text-blue-400',
-    pending_cancellation: 'bg-orange-500/20 text-orange-400',
-    closed: 'bg-green-500/20 text-green-400',
-    cancelled: 'bg-red-500/20 text-red-400',
-    expired: 'bg-slate-500/20 text-slate-400',
-  }
 
   return (
     <div className="p-8">
@@ -194,61 +214,64 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      {/* Active Deals */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-gray-900 font-semibold">Active Deals</h2>
-            <p className="text-gray-600 text-sm mt-0.5">Under contract or in review</p>
-          </div>
-          <Link
-            href="/dashboard/transactions"
-            className="text-blue-600 hover:text-blue-700 text-sm transition-colors"
-          >
-            View all →
+      {/* Agent Performance KPIs */}
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Agent Performance</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Total Agents */}
+          <Link href="/dashboard/agents" className="bg-white rounded-lg border border-gray-200 shadow p-6 hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-gray-600">Total Agents</p>
+              <Users className="w-5 h-5 text-blue-600" />
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{totalAgents}</p>
           </Link>
-        </div>
 
-        {!recentTransactions || recentTransactions.length === 0 ? (
-          <div className="p-12 text-center">
-            <AlertCircle className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-600">No active deals</p>
-            <p className="text-gray-500 text-sm mt-2">Transactions under contract or in review will appear here</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-200">
-            {recentTransactions.map((tx: any) => {
-              // Client = whoever we represent
-              const clientFirstName = tx.transaction_type === 'listing' ? tx.seller_first_name : tx.buyer_first_name
-              const clientLastName = tx.transaction_type === 'listing' ? tx.seller_last_name : tx.buyer_last_name
-              const roleLabel = tx.transaction_type === 'listing' ? 'Listing' : tx.transaction_type === 'buyer_agency' ? 'Buyer' : 'Limited Agency'
-              
-              return (
-                <Link
-                  key={tx.id}
-                  href={`/dashboard/transactions/${tx.id}`}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <p className="text-gray-900 font-medium text-sm">
-                      {clientLastName}, {clientFirstName}
-                    </p>
-                    <p className="text-gray-600 text-xs mt-0.5">
-                      {tx.property_address ?? 'No address'} {tx.property_city && `· ${tx.property_city}`} · {roleLabel} Side
-                    </p>
+          {/* Agents with Transactions */}
+          <Link href="/dashboard/agents" className="bg-white rounded-lg border border-gray-200 shadow p-6 hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-gray-600">Agents with Transactions</p>
+              <FileText className="w-5 h-5 text-green-600" />
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{agentsWithTransactions}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {totalAgents > 0 ? Math.round((agentsWithTransactions / totalAgents) * 100) : 0}% active
+            </p>
+          </Link>
+
+          {/* Agents with Pending Sales */}
+          <Link href="/dashboard/agents" className="bg-white rounded-lg border border-gray-200 shadow p-6 hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-gray-600">Agents with Pending Sales</p>
+              <Clock className="w-5 h-5 text-orange-600" />
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{agentsWithPending}</p>
+            <p className="text-xs text-gray-500 mt-1">Currently under contract</p>
+          </Link>
+
+          {/* Top 3 Agents */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow p-6">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-gray-600">Top Agents (Pending)</p>
+              <CheckCircle className="w-5 h-5 text-yellow-600" />
+            </div>
+            <div className="space-y-2">
+              {topAgents.length > 0 ? (
+                topAgents.map((agent: any, idx: number) => (
+                  <div key={agent.id} className="flex items-center justify-between text-sm">
+                    <span className="text-gray-900">
+                      {idx + 1}. {agent.name}
+                    </span>
+                    <span className="font-semibold text-gray-700">{agent.pendingCount}</span>
                   </div>
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColors[tx.status]}`}>
-                    {tx.status === 'pending' ? 'Under Contract' :
-                     tx.status === 'under_contract' ? 'Under Contract' :
-                     tx.status === 'pending_closure' ? 'CTP Review' :
-                     tx.status === 'pending_cancellation' ? 'Cancel Review' :
-                     tx.status?.replace(/_/g, ' ')}
-                  </span>
-                </Link>
-              )
-            })}
+                ))
+              ) : (
+                <p className="text-sm text-gray-400">No pending sales yet</p>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )
