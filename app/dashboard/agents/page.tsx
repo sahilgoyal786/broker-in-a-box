@@ -78,21 +78,21 @@ export default async function AgentsPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">Agents</h1>
-          <p className="text-slate-400 mt-1">{agents?.length ?? 0} agent{(agents?.length ?? 0) !== 1 ? 's' : ''} on your roster</p>
+          <h1 className="text-2xl font-bold text-gray-900">Agents</h1>
+          <p className="text-gray-600 mt-1">{agents?.length ?? 0} agent{(agents?.length ?? 0) !== 1 ? 's' : ''} on your roster</p>
         </div>
         {userContext?.role === 'broker' && (
           <div className="flex gap-3">
             <Link
               href="/dashboard/agents/upload"
-              className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-colors"
             >
               <Upload className="w-4 h-4" />
               Upload CSV
             </Link>
             <Link
               href="/dashboard/agents/new"
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
             >
               <Plus className="w-4 h-4" />
               Add Agent
