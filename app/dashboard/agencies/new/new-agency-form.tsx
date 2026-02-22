@@ -39,6 +39,7 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
       data.property_zip = formData.get('property_zip')
       data.property_type = formData.get('property_type')
       data.list_price = formData.get('list_price') || null
+      data.tax_id = formData.get('tax_id') || null
     }
 
     const { data: agency, error } = await supabase
@@ -218,6 +219,16 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
                 className="w-full px-3 py-2 border rounded-lg"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Tax ID Number</label>
+            <input
+              type="text"
+              name="tax_id"
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Required if no street address"
+            />
           </div>
         </div>
       )}
