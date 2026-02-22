@@ -29,6 +29,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       property_type: formData.get('property_type'),
       transaction_type: formData.get('transaction_type'),
       contract_type: formData.get('contract_type'),
+      offer_reference_date: formData.get('offer_reference_date') || null,
       contract_date: formData.get('contract_date'),
       original_list_price: formData.get('original_list_price') || null,
       current_list_price: formData.get('current_list_price') || null,
@@ -348,19 +349,19 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
         
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Contract Date</label>
+            <label className="block text-sm font-medium mb-2">Offer Reference Date</label>
             <input
               type="date"
-              name="contract_date"
-              required
+              name="offer_reference_date"
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Anticipated Closing Date</label>
+            <label className="block text-sm font-medium mb-2">Contract Date (Acceptance Date)</label>
             <input
               type="date"
-              name="anticipated_closing_date"
+              name="contract_date"
+              required
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
@@ -593,6 +594,17 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             <input
               type="date"
               name="buyer_property_sale_deadline"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Settlement Deadline</label>
+            <input
+              type="date"
+              name="anticipated_closing_date"
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
