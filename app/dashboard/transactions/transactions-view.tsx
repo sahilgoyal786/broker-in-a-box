@@ -18,7 +18,7 @@ export default function TransactionsView({
     <div className="p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Purchase Contracts</h1>
-        <p className="text-gray-500 mt-1">{displayCount} total • Create from listing detail page</p>
+        <p className="text-gray-500 mt-1">{displayCount} total • Create from active agency detail page</p>
       </div>
 
       <TransactionsTable 

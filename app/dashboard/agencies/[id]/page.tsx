@@ -75,7 +75,7 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {agency.agreement_type === 'listing_agreement' && agency.status === 'active' && (
+          {agency.status === 'active' && (
             <Link
               href={`/dashboard/transactions/new?from_listing=${id}`}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
