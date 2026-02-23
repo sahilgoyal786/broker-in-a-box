@@ -172,6 +172,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               name="buyer_first_name"
               required
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.buyer_first_name || ''}
             />
           </div>
           <div>
@@ -181,6 +182,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               name="buyer_last_name"
               required
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.buyer_last_name || ''}
             />
           </div>
         </div>
@@ -192,6 +194,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               type="email"
               name="buyer_email"
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.buyer_email || ''}
             />
           </div>
           <div>
@@ -200,6 +203,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               type="tel"
               name="buyer_phone"
               className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.buyer_phone || ''}
             />
           </div>
         </div>
