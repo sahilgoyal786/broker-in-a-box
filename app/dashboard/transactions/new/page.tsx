@@ -6,7 +6,7 @@ import NewTransactionForm from './new-transaction-form'
 export default async function NewTransactionPage({
   searchParams,
 }: {
-  searchParams: Promise<{ from_listing?: string }>
+  searchParams: Promise<{ from_listing?: string; from_buyer?: string }>
 }) {
   const params = await searchParams
   const supabase = await createClient()
@@ -54,8 +54,9 @@ export default async function NewTransactionPage({
     agents = [agent]
   }
 
-  // Check if creating from a listing
+  // Check if creating from a listing or buyer agency
   let prefillData = null
+  
   if (params.from_listing) {
     const { data: agency } = await supabase
       .from('agency_agreements')
@@ -91,16 +92,45 @@ export default async function NewTransactionPage({
         transaction_type: 'listing', // They're the listing agent
       }
     }
+  } else if (params.from_buyer) {
+    const { data: agency } = await supabase
+      .from('agency_agreements')
+      .select(`
+        *,
+        agent_id
+      `)
+      .eq('id', params.from_buyer)
+      .eq('broker_id', brokerId)
+      .single() as any
+
+    if (agency) {
+      prefillData = {
+        agency_agreement_id: params.from_buyer, // Link back to the buyer agency
+        agent_id: agency.agent_id,
+        buyer_first_name: agency.client_first_name,
+        buyer_last_name: agency.client_last_name,
+        buyer_email: agency.client_email,
+        buyer_phone: agency.client_phone,
+        transaction_type: 'buyer_agency', // They're the buyer's agent
+      }
+    }
   }
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-6">
-        {prefillData ? 'New Purchase Contract (from Listing)' : 'New Purchase Contract'}
+        {params.from_listing && 'New Purchase Contract (from Listing)'}
+        {params.from_buyer && 'New Purchase Contract (from Buyer Agency)'}
+        {!params.from_listing && !params.from_buyer && 'New Purchase Contract'}
       </h1>
-      {prefillData && (
+      {prefillData && params.from_listing && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+          ✓ Pre-filled with seller information from listing agreement
+        </div>
+      )}
+      {prefillData && params.from_buyer && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-          Pre-filled with listing data for {prefillData.seller_first_name} {prefillData.seller_last_name}
+          ✓ Pre-filled with buyer information from buyer agency agreement
         </div>
       )}
       <NewTransactionForm 

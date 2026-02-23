@@ -77,7 +77,11 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
         <div className="flex items-center gap-3">
           {agency.status === 'active' && (
             <Link
-              href={`/dashboard/transactions/new?from_listing=${id}`}
+              href={
+                agency.agreement_type === 'listing_agreement' 
+                  ? `/dashboard/transactions/new?from_listing=${id}`
+                  : `/dashboard/transactions/new?from_buyer=${id}`
+              }
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
             >
               Create Purchase Contract
