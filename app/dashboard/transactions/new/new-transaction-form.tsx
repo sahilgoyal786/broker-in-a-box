@@ -22,13 +22,15 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       broker_id: brokerId,
       agent_id: formData.get('agent_id') || currentAgentId,
       agency_agreement_id: prefillData?.agency_agreement_id || null,
-      property_address: formData.get('property_address'),
+      property_address: formData.get('property_address') || null,
       property_city: formData.get('property_city'),
       property_state: formData.get('property_state'),
       property_zip: formData.get('property_zip'),
       county: formData.get('county') || null,
+      tax_id: formData.get('tax_id') || null,
       property_type: formData.get('property_type'),
       transaction_type: formData.get('transaction_type'),
+      purpose: formData.get('purpose'),
       offer_reference_date: formData.get('offer_reference_date') || null,
       client_first_name: formData.get('buyer_first_name'),
       client_last_name: formData.get('buyer_last_name'),
@@ -126,19 +128,34 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
         )}
 
-        <div>
-          <label className="block text-sm font-medium mb-2">Your Role</label>
-          <select 
-            name="transaction_type" 
-            required
-            defaultValue={prefillData?.transaction_type || ''}
-            className="w-full px-3 py-2 border rounded-lg"
-          >
-            <option value="">Select your role...</option>
-            <option value="listing">Listing Agent (Representing Seller)</option>
-            <option value="buyer_agency">Buyer's Agent (Representing Buyer)</option>
-            <option value="limited_agency">Limited Agency - Buyer/Seller</option>
-          </select>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Your Role</label>
+            <select 
+              name="transaction_type" 
+              required
+              defaultValue={prefillData?.transaction_type || ''}
+              className="w-full px-3 py-2 border rounded-lg"
+            >
+              <option value="">Select your role...</option>
+              <option value="listing">Listing Agent (Representing Seller)</option>
+              <option value="buyer_agency">Buyer's Agent (Representing Buyer)</option>
+              <option value="limited_agency">Limited Agency - Buyer/Seller</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Purpose</label>
+            <select 
+              name="purpose" 
+              required
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.purpose || 'purchase'}
+            >
+              <option value="purchase">Purchase</option>
+              <option value="lease">Lease</option>
+            </select>
+          </div>
         </div>
 
         <div>
@@ -305,15 +322,27 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-lg font-semibold border-b pb-2">Property Information</h2>
         
-        <div>
-          <label className="block text-sm font-medium mb-2">Property Address</label>
-          <input
-            type="text"
-            name="property_address"
-            required
-            className="w-full px-3 py-2 border rounded-lg"
-            defaultValue={prefillData?.property_address || ''}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Property Address</label>
+            <input
+              type="text"
+              name="property_address"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.property_address || ''}
+              placeholder="Leave blank if using Tax ID only"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Tax ID Number</label>
+            <input
+              type="text"
+              name="tax_id"
+              className="w-full px-3 py-2 border rounded-lg"
+              defaultValue={prefillData?.tax_id || ''}
+              placeholder="e.g., 12-345-6789"
+            />
+          </div>
         </div>
 
         <div>
