@@ -140,44 +140,45 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
 
   return (
     <div>
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
+      {/* Tabs - Prominent Design */}
+      <div className="mb-6">
+        <nav className="flex space-x-4">
           <button
             onClick={() => setActiveTab('listings')}
-            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm ${
+            className={`flex items-center gap-3 px-6 py-4 rounded-lg font-semibold text-base transition-all ${
               activeTab === 'listings'
-                ? 'border-green-600 text-green-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'bg-green-600 text-white shadow-lg scale-105'
+                : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-green-300 hover:shadow'
             }`}
           >
-            <div className="flex items-center gap-2">
-              <Home className="w-4 h-4" />
-              Listings
-              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                activeTab === 'listings' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
-              }`}>
-                {filteredListings.length}
-              </span>
-            </div>
+            <Home className="w-5 h-5" />
+            <span>Listings</span>
+            <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+              activeTab === 'listings' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-gray-100 text-gray-700'
+            }`}>
+              {filteredListings.length}
+            </span>
           </button>
+          
           <button
             onClick={() => setActiveTab('buyers')}
-            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm ${
+            className={`flex items-center gap-3 px-6 py-4 rounded-lg font-semibold text-base transition-all ${
               activeTab === 'buyers'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'bg-blue-600 text-white shadow-lg scale-105'
+                : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300 hover:shadow'
             }`}
           >
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              Buyer Agreements
-              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                activeTab === 'buyers' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
-              }`}>
-                {filteredBuyerAgreements.length}
-              </span>
-            </div>
+            <Users className="w-5 h-5" />
+            <span>Buyer Agreements</span>
+            <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+              activeTab === 'buyers' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-100 text-gray-700'
+            }`}>
+              {filteredBuyerAgreements.length}
+            </span>
           </button>
         </nav>
       </div>
