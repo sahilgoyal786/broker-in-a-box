@@ -168,7 +168,7 @@ export default async function TransactionDetailPage({
           {/* Parties */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4">Parties</h2>
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-6">
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 mb-2">Buyer</h3>
                 <p className="font-medium">{transaction.buyer_first_name} {transaction.buyer_last_name}</p>
@@ -182,7 +182,7 @@ export default async function TransactionDetailPage({
                 {transaction.seller_phone && <p className="text-sm text-gray-600">{transaction.seller_phone}</p>}
               </div>
               {transaction.cooperating_brokerage && (
-                <div>
+                <div className="col-span-2 pt-4 border-t">
                   <h3 className="text-sm font-semibold text-gray-700 mb-2">Cooperating Broker</h3>
                   <p className="font-medium">{transaction.cooperating_brokerage}</p>
                   {transaction.cooperating_agent_name && <p className="text-sm text-gray-600">{transaction.cooperating_agent_name}</p>}
@@ -190,6 +190,39 @@ export default async function TransactionDetailPage({
                   {transaction.cooperating_agent_email && <p className="text-sm text-gray-600">{transaction.cooperating_agent_email}</p>}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Title Companies */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-4">Title Companies</h2>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Buyer's Title Company</h3>
+                {transaction.buyer_title_company ? (
+                  <>
+                    <p className="font-medium">{transaction.buyer_title_company}</p>
+                    {transaction.buyer_title_contact_name && <p className="text-sm text-gray-600">{transaction.buyer_title_contact_name}</p>}
+                    {transaction.buyer_title_contact_phone && <p className="text-sm text-gray-600">{transaction.buyer_title_contact_phone}</p>}
+                    {transaction.buyer_title_contact_email && <p className="text-sm text-gray-600">{transaction.buyer_title_contact_email}</p>}
+                  </>
+                ) : (
+                  <p className="text-gray-400 italic">Not specified</p>
+                )}
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Seller's Title Company</h3>
+                {transaction.seller_title_company ? (
+                  <>
+                    <p className="font-medium">{transaction.seller_title_company}</p>
+                    {transaction.seller_title_contact_name && <p className="text-sm text-gray-600">{transaction.seller_title_contact_name}</p>}
+                    {transaction.seller_title_contact_phone && <p className="text-sm text-gray-600">{transaction.seller_title_contact_phone}</p>}
+                    {transaction.seller_title_contact_email && <p className="text-sm text-gray-600">{transaction.seller_title_contact_email}</p>}
+                  </>
+                ) : (
+                  <p className="text-gray-400 italic">Not specified</p>
+                )}
+              </div>
             </div>
           </div>
 
