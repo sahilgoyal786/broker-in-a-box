@@ -39,7 +39,7 @@ BEGIN
     ELSIF txn.property_type IN ('commercial', 'multi_unit') THEN
       INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
       VALUES (txn.id, 'COMMERCIAL SELLER''S PROPERTY CONDITION DISCLOSURE SIGNED BY BUYER', 'pdf_auto', true, sort_counter);
-    ELSE -- residential, mobile_home
+    ELSE -- residential
       INSERT INTO transaction_compliance_items (transaction_id, form_name, tracking_type, is_required, sort_order)
       VALUES (txn.id, 'SELLER''S PROPERTY CONDITION DISCLOSURE SIGNED BY BUYER', 'pdf_auto', true, sort_counter);
     END IF;
