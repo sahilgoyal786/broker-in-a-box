@@ -152,7 +152,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
             <option value="">Select type...</option>
             <option value="residential">Residential</option>
             <option value="vacant_land">Vacant Land</option>
-            <option value="mobile_home">Mobile Home</option>
+            
             <option value="commercial">Commercial</option>
             <option value="multi_unit">Multi-Unit</option>
             <option value="farm">Farm</option>
