@@ -140,20 +140,28 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
 
   return (
     <div>
-      {/* Tabs - Prominent Design */}
-      <div className="mb-6">
-        <nav className="flex space-x-4">
+      {/* Tabs - VERY Prominent Design */}
+      <div className="mb-8 bg-gray-50 p-6 rounded-lg border-2 border-gray-200">
+        <div className="mb-4">
+          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-wide">Select Agreement Type:</h2>
+        </div>
+        <nav className="flex gap-4">
           <button
             onClick={() => setActiveTab('listings')}
-            className={`flex items-center gap-3 px-6 py-4 rounded-lg font-semibold text-base transition-all ${
+            className={`flex-1 flex items-center justify-center gap-4 px-8 py-6 rounded-xl font-bold text-lg transition-all ${
               activeTab === 'listings'
-                ? 'bg-green-600 text-white shadow-lg scale-105'
-                : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-green-300 hover:shadow'
+                ? 'bg-green-600 text-white shadow-xl scale-105 ring-4 ring-green-300'
+                : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-green-400 hover:shadow-lg hover:scale-102'
             }`}
           >
-            <Home className="w-5 h-5" />
-            <span>Listings</span>
-            <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+            <Home className="w-6 h-6" />
+            <div className="text-left">
+              <div>Listings</div>
+              <div className={`text-sm font-normal ${activeTab === 'listings' ? 'text-green-100' : 'text-gray-500'}`}>
+                Seller representation
+              </div>
+            </div>
+            <span className={`ml-auto px-4 py-2 rounded-full text-base font-bold ${
               activeTab === 'listings' 
                 ? 'bg-green-500 text-white' 
                 : 'bg-gray-100 text-gray-700'
@@ -164,15 +172,20 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
           
           <button
             onClick={() => setActiveTab('buyers')}
-            className={`flex items-center gap-3 px-6 py-4 rounded-lg font-semibold text-base transition-all ${
+            className={`flex-1 flex items-center justify-center gap-4 px-8 py-6 rounded-xl font-bold text-lg transition-all ${
               activeTab === 'buyers'
-                ? 'bg-blue-600 text-white shadow-lg scale-105'
-                : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300 hover:shadow'
+                ? 'bg-blue-600 text-white shadow-xl scale-105 ring-4 ring-blue-300'
+                : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-400 hover:shadow-lg hover:scale-102'
             }`}
           >
-            <Users className="w-5 h-5" />
-            <span>Buyer Agreements</span>
-            <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+            <Users className="w-6 h-6" />
+            <div className="text-left">
+              <div>Buyer Agreements</div>
+              <div className={`text-sm font-normal ${activeTab === 'buyers' ? 'text-blue-100' : 'text-gray-500'}`}>
+                Buyer representation
+              </div>
+            </div>
+            <span className={`ml-auto px-4 py-2 rounded-full text-base font-bold ${
               activeTab === 'buyers' 
                 ? 'bg-blue-500 text-white' 
                 : 'bg-gray-100 text-gray-700'
