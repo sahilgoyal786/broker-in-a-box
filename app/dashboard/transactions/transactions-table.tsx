@@ -8,6 +8,7 @@ import TransactionFilters from './transaction-filters'
 
 interface Transaction {
   id: string
+  file_id: string | null
   buyer_first_name: string
   buyer_last_name: string
   seller_first_name: string | null
@@ -31,7 +32,7 @@ interface Transaction {
   }
 }
 
-type SortField = 'agent' | 'role' | 'type' | 'client' | 'address' | 'county' | 'price' | 'settlement' | 'status'
+type SortField = 'fileId' | 'agent' | 'role' | 'type' | 'client' | 'address' | 'county' | 'price' | 'settlement' | 'status'
 type SortDirection = 'asc' | 'desc'
 
 export default function TransactionsTable({ 
@@ -122,6 +123,10 @@ export default function TransactionsTable({
     let bVal: any
 
     switch (sortField) {
+      case 'fileId':
+        aVal = a.file_id || ''
+        bVal = b.file_id || ''
+        break
       case 'agent':
         aVal = `${a.agents.last_name} ${a.agents.first_name}`
         bVal = `${b.agents.last_name} ${b.agents.first_name}`
@@ -258,6 +263,7 @@ export default function TransactionsTable({
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
+              <SortableHeader field="fileId">File ID</SortableHeader>
               {userRole === 'broker' && <SortableHeader field="agent">Agent</SortableHeader>}
               <SortableHeader field="role">Role</SortableHeader>
               <SortableHeader field="type">Type</SortableHeader>
@@ -281,6 +287,9 @@ export default function TransactionsTable({
 
               return (
                 <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-3 text-sm font-mono font-medium text-gray-900">
+                    {tx.file_id || <span className="text-gray-400">—</span>}
+                  </td>
                   {userRole === 'broker' && (
                     <td className="px-4 py-3 text-sm">
                       {tx.agents.last_name}, {tx.agents.first_name}

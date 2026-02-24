@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS transaction_compliance_items (
 );
 
 -- Create index for faster lookups
-CREATE INDEX IF NOT EXISTS idx_transaction_compliance_transaction_id ON transaction_compliance_items(transaction_id);
+CREATE INDEX IF NOT EXISTS idx_transaction_compliance_transaction_id ON transaction_compliance_items(transaction_id); I will need you to update those files because I just renamed old and so that I can rename the new the old one
 
 -- Enable RLS
 ALTER TABLE transaction_compliance_items ENABLE ROW LEVEL SECURITY;

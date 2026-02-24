@@ -19,6 +19,7 @@ export default async function AgenciesPage() {
     .from('agency_agreements')
     .select(`
       id,
+      file_id,
       agreement_type,
       agent_id,
       client_first_name,
@@ -72,6 +73,7 @@ export default async function AgenciesPage() {
       agent:agents(first_name, last_name),
       agency_agreement:agency_agreements!inner(
         id,
+        file_id,
         client_first_name,
         client_last_name
       )
@@ -95,6 +97,7 @@ export default async function AgenciesPage() {
   // Map listings data to match Agreement type
   const listings = listingsData?.map(l => ({
     id: l.agency_agreement?.id || l.id,
+    file_id: l.agency_agreement?.file_id,
     agreement_type: 'listing_agreement',
     agent_id: l.agent_id,
     client_first_name: l.agency_agreement?.client_first_name || '',

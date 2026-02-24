@@ -1,0 +1,154 @@
+Can you generate a report the number of independent real estate brokerages in the United States versus big franchises you know or any franchise for that matter You know you got your Keller Williams your Coldwell Banker Remax Windermere, fathom Realty just to name some of the major ones. But I would like to know how many are non franchise independent owners
+National data suggests there are hundreds of thousands of real estate brokerage firms in the U.S., and the large majority by count are independent, non‑franchise brokerages rather than big-brand franchises.
+
+Big picture numbers
+The National Association of REALTORS® reports over 360,000 real estate brokerage firms operating in the United States (latest Census-based stat referenced in NAR’s 2024 “Quick Real Estate Statistics”).
+​
+
+Research cited in a 2020s-era “Franchise vs. Independent” financial model paper notes that about 86% of real estate firms are independent, non‑franchised companies.
+​
+
+Using those together as a ballpark:
+
+Total brokerage firms: 360,000+.
+​
+
+Independent/non‑franchise firms (≈86%): roughly 310,000+ independent brokerages.
+
+Franchised or other models (≈14%): on the order of 50,000 offices/companies tied to franchise brands or other structures.
+
+These are directional estimates, not exact current headcounts, but they’re the best national-level indicators available.
+
+Why the big brands feel so dominant
+Even though independents are the majority by firm count, a large share of agents and production sit inside the big networks:
+
+NAR data has historically shown that brokers and broker‑associates are more often with independents, but sales agents are split more evenly between independent and franchised companies.
+​
+
+A recent analysis notes that about 40% of agents are affiliated with franchised companies, illustrating that franchises host many more agents per office on average.
+​
+
+For example (U.S. plus global networks):
+
+Keller Williams: 1,000+ market center offices, 160k+ agents worldwide, and hundreds of billions in U.S. volume.
+
+Coldwell Banker, Berkshire Hathaway HomeServices, RE/MAX, etc., each run thousands of franchise offices collectively and account for a large chunk of national transaction sides and volume.
+
+So on the ground, you see brands like Keller Williams, Coldwell Banker, RE/MAX, Compass, etc., everywhere—not because they outnumber independents by office count, but because their offices are larger and cluster huge agent rosters and production.
+
+How to frame this for your “Focus Forty” and agent conversations
+If you’re talking to agents or designing CE content/Facebook ad hooks, you can truthfully frame it like this (in your own words):
+
+Most U.S. brokerages by count are local, independent shops, but a big share of agents and closings sit inside a relatively small number of national franchise brands.
+
+That means your opportunity set as an LO is two-layered:
+
+Depth with big-franchise offices (a lot of agents and transactions under a few roofs).
+
+Breadth across independents (they massively outnumber franchise offices and often want more personalized lender relationships).
+
+If you’d like, I can turn this into a one-pager or a slide:
+
+One simple chart showing 86% independents vs 14% franchised by firm count, and
+
+A short talking track you can use in CE classes or with team leaders.
+
+Do you know the numbers of agents that are in independent brokerages versus those that are in franchise companies
+NAR’s member data shows that a slim majority of agents are with independent companies, and a large minority are with franchises.
+
+Current split (directional)
+From NAR Member/Profile data and franchise reports:
+
+In 2025, 38% of NAR members were affiliated with a franchise company.
+​
+
+A recent NAR Research summary says 55% of REALTORS® are affiliated with an independent company (i.e., non‑franchise), implying the remaining ~45% are in franchise or “other” models.
+​
+
+Earlier NAR Member Profile data (2020) showed about 42% of REALTORS® with a national franchise and 52% under an independent firm, with a small remainder in “other.”
+​
+
+So for a quick working model today:
+
+Independent brokerages: roughly 55–60% of agents.
+
+Franchise companies (Keller Williams, RE/MAX, Coldwell, etc.): roughly 40–45% of agents.
+
+Because NAR has about 1.5–1.6M members in recent years, that translates to on the order of:
+
+Around 800k–900k agents at independents.
+
+Around 600k–700k agents at franchise brands.
+
+These are approximate, but they’re solid enough to use in your CE classes and Focus Forty framing (e.g., “About 4 in 10 agents fly a franchise flag, while a little over half are with independents”).
+
+This may be a hard number to find. How many of the Independent broker have more 10 or 12 agents?
+There isn’t a published “hard count” of how many independent brokerages have 10–12+ agents, but we can bracket it pretty tightly from NAR firm data.
+
+What NAR tells us
+From NAR’s 2023 and 2025 Profile of Real Estate Firms:
+
+81% of all real estate firms are single‑office firms, and the typical single‑office firm has 2–3 full‑time licensees.
+
+Across all firms, the median number of full‑time licensees is 3.
+​
+
+Only a minority of firms report “10 or more people” on staff (including licensees and employees), while the largest firms (3+ offices) have medians of 20–64 licensees.
+
+Around 86–87% of all firms are independent, non‑franchised.
+
+Putting that together:
+
+Most independent brokerages are very small (often the broker + 1–3 agents).
+
+Firms with 10+ agents are the exception, not the rule, and they’re disproportionately the multi‑office and/or franchise shops.
+
+Reasonable working estimate for your purposes
+Using NAR’s medians and distributions as guardrails:
+
+Out of all independent firms, a large majority (easily 70–80%+) are likely under 10 agents.
+
+That leaves perhaps 20–30% of independents in the 10+ agent range, and only a slice of those will be 20–30+ agent “mini‑franchises.”
+
+So in plain language you can use in class:
+
+“Most independent brokerages are small—often just a handful of agents. Only a minority of independents have 10 or more agents in-house; those larger independents are the ones that start to look and behave more like franchise offices.”
+
+If you’d like, I can help you turn this into a slide that visually shows:
+
+All firms → independents vs franchise
+
+Independents → small (1–9 agents) vs larger (10+ agents, approximated).
+
+My reason project or space is I'm developing SaaS That is geared towards independent brokerages. Those with one or two agents would not be a good target
+You’re thinking about it the right way: your best SaaS targets are the larger independents, not the one‑and‑two‑agent shops.
+
+Why your focus segment makes sense
+NAR’s firm profiles show most independents are very small (median 2–3 licensees in single‑office firms), and smaller offices use fewer tech tools and spend less on software overall.
+
+Mid‑sized and larger firms (10+ agents, multiple offices, higher sales volume) are much more likely to invest in brokerage‑level SaaS: CRM, recruiting, accountability/production dashboards, marketing automation, onboarding, compliance, etc.
+
+So treating roughly the top quartile of independents by size (10+ agents) as your ICP is very defensible for:
+
+Ability to pay (office-level SaaS budget vs agent-level spend).
+
+Clear pains you can solve (managing a team, tracking leads, reporting to owners, recruiting/retention).
+
+Easier ROI story (hours saved and deals retained across 10–50 agents add up fast).
+
+If you tell me what the SaaS actually does (core features and price point), I can help you tighten the ICP even further (e.g., “independent, 10–60 agents, 1–3 offices, $X–$Y GCI”) and map that to a prospecting script for those 77.5k “ideal” independents.
+
+It is contract compliance and HR if you will. The big player in the market Dot Loop. It is very expensive Brokers are$650 I'm developing that will be $150 a month.
+You’re pointed at exactly the right niche: mid‑sized independent brokerages that feel Dotloop/Brokermint prices but still need real compliance.
+
+A $150/mo “broker plan” is a very strong relative offer:
+
+Dotloop and similar tools typically charge per user (often around $29–$39 per user per month, or custom “broker” pricing), which scales costs quickly once a brokerage has 10–20+ agents.
+
+Reviews and comparisons put “team/brokerage” style transaction-management tools starting around $149–$199 per month and then rising with seats and features, with many requiring annual contracts.
+
+So your positioning story for those 10–40‑agent independents practically writes itself:
+
+“You get brokerage‑level contract compliance and HR oversight like the big brands, but at a flat $150 per month, not $650+ or $30–$40 per head.”
+
+“Ideal for independents with 10–40 agents who’ve outgrown Google Drive and email, but can’t justify franchise‑style software pricing.”

@@ -7,6 +7,7 @@ import AgencyFilters from './agency-filters'
 
 type Agreement = {
   id: string
+  file_id?: string | null
   agreement_type: string
   agent_id?: string
   client_first_name: string
@@ -212,6 +213,12 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
           <thead className="bg-gray-50">
             <tr>
               <th 
+                onClick={() => handleSort('file_id')}
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+              >
+                File ID <SortIcon field="file_id" />
+              </th>
+              <th 
                 onClick={() => handleSort('agent')}
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
               >
@@ -271,6 +278,9 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedAgreements.map((agreement) => (
               <tr key={agreement.id}>
+                <td className="px-6 py-4 text-sm font-mono font-medium text-gray-900">
+                  {agreement.file_id || <span className="text-gray-400">—</span>}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
                   {agreement.agent.first_name} {agreement.agent.last_name}
                 </td>
@@ -336,7 +346,7 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
             ))}
             {sortedAgreements.length === 0 && (
               <tr>
-                <td colSpan={activeTab === 'listings' ? 9 : 5} className="px-6 py-8 text-center">
+                <td colSpan={activeTab === 'listings' ? 10 : 6} className="px-6 py-8 text-center">
                   <p className="text-gray-600">No {activeTab === 'listings' ? 'listings' : 'buyer agreements'} found</p>
                   <p className="text-gray-400 text-sm mt-1">
                     {(activeTab === 'listings' ? listings.length : buyerAgreements.length) > 0 
