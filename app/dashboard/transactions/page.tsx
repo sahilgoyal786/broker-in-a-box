@@ -17,6 +17,7 @@ export default async function TransactionsPage() {
     .from('transactions')
     .select(`
       id,
+      file_id,
       buyer_first_name,
       buyer_last_name,
       seller_first_name,
