@@ -103,14 +103,11 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
           {/* Agreement Details */}
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold">Agreement Details</h2>
-                {agency.file_id && (
-                  <span className="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded font-mono">
-                    {agency.file_id}
-                  </span>
+              <h2 className="text-lg font-bold">
+                Agreement Details{agency.file_id && (
+                  <> for ID# <span className="font-mono">{agency.file_id}</span></>
                 )}
-              </div>
+              </h2>
               <Link
                 href={`/dashboard/agencies/${id}/edit`}
                 className="text-blue-600 hover:text-blue-800 text-sm"
