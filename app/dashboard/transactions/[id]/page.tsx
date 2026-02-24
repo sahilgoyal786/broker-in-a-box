@@ -69,14 +69,7 @@ export default async function TransactionDetailPage({
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold">Purchase Contract</h1>
-              {transaction.file_id && (
-                <span className="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded">
-                  {transaction.file_id}
-                </span>
-              )}
-            </div>
+            <h1 className="text-2xl font-bold">Purchase Contract</h1>
             <p className="text-gray-600">
               {transaction.buyer_first_name} {transaction.buyer_last_name} • {transaction.agent?.first_name} {transaction.agent?.last_name}
             </p>
@@ -96,7 +89,14 @@ export default async function TransactionDetailPage({
         <div className="col-span-2 space-y-6">
           {/* Transaction Info */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Transaction Details</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Transaction Details</h2>
+              {transaction.file_id && (
+                <span className="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded font-mono">
+                  {transaction.file_id}
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
               <div>
                 <span className="text-gray-600">Role:</span>

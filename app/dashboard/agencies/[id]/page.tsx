@@ -66,16 +66,9 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold">
-                {agency.agreement_type === 'listing_agreement' ? 'Listing' : 'Buyer Agreement'}
-              </h1>
-              {agency.file_id && (
-                <span className="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded">
-                  {agency.file_id}
-                </span>
-              )}
-            </div>
+            <h1 className="text-2xl font-bold">
+              {agency.agreement_type === 'listing_agreement' ? 'Listing' : 'Buyer Agreement'}
+            </h1>
             <p className="text-gray-600">
               {agency.client_first_name} {agency.client_last_name} • {agency.agent?.first_name} {agency.agent?.last_name}
             </p>
@@ -110,7 +103,14 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
           {/* Agreement Details */}
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Agreement Details</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-semibold">Agreement Details</h2>
+                {agency.file_id && (
+                  <span className="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded font-mono">
+                    {agency.file_id}
+                  </span>
+                )}
+              </div>
               <Link
                 href={`/dashboard/agencies/${id}/edit`}
                 className="text-blue-600 hover:text-blue-800 text-sm"
