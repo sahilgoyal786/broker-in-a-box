@@ -51,13 +51,11 @@ export default function BookDemoPage() {
           </div>
 
           {/* Calendly Widget */}
-          <div className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden shadow-sm">
-            <div 
-              className="calendly-inline-widget" 
-              data-url="https://calendly.com/raubrey/re-broker-in-a-box-demo" 
-              style={{minWidth:'320px', height:'700px'}}
-            />
-          </div>
+          <div 
+            className="calendly-inline-widget" 
+            data-url="https://calendly.com/raubrey/re-broker-in-a-box-demo" 
+            style={{minWidth:'320px', height:'1100px'}}
+          />
 
           {/* Contact Info Below */}
           <div className="mt-12 text-center">
