@@ -380,6 +380,11 @@ export default function CalendarPage() {
               window.location.href = `/dashboard/agents/${event.agentId}`
             }
           }}
+          formats={{
+            agendaTimeRangeFormat: () => '',
+            eventTimeRangeFormat: () => '',
+            timeGutterFormat: () => '',
+          }}
         />
       </div>
     </div>

@@ -101,10 +101,15 @@
   border-bottom: none;
 }
 
-.rbc-agenda-date-cell,
-.rbc-agenda-time-cell {
+.rbc-agenda-date-cell {
   font-weight: 600;
   color: #374151;
+}
+
+/* Hide time displays - all REPC deadlines are 5:00 PM MT per Section 21 */
+.rbc-agenda-time-cell,
+.rbc-header.rbc-agenda-time-header {
+  display: none;
 }
 
 .rbc-agenda-event-cell {
