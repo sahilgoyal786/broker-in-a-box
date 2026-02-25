@@ -53,7 +53,18 @@ export default async function AgenciesPage() {
 
   const { data: allAgreements } = await query
 
+  // Fetch pending transactions to determine U/C status
+  const { data: pendingTransactions } = await supabase
+    .from('transactions')
+    .select('agency_agreement_id')
+    .eq('status', 'pending')
+
+  const underContractAgreementIds = new Set(
+    pendingTransactions?.map(t => t.agency_agreement_id).filter(Boolean) || []
+  )
+
   // Fetch listings from listings table (has county and mls_number)
+  // Include transaction status to show U/C when under contract
   let listingsQuery = supabase
     .from('listings')
     .select(`
@@ -112,10 +123,14 @@ export default async function AgenciesPage() {
     status: l.status,
     agreement_date: l.listing_start_date,
     expiration_date: l.listing_end_date,
-    agent: l.agent
+    agent: l.agent,
+    hasUnderContractTransaction: underContractAgreementIds.has(l.agency_agreement?.id || l.id)
   })) || []
 
-  const buyerAgreements = allAgreements?.filter(a => a.agreement_type === 'buyer_agency_agreement') || []
+  const buyerAgreements = allAgreements?.filter(a => a.agreement_type === 'buyer_agency_agreement').map(a => ({
+    ...a,
+    hasUnderContractTransaction: underContractAgreementIds.has(a.id)
+  })) || []
 
   // Get list of agents for broker filter
   let agents: any[] = []

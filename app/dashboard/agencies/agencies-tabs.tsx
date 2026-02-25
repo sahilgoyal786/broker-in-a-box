@@ -27,6 +27,7 @@ type Agreement = {
     first_name: string
     last_name: string
   }
+  hasUnderContractTransaction?: boolean
 }
 
 type Props = {
@@ -314,11 +315,12 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
                 )}
                 <td className="px-6 py-4">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    agreement.hasUnderContractTransaction ? 'bg-blue-100 text-blue-800' :
                     agreement.status === 'active' ? 'bg-green-100 text-green-800' :
                     agreement.status === 'expired' ? 'bg-gray-100 text-gray-800' :
                     'bg-red-100 text-red-800'
                   }`}>
-                    {agreement.status}
+                    {agreement.hasUnderContractTransaction ? 'U/C' : agreement.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">

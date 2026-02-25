@@ -1,0 +1,25 @@
+30-SECOND VERCEL SETUP (Do When You Get Back)
+===============================================
+
+1. Go to: https://vercel.com/aubrobs-projects/broker-in-a-box/settings/environment-variables
+
+2. Click "Add New" and add:
+   
+   Name: MATON_API_KEY
+   Value: ***REMOVED-MATON-API-KEY***
+   ✓ Production ✓ Preview ✓ Development
+
+3. Click "Add New" again:
+   
+   Name: GOOGLE_CALENDAR_CONNECTION_ID
+   Value: 90a653bd-3851-4860-aa62-e9d905df9c05
+   ✓ Production ✓ Preview ✓ Development
+
+4. Click "Deployments" → Click "..." on latest → "Redeploy"
+
+DONE! Future transactions will auto-sync to rebrokerinabox@gmail.com at 8 AM.
+
+✅ ALREADY DONE:
+- 24 events created on rebrokerinabox@gmail.com
+- All showing at 8:00 AM (not buried as all-day)
+- Your rob@aubrey.net calendar stays clean
