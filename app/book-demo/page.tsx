@@ -1,8 +1,20 @@
+'use client'
+
 import Link from 'next/link'
-import Script from 'next/script'
 import { FileText, ArrowLeft } from 'lucide-react'
+import { useEffect } from 'react'
 
 export default function BookDemoPage() {
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://assets.calendly.com/assets/external/widget.js'
+    script.async = true
+    document.body.appendChild(script)
+    
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Nav */}
@@ -73,11 +85,6 @@ export default function BookDemoPage() {
         </div>
       </footer>
 
-      {/* Calendly Script */}
-      <Script 
-        src="https://assets.calendly.com/assets/external/widget.js" 
-        strategy="lazyOnload"
-      />
     </div>
   )
 }
