@@ -14,10 +14,10 @@ export default function HomePage() {
             <span className="text-gray-900 font-semibold text-lg">RE Broker in a Box</span>
           </div>
           <Link
-            href="/auth/login"
+            href="mailto:rob@aubrey.net?subject=RE Broker in a Box Demo Request"
             className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
           >
-            Sign In
+            Request Demo
           </Link>
         </div>
       </nav>
@@ -33,19 +33,26 @@ export default function HomePage() {
               <span className="text-blue-600">on Autopilot</span>
             </h1>
 
-            <p className="text-xl sm:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               RE Broker in a Box automatically tracks compliance documents for every transaction. 
               PDFs arrive in your inbox—we classify, file, and flag what&apos;s missing.
             </p>
 
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-green-50 border border-green-200 rounded-xl mb-12">
+              <span className="text-2xl font-bold text-green-700">$150/month</span>
+              <span className="text-gray-400">vs</span>
+              <span className="text-lg text-gray-500 line-through">$500-650/month</span>
+              <span className="px-3 py-1 bg-green-600 text-white text-sm font-semibold rounded-full">Save $6,000/year</span>
+            </div>
+
             <Link
-              href="/auth/login"
+              href="mailto:rob@aubrey.net?subject=RE Broker in a Box Demo Request"
               className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg shadow-lg shadow-blue-600/20"
             >
-              Get Started →
+              Schedule a Demo →
             </Link>
 
-            <p className="mt-6 text-gray-500">Sign in with Google</p>
+            <p className="mt-6 text-gray-500">15-minute walkthrough · rob@aubrey.net · 801-999-8209</p>
           </div>
 
           {/* How It Works Section */}
@@ -120,18 +127,21 @@ export default function HomePage() {
           </div>
 
           {/* CTA Section */}
-          <div className="py-20 text-center">
+          <div className="py-20 text-center bg-gray-50 -mx-6 px-6">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
               Ready to Put Compliance on Autopilot?
             </h2>
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Get started today.
+            <p className="text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
+              See how RE Broker in a Box can save you $6,000/year and hours of paperwork.
+            </p>
+            <p className="text-lg text-gray-500 mb-10">
+              Call Rob Aubrey: <a href="tel:8019998209" className="text-blue-600 font-semibold hover:underline">801-999-8209</a>
             </p>
             <Link
-              href="/auth/login"
+              href="mailto:rob@aubrey.net?subject=RE Broker in a Box Demo Request"
               className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg shadow-lg shadow-blue-600/20"
             >
-              Sign In with Google
+              Schedule a Demo →
             </Link>
           </div>
         </div>
