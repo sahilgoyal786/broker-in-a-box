@@ -27,11 +27,6 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6">
           {/* Hero Section */}
           <div className="py-20 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full text-blue-700 text-sm font-medium mb-8">
-              <span className="w-2 h-2 rounded-full bg-blue-600 inline-block" />
-              Now in early access
-            </div>
-
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
               Compliance Tracking
               <br />
@@ -47,10 +42,10 @@ export default function HomePage() {
               href="/auth/login"
               className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg shadow-lg shadow-blue-600/20"
             >
-              Get Started Free →
+              Get Started →
             </Link>
 
-            <p className="mt-6 text-gray-500">Sign in with Google · No credit card required</p>
+            <p className="mt-6 text-gray-500">Sign in with Google</p>
           </div>
 
           {/* How It Works Section */}
@@ -130,7 +125,7 @@ export default function HomePage() {
               Ready to Put Compliance on Autopilot?
             </h2>
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Join the early access program. No credit card required.
+              Get started today.
             </p>
             <Link
               href="/auth/login"
