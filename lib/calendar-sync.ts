@@ -6,6 +6,7 @@
  */
 
 const MATON_API_KEY = process.env.MATON_API_KEY || '***REMOVED-MATON-API-KEY***';
+const CALENDAR_CONNECTION_ID = process.env.GOOGLE_CALENDAR_CONNECTION_ID; // rebrokerinabox@gmail.com connection
 
 // Deadline field mapping (database column -> event title prefix)
 const DEADLINE_FIELDS: Record<string, string> = {
@@ -35,8 +36,16 @@ interface CalendarEvent {
   id?: string;
   summary: string;
   description: string;
-  start: { date: string };
-  end: { date: string };
+  start: { 
+    date?: string;
+    dateTime?: string;
+    timeZone?: string;
+  };
+  end: { 
+    date?: string;
+    dateTime?: string;
+    timeZone?: string;
+  };
   reminders: {
     useDefault: boolean;
     overrides: Array<{ method: string; minutes: number }>;
@@ -61,29 +70,47 @@ Agent: ${agentName}
 Property: ${transaction.property_address || 'TBD'}
 File ID: ${transaction.file_id || 'N/A'}`;
 
+  // Create event at 8:00 AM Mountain Time so it shows prominently in calendar
+  // (All-day events get buried at the top)
+  const eventStart = `${deadlineDate}T08:00:00`;
+  const eventEnd = `${deadlineDate}T08:30:00`;
+
   const eventData: CalendarEvent = {
     summary: eventTitle,
     description: eventDescription,
-    start: { date: deadlineDate },
-    end: { date: deadlineDate },
+    start: { 
+      dateTime: eventStart,
+      timeZone: 'America/Denver'
+    },
+    end: { 
+      dateTime: eventEnd,
+      timeZone: 'America/Denver'
+    },
     reminders: {
       useDefault: false,
       overrides: [
-        { method: 'popup', minutes: 24 * 60 }, // 1 day before
-        { method: 'email', minutes: 48 * 60 }  // 2 days before
+        { method: 'popup', minutes: 24 * 60 }, // 1 day before at 8 AM
+        { method: 'email', minutes: 48 * 60 }  // 2 days before at 8 AM
       ]
     }
   };
 
   try {
+    const headers: Record<string, string> = {
+      'Authorization': `Bearer ${MATON_API_KEY}`,
+      'Content-Type': 'application/json'
+    };
+
+    // Route to rebrokerinabox@gmail.com if connection ID is set
+    if (CALENDAR_CONNECTION_ID) {
+      headers['Maton-Connection'] = CALENDAR_CONNECTION_ID;
+    }
+
     const response = await fetch(
       'https://gateway.maton.ai/google-calendar/calendar/v3/calendars/primary/events',
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${MATON_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
+        headers,
         body: JSON.stringify(eventData)
       }
     );
@@ -108,13 +135,20 @@ File ID: ${transaction.file_id || 'N/A'}`;
  */
 async function deleteCalendarEvent(eventId: string): Promise<boolean> {
   try {
+    const headers: Record<string, string> = {
+      'Authorization': `Bearer ${MATON_API_KEY}`
+    };
+
+    // Route to rebrokerinabox@gmail.com if connection ID is set
+    if (CALENDAR_CONNECTION_ID) {
+      headers['Maton-Connection'] = CALENDAR_CONNECTION_ID;
+    }
+
     const response = await fetch(
       `https://gateway.maton.ai/google-calendar/calendar/v3/calendars/primary/events/${eventId}`,
       {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${MATON_API_KEY}`
-        }
+        headers
       }
     );
 
