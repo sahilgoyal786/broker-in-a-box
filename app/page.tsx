@@ -1,99 +1,154 @@
 import Link from 'next/link'
-import { FileText, FolderOpen, CheckSquare, Calendar } from 'lucide-react'
+import { FileText, Shield, CheckSquare, Calendar } from 'lucide-react'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Nav */}
-      <nav className="border-b border-slate-800 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-            <FileText className="w-4 h-4 text-white" />
+      <nav className="border-b border-gray-200 px-6 py-4 bg-white">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-gray-900 font-semibold text-lg">RE Broker in a Box</span>
           </div>
-          <span className="text-white font-semibold">Broker in a Box</span>
+          <Link
+            href="/auth/login"
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+          >
+            Sign In
+          </Link>
         </div>
       </nav>
 
       {/* Hero */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-24">
-        <div className="max-w-2xl w-full text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600/20 border border-blue-600/30 rounded-full text-blue-400 text-sm font-medium mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />
-            Now in early access
+      <main className="flex-1">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Hero Section */}
+          <div className="py-20 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full text-blue-700 text-sm font-medium mb-8">
+              <span className="w-2 h-2 rounded-full bg-blue-600 inline-block" />
+              Now in early access
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+              Compliance Tracking
+              <br />
+              <span className="text-blue-600">on Autopilot</span>
+            </h1>
+
+            <p className="text-xl sm:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+              RE Broker in a Box automatically tracks compliance documents for every transaction. 
+              PDFs arrive in your inbox—we classify, file, and flag what&apos;s missing.
+            </p>
+
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg shadow-lg shadow-blue-600/20"
+            >
+              Get Started Free →
+            </Link>
+
+            <p className="mt-6 text-gray-500">Sign in with Google · No credit card required</p>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 leading-tight">
-            Compliance tracking,
-            <span className="text-blue-400"> on autopilot</span>
-          </h1>
+          {/* How It Works Section */}
+          <div className="py-20">
+            <h2 className="text-gray-500 text-sm font-semibold uppercase tracking-wider text-center mb-16">
+              How it works
+            </h2>
 
-          <p className="text-xl text-slate-400 mb-10 leading-relaxed">
-            Broker in a Box automatically tracks compliance documents for every transaction.
-            PDFs arrive in your inbox — we classify, file, and flag what&apos;s missing.
-          </p>
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Box 1: Data Ownership */}
+              <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-blue-300 hover:shadow-lg transition-all">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-6">
+                  <Shield className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Do You Know Where Your Data Is?
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  You will with RE Broker in a Box.
+                  <br /><br />
+                  Your transaction files live where YOU control them—not buried on corporate servers you can&apos;t see or access. You know exactly where every document is, who has access to it, and what&apos;s happening with your data.
+                  <br /><br />
+                  Complete transparency. Complete control. No black boxes.
+                </p>
+              </div>
 
-          <Link
-            href="/auth/login"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-colors text-lg"
-          >
-            Get started free →
-          </Link>
+              {/* Box 2: Agent Sends */}
+              <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-green-300 hover:shadow-lg transition-all">
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center mb-6">
+                  <FileText className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Agent Sends, We Handle the Rest
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Agent emails a listing agreement or purchase contract? We automatically detect the document type, extract the key details, file it to the right folder, and populate the compliance checklist.
+                  <br /><br />
+                  No manual data entry. No copying and pasting. Just forward the email—we do the rest.
+                </p>
+              </div>
 
-          <p className="mt-4 text-slate-500 text-sm">Sign in with Google · No credit card required</p>
-        </div>
+              {/* Box 3: Track Compliance */}
+              <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-purple-300 hover:shadow-lg transition-all">
+                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center mb-6">
+                  <CheckSquare className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Track Compliance Per Transaction
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Every transaction gets its own compliance checklist based on property type (residential, land, commercial, etc.).
+                  <br /><br />
+                  We track what&apos;s missing automatically—you don&apos;t even have to look. If required documents haven&apos;t arrived, we notify the agent. You focus on running your brokerage, not chasing paperwork.
+                </p>
+              </div>
 
-        {/* Features */}
-        <div className="max-w-2xl w-full mt-24 space-y-4">
-          <h2 className="text-slate-400 text-sm font-semibold uppercase tracking-wider text-center mb-8">
-            How it works
-          </h2>
-
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex items-start gap-5">
-            <div className="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center flex-shrink-0">
-              <FolderOpen className="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-1">Auto-file PDFs to Drive</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Agents CC a dedicated email address on DocuSign completions. We detect the document type and file it automatically to the right transaction folder.
-              </p>
+              {/* Box 4: Calendar Deadlines */}
+              <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-orange-300 hover:shadow-lg transition-all">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-6">
+                  <Calendar className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Calendar Deadlines from Purchase Contract
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Critical deadlines—due diligence, financing contingency, settlement date—are automatically extracted from the purchase contract and added to your calendar.
+                  <br /><br />
+                  You and your agents get reminders before deadlines hit. Never miss a critical date again.
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex items-start gap-5">
-            <div className="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center flex-shrink-0">
-              <CheckSquare className="w-5 h-5 text-green-400" />
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-1">Track compliance per transaction</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Every transaction gets a checklist based on property type and deal structure — residential, vacant land, commercial, and more. Always know what&apos;s missing before closing.
-              </p>
-            </div>
+          {/* CTA Section */}
+          <div className="py-20 text-center">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              Ready to Put Compliance on Autopilot?
+            </h2>
+            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+              Join the early access program. No credit card required.
+            </p>
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg shadow-lg shadow-blue-600/20"
+            >
+              Sign In with Google
+            </Link>
           </div>
-
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex items-start gap-5">
-            <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center flex-shrink-0">
-              <Calendar className="w-5 h-5 text-purple-400" />
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-1">Calendar deadlines from REPC</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                When a REPC is processed, we extract all the key dates — inspection periods, financing contingencies, closing deadlines — and push them to your Google Calendar automatically.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-16">
-          <Link
-            href="/auth/login"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-colors border border-slate-700"
-          >
-            Sign in with Google
-          </Link>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 py-8 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 text-center text-gray-500 text-sm">
+          <p>© 2026 RE Broker in a Box · Built for independent brokers</p>
+          <p className="mt-2">Contact: rob@aubrey.net | 801-999-8209</p>
+        </div>
+      </footer>
     </div>
   )
 }
