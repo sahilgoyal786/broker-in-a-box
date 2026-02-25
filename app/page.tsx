@@ -13,12 +13,20 @@ export default function HomePage() {
             </div>
             <span className="text-gray-900 font-semibold text-lg">RE Broker in a Box</span>
           </div>
-          <Link
-            href="/book-demo"
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-          >
-            Request Demo
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/auth/login"
+              className="px-5 py-2.5 text-gray-700 hover:text-gray-900 font-medium transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/book-demo"
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+              Request Demo
+            </Link>
+          </div>
         </div>
       </nav>
 
