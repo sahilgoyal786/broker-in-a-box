@@ -118,6 +118,12 @@ export default function CalendarPage() {
 
       const deadlineEvents: DeadlineEvent[] = []
 
+      // Helper to create proper all-day event date (avoids timezone issues)
+      const createAllDayDate = (dateString: string) => {
+        const date = new Date(dateString + 'T00:00:00')
+        return date
+      }
+
       // Process transaction deadlines
       transactions?.forEach(t => {
         const agentName = t.agents ? `${t.agents.first_name} ${t.agents.last_name}` : 'Unknown'
@@ -127,8 +133,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `sd-${t.id}`,
             title: `Seller Disclosure: ${address}`,
-            start: new Date(t.seller_disclosure_deadline),
-            end: new Date(t.seller_disclosure_deadline),
+            start: createAllDayDate(t.seller_disclosure_deadline),
+            end: createAllDayDate(t.seller_disclosure_deadline),
             type: 'seller_disclosure',
             transactionId: t.id,
             agentId: t.agent_id,
@@ -140,8 +146,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `dd-${t.id}`,
             title: `Due Diligence: ${address}`,
-            start: new Date(t.due_diligence_deadline),
-            end: new Date(t.due_diligence_deadline),
+            start: createAllDayDate(t.due_diligence_deadline),
+            end: createAllDayDate(t.due_diligence_deadline),
             type: 'due_diligence',
             transactionId: t.id,
             agentId: t.agent_id,
@@ -153,8 +159,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `fin-${t.id}`,
             title: `Financing & Appraisal: ${address}`,
-            start: new Date(t.financing_appraisal_deadline),
-            end: new Date(t.financing_appraisal_deadline),
+            start: createAllDayDate(t.financing_appraisal_deadline),
+            end: createAllDayDate(t.financing_appraisal_deadline),
             type: 'financing',
             transactionId: t.id,
             agentId: t.agent_id,
@@ -166,8 +172,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `settle-${t.id}`,
             title: `Closing: ${address}`,
-            start: new Date(t.settlement_deadline),
-            end: new Date(t.settlement_deadline),
+            start: createAllDayDate(t.settlement_deadline),
+            end: createAllDayDate(t.settlement_deadline),
             type: 'settlement',
             transactionId: t.id,
             agentId: t.agent_id,
@@ -180,8 +186,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `custom1-${t.id}`,
             title: `${t.custom_deadline_1_label}: ${address}`,
-            start: new Date(t.custom_deadline_1_date),
-            end: new Date(t.custom_deadline_1_date),
+            start: createAllDayDate(t.custom_deadline_1_date),
+            end: createAllDayDate(t.custom_deadline_1_date),
             type: 'custom',
             transactionId: t.id,
             agentId: t.agent_id,
@@ -194,8 +200,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `custom2-${t.id}`,
             title: `${t.custom_deadline_2_label}: ${address}`,
-            start: new Date(t.custom_deadline_2_date),
-            end: new Date(t.custom_deadline_2_date),
+            start: createAllDayDate(t.custom_deadline_2_date),
+            end: createAllDayDate(t.custom_deadline_2_date),
             type: 'custom',
             transactionId: t.id,
             agentId: t.agent_id,
@@ -217,8 +223,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `lic-${agent.id}`,
             title: `License Exp: ${agentName}`,
-            start: new Date(agent.license_expiration),
-            end: new Date(agent.license_expiration),
+            start: createAllDayDate(agent.license_expiration),
+            end: createAllDayDate(agent.license_expiration),
             type: 'license',
             agentId: agent.id,
             agentName,
@@ -229,8 +235,8 @@ export default function CalendarPage() {
           deadlineEvents.push({
             id: `ce-${agent.id}`,
             title: `CE Renewal: ${agentName}`,
-            start: new Date(agent.ce_renewal_date),
-            end: new Date(agent.ce_renewal_date),
+            start: createAllDayDate(agent.ce_renewal_date),
+            end: createAllDayDate(agent.ce_renewal_date),
             type: 'ce',
             agentId: agent.id,
             agentName,
