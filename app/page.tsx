@@ -35,7 +35,7 @@ export default function HomePage() {
 
             <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               RE Broker in a Box automatically tracks compliance documents for every transaction. 
-              PDFs arrive in your inbox - we classify, file, and flag what&apos;s missing.
+              PDFs arrive - we classify, file, and flag what&apos;s missing.
             </p>
 
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-green-50 border border-green-200 rounded-xl mb-12">
