@@ -87,16 +87,39 @@
 .rbc-agenda-view {
   border: 1px solid #E5E7EB;
   border-radius: 8px;
+  background-color: #F9FAFB;
+  overflow: hidden;
 }
 
 .rbc-agenda-view table.rbc-agenda-table {
   border-spacing: 0;
+  width: 100%;
+}
+
+.rbc-agenda-view table.rbc-agenda-table thead {
+  background-color: white;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.rbc-agenda-view table.rbc-agenda-table thead th {
+  padding: 16px 20px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6B7280;
+  font-weight: 600;
+}
+
+/* Hover effect for entire row */
+.rbc-agenda-view table.rbc-agenda-table tbody > tr:hover > td {
+  background-color: #F3F4F6;
 }
 
 .rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
-  padding: 14px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid #E5E7EB;
   vertical-align: middle;
+  background-color: white;
 }
 
 .rbc-agenda-view table.rbc-agenda-table tbody > tr:last-child > td {
@@ -104,12 +127,26 @@
 }
 
 .rbc-agenda-view table.rbc-agenda-table tbody > tr > td + td {
-  padding-left: 20px;
+  padding-left: 24px;
+}
+
+/* Add spacing between rows */
+.rbc-agenda-view table.rbc-agenda-table tbody > tr {
+  border-bottom: 8px solid #F9FAFB;
+}
+
+.rbc-agenda-view table.rbc-agenda-table tbody > tr:last-child {
+  border-bottom: none;
 }
 
 .rbc-agenda-date-cell {
   font-weight: 600;
   color: #374151;
+  padding: 14px 20px !important;
+  background-color: #F9FAFB;
+  border-right: 2px solid #E5E7EB;
+  min-width: 150px;
+  font-size: 14px;
 }
 
 /* Hide time displays - all REPC deadlines are 5:00 PM MT per Section 21 */
@@ -120,8 +157,19 @@
 
 .rbc-agenda-event-cell {
   cursor: pointer;
+  padding: 14px 20px !important;
 }
 
 .rbc-agenda-event-cell:hover {
-  background-color: #F3F4F6;
+  background-color: #F9FAFB;
+}
+
+/* Style event content in agenda view for better readability */
+.rbc-agenda-event-cell .rbc-event-content {
+  display: block;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
 }
