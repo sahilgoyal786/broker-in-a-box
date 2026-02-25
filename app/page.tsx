@@ -14,7 +14,7 @@ export default function HomePage() {
             <span className="text-gray-900 font-semibold text-lg">RE Broker in a Box</span>
           </div>
           <Link
-            href="mailto:rob@aubrey.net?subject=RE Broker in a Box Demo Request"
+            href="/book-demo"
             className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
           >
             Request Demo
@@ -46,7 +46,7 @@ export default function HomePage() {
             </div>
 
             <Link
-              href="mailto:rob@aubrey.net?subject=RE Broker in a Box Demo Request"
+              href="/book-demo"
               className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg shadow-lg shadow-blue-600/20"
             >
               Schedule a Demo →
@@ -138,7 +138,7 @@ export default function HomePage() {
               Call Rob Aubrey: <a href="tel:8019998209" className="text-blue-600 font-semibold hover:underline">801-999-8209</a>
             </p>
             <Link
-              href="mailto:rob@aubrey.net?subject=RE Broker in a Box Demo Request"
+              href="/book-demo"
               className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg shadow-lg shadow-blue-600/20"
             >
               Schedule a Demo →
