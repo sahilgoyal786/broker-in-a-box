@@ -45,13 +45,13 @@ const deadlineTypeLabels: Record<DeadlineType, string> = {
 }
 
 const deadlineTypeColors: Record<DeadlineType, string> = {
-  seller_disclosure: '#8B5CF6', // purple
-  due_diligence: '#3B82F6', // blue
-  financing: '#10B981', // green
-  settlement: '#EF4444', // red
-  custom: '#F59E0B', // orange
-  license: '#F59E0B', // yellow
-  ce: '#8B5CF6', // purple
+  seller_disclosure: '#8B5CF6',
+  due_diligence: '#3B82F6',
+  financing: '#10B981',
+  settlement: '#EF4444',
+  custom: '#F59E0B',
+  license: '#F59E0B',
+  ce: '#8B5CF6',
 }
 
 export default function CalendarPage() {
@@ -275,18 +275,30 @@ export default function CalendarPage() {
     setSelectedTypes(newSet)
   }
 
-  // Custom event style
+  // Custom event style - light backgrounds for readability
   const eventStyleGetter = (event: DeadlineEvent) => {
+    const colorMap: Record<DeadlineType, { bg: string; border: string; text: string }> = {
+      seller_disclosure: { bg: '#F3E8FF', border: '#8B5CF6', text: '#6B21A8' },
+      due_diligence: { bg: '#DBEAFE', border: '#3B82F6', text: '#1E40AF' },
+      financing: { bg: '#D1FAE5', border: '#10B981', text: '#065F46' },
+      settlement: { bg: '#FEE2E2', border: '#EF4444', text: '#991B1B' },
+      custom: { bg: '#FEF3C7', border: '#F59E0B', text: '#92400E' },
+      license: { bg: '#FEF3C7', border: '#F59E0B', text: '#92400E' },
+      ce: { bg: '#F3E8FF', border: '#8B5CF6', text: '#6B21A8' },
+    }
+    
+    const colors = colorMap[event.type]
+    
     return {
       style: {
-        backgroundColor: deadlineTypeColors[event.type],
+        backgroundColor: colors.bg,
+        borderLeft: `3px solid ${colors.border}`,
+        color: colors.text,
         borderRadius: '4px',
-        opacity: 0.9,
-        color: 'white',
-        border: 'none',
         display: 'block',
         fontSize: '13px',
         padding: '2px 5px',
+        fontWeight: '500',
       },
     }
   }
