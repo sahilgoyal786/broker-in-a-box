@@ -30,10 +30,25 @@ export default function StatusUpdater({
 
     if (error) {
       alert('Error updating status: ' + error.message)
-    } else {
-      router.refresh()
+      setUpdating(false)
+      return
     }
-    
+
+    // If closing or cancelling, delete calendar events
+    if (newStatus === 'closed' || newStatus === 'cancelled') {
+      try {
+        await fetch('/api/transactions/delete-calendar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transactionId })
+        })
+      } catch (err) {
+        console.error('Failed to delete calendar events:', err)
+        // Don't block the user - calendar deletion failure is not critical
+      }
+    }
+
+    router.refresh()
     setUpdating(false)
   }
 

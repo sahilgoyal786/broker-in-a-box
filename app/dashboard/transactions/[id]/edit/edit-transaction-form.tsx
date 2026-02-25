@@ -78,6 +78,18 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
       return
     }
 
+    // Sync deadlines to Google Calendar
+    try {
+      await fetch('/api/transactions/sync-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transactionId: transaction.id })
+      })
+    } catch (err) {
+      console.error('Failed to sync calendar:', err)
+      // Don't block the user - calendar sync failure is not critical
+    }
+
     router.push(`/dashboard/transactions/${transaction.id}`)
   }
 

@@ -94,6 +94,18 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
         .eq('agency_agreement_id', prefillData.agency_agreement_id)
     }
 
+    // Sync deadlines to Google Calendar
+    try {
+      await fetch('/api/transactions/sync-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transactionId: transaction.id })
+      })
+    } catch (err) {
+      console.error('Failed to sync calendar:', err)
+      // Don't block the user - calendar sync failure is not critical
+    }
+
     router.push(`/dashboard/transactions/${transaction.id}`)
     router.refresh()
   }
