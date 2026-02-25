@@ -39,7 +39,7 @@ export default function HomePage() {
             </p>
 
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-green-50 border border-green-200 rounded-xl mb-12">
-              <span className="text-2xl font-bold text-green-700">$150/month</span>
+              <span className="text-2xl font-bold text-green-700">$147/month</span>
               <span className="text-gray-400">vs</span>
               <span className="text-lg text-gray-500 line-through">$500-650/month</span>
               <span className="px-3 py-1 bg-green-600 text-white text-sm font-semibold rounded-full">Save $6,000/year</span>
