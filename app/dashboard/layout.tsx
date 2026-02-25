@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User, Home } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User, Home, Calendar } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import AgentSwitcher from './agent-switcher'
 
@@ -49,6 +49,7 @@ export default async function DashboardLayout({
     { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, roles: ['broker', 'agent'] },
     { href: '/dashboard/agencies', label: 'Agency Agreements', icon: FileText, roles: ['broker', 'agent'] },
     { href: '/dashboard/transactions', label: 'Transactions', icon: FileText, roles: ['broker', 'agent'] },
+    { href: '/dashboard/calendar', label: 'Deadline Calendar', icon: Calendar, roles: ['broker', 'agent'] },
     { href: '/dashboard/agents', label: 'Agents', icon: Users, roles: ['broker'] },  // Broker only
     { href: '/dashboard/profile', label: 'Profile', icon: User, roles: ['agent'] },  // Agent only
     { href: '/dashboard/settings', label: 'Settings', icon: Settings, roles: ['broker'] },  // Broker only
