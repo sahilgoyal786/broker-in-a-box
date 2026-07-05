@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Phone, Save, X } from 'lucide-react'
+import { formatPhoneNumber } from '@/lib/phone'
 
 export default function ProfileForm({ agentId, currentPhone }: { agentId: string, currentPhone: string }) {
   const [editing, setEditing] = useState(false)
-  const [phone, setPhone] = useState(currentPhone)
+  const [phone, setPhone] = useState(formatPhoneNumber(currentPhone))
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -36,7 +37,7 @@ export default function ProfileForm({ agentId, currentPhone }: { agentId: string
   }
 
   function handleCancel() {
-    setPhone(currentPhone)
+    setPhone(formatPhoneNumber(currentPhone))
     setEditing(false)
     setMessage('')
   }
@@ -51,7 +52,7 @@ export default function ProfileForm({ agentId, currentPhone }: { agentId: string
             <input
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
               className="flex-1 px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="(555) 123-4567"
               disabled={saving}

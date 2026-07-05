@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import PhoneInput from '@/components/phone-input'
 
 export default function NewTransactionForm({ brokerId, agents, currentAgentId, isAgent, prefillData }: any) {
   const router = useRouter()
@@ -228,8 +229,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="buyer_phone"
               className="w-full px-3 py-2 border rounded-lg"
               defaultValue={prefillData?.buyer_phone || ''}
@@ -276,8 +276,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="seller_phone"
               className="w-full px-3 py-2 border rounded-lg"
               defaultValue={prefillData?.seller_phone || ''}
@@ -311,8 +310,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Agent Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="cooperating_agent_phone"
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="(801) 555-1234"
@@ -527,8 +525,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Contact Phone</label>
-                <input
-                  type="tel"
+                <PhoneInput
                   name="earnest_money_contact_phone"
                   className="w-full px-3 py-2 border rounded-lg"
                 />
@@ -571,8 +568,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="seller_title_contact_phone"
               className="w-full px-3 py-2 border rounded-lg"
             />
@@ -613,8 +609,7 @@ export default function NewTransactionForm({ brokerId, agents, currentAgentId, i
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="buyer_title_contact_phone"
               className="w-full px-3 py-2 border rounded-lg"
             />

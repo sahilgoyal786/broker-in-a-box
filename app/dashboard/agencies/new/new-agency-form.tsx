@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { initializeAgencyCompliance } from '@/lib/compliance/initialize-agency-compliance'
+import PhoneInput from '@/components/phone-input'
 
 export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgent, agreementType: initialType }: any) {
   const router = useRouter()
@@ -195,8 +196,7 @@ export default function NewAgencyForm({ brokerId, agents, currentAgentId, isAgen
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="client_phone"
               className="w-full px-3 py-2 border rounded-lg"
             />

@@ -30,7 +30,7 @@ export default function DeactivateButton({
 
     const { error } = await supabase
       .from('agents')
-      .update({ active: !isActive })
+      .update({ is_active: !isActive })
       .eq('id', agentId) as any
 
     if (error) {

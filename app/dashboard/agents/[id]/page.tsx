@@ -4,6 +4,22 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Mail, Phone, Calendar, User, Shield, TrendingUp } from 'lucide-react'
 import DeactivateButton from './deactivate-button'
+import { daysUntilDateOnly, formatDateOnly, parseDateOnly } from '@/lib/date-only'
+import { formatPhoneNumber, phoneTelHref } from '@/lib/phone'
+
+function formatPortalStatus(status: string | null) {
+  switch (status) {
+    case 'active':
+      return 'Active'
+    case 'invited':
+      return 'Invited'
+    case 'expired':
+      return 'Expired'
+    case 'not_invited':
+    default:
+      return 'Not Invited'
+  }
+}
 
 export default async function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -70,13 +86,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
     .limit(5) as any
 
   // License expiration
-  let daysUntilExpiration = null
-  if (agent.license_expiration) {
-    const expDate = new Date(agent.license_expiration)
-    const today = new Date()
-    const diffTime = expDate.getTime() - today.getTime()
-    daysUntilExpiration = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  }
+  const daysUntilExpiration = daysUntilDateOnly(agent.license_expiration)
   const isExpiring = daysUntilExpiration !== null && daysUntilExpiration <= 45 && daysUntilExpiration >= 0
   const isExpired = daysUntilExpiration !== null && daysUntilExpiration < 0
 
@@ -98,7 +108,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
           </h1>
           <div className="flex items-center gap-3">
             <p className="text-gray-600">Agent Profile</p>
-            {!agent.active && (
+            {!agent.is_active && (
               <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full border border-red-200">
                 INACTIVE
               </span>
@@ -115,7 +125,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
           <DeactivateButton 
             agentId={agent.id} 
             agentName={`${agent.first_name} ${agent.last_name}`}
-            isActive={agent.active ?? true}
+            isActive={agent.is_active ?? true}
           />
         </div>
       </div>
@@ -141,8 +151,8 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                   <Phone className="w-5 h-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-600">Phone</p>
-                    <a href={`tel:${agent.phone}`} className="text-sm text-gray-900">
-                      {agent.phone}
+                    <a href={phoneTelHref(agent.phone)} className="text-sm text-gray-900">
+                      {formatPhoneNumber(agent.phone)}
                     </a>
                   </div>
                 </div>
@@ -175,7 +185,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
               <div className="flex items-center gap-3">
                 <Calendar className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-xs text-gray-600">Expiration</p>
+                  <p className="text-xs text-gray-600">License Expiration</p>
                   {agent.license_expiration ? (
                     <div>
                       <p className={`text-sm font-medium ${
@@ -183,7 +193,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                         isExpiring ? 'text-orange-600' :
                         'text-gray-900'
                       }`}>
-                        {new Date(agent.license_expiration).toLocaleDateString()}
+                        {formatDateOnly(agent.license_expiration)}
                       </p>
                       {isExpiring && daysUntilExpiration > 0 && (
                         <p className="text-xs text-orange-600">{daysUntilExpiration} days remaining</p>
@@ -202,24 +212,34 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
 
           {/* CE & NAR Compliance - Side by Side */}
           <div className="grid grid-cols-2 gap-6">
-            {/* CE Compliance */}
+            {/* Utah CE Compliance */}
             <div className="bg-white rounded-lg border border-gray-200 p-6 shadow">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">CE Compliance</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Utah CE Compliance</h2>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-600 mb-1">Core Hours</p>
-                    <p className="text-2xl font-bold text-gray-900">{agent.ce_hours_core ?? 0}</p>
-                    <p className="text-xs text-gray-600">of 12 required</p>
+                    <p className="text-xs text-gray-600 mb-1">Core</p>
+                    <p className="text-2xl font-bold text-gray-900">{agent.ce_core_hours ?? 0}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-600 mb-1">Elective Hours</p>
-                    <p className="text-2xl font-bold text-gray-900">{agent.ce_hours_other ?? 0}</p>
-                    <p className="text-xs text-gray-600">of 6 required</p>
+                    <p className="text-xs text-gray-600 mb-1">Elective</p>
+                    <p className="text-2xl font-bold text-gray-900">{agent.ce_elective_hours ?? 0}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-200">
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">Required Hours</p>
+                    <p className="text-sm font-medium text-gray-900">{agent.ce_required_hours ?? 18}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">CE Due Date</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {agent.ce_due_date ? formatDateOnly(agent.ce_due_date) : <span className="italic text-gray-500">Not set</span>}
+                    </p>
                   </div>
                 </div>
                 <div className="pt-3 border-t border-gray-200">
-                  <p className="text-xs text-gray-600 mb-2">Mandatory 3-Hour Course</p>
+                  <p className="text-xs text-gray-600 mb-2">Mandatory Class</p>
                   {agent.mandatory_course_completed ? (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
                       ✓ Completed
@@ -246,10 +266,10 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Code of Ethics</p>
-                  {agent.nar_code_of_ethics_date ? (
+                  {agent.nar_code_of_ethics_completed || agent.nar_code_of_ethics_date ? (
                     <div>
                       <p className="text-sm font-medium text-green-600">
-                        ✓ {new Date(agent.nar_code_of_ethics_date).toLocaleDateString()}
+                        {agent.nar_code_of_ethics_date ? formatDateOnly(agent.nar_code_of_ethics_date) : 'Completed'}
                       </p>
                       {agent.nar_code_of_ethics_cert_url && (
                         <a 
@@ -263,15 +283,15 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm font-medium text-red-600">✗ Not completed</p>
+                    <p className="text-sm font-medium text-red-600">Not completed</p>
                   )}
                 </div>
                 <div className="pt-3 border-t border-gray-200">
                   <p className="text-xs text-gray-600 mb-1">Fair Housing</p>
-                  {agent.nar_fair_housing_date ? (
+                  {agent.nar_fair_housing_completed || agent.nar_fair_housing_date ? (
                     <div>
                       <p className="text-sm font-medium text-green-600">
-                        ✓ {new Date(agent.nar_fair_housing_date).toLocaleDateString()}
+                        {agent.nar_fair_housing_date ? formatDateOnly(agent.nar_fair_housing_date) : 'Completed'}
                       </p>
                       {agent.nar_fair_housing_cert_url && (
                         <a 
@@ -285,14 +305,14 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm font-medium text-red-600">✗ Not completed</p>
+                    <p className="text-sm font-medium text-red-600">Not completed</p>
                   )}
                 </div>
                 {agent.nar_cycle_end && (
                   <div className="pt-3 border-t border-gray-200">
                     <p className="text-xs text-gray-600 mb-1">Current Cycle Ends</p>
                     <p className="text-sm text-gray-900">
-                      {new Date(agent.nar_cycle_end).toLocaleDateString()}
+                      {formatDateOnly(agent.nar_cycle_end)}
                     </p>
                   </div>
                 )}
@@ -309,10 +329,10 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                   <div>
                     <p className="text-xs text-gray-600">Date of Birth</p>
                     <p className="text-sm text-gray-900">
-                      {new Date(agent.date_of_birth).toLocaleDateString()}
+                      {formatDateOnly(agent.date_of_birth)}
                     </p>
                     <p className="text-xs text-gray-600 mt-0.5">
-                      Age: {Math.floor((new Date().getTime() - new Date(agent.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000))}
+                      Age: {Math.floor((new Date().getTime() - parseDateOnly(agent.date_of_birth)!.getTime()) / (365.25 * 24 * 60 * 60 * 1000))}
                     </p>
                   </div>
                 )}
@@ -340,10 +360,10 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                 <div>
                   <p className="text-xs text-gray-600">Original License Date</p>
                   <p className="text-sm text-gray-900">
-                    {new Date(agent.original_license_date).toLocaleDateString()}
+                    {formatDateOnly(agent.original_license_date)}
                   </p>
                   <p className="text-xs text-gray-600 mt-0.5">
-                    {Math.floor((new Date().getTime() - new Date(agent.original_license_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))} years licensed
+                    {Math.floor((new Date().getTime() - parseDateOnly(agent.original_license_date)!.getTime()) / (365.25 * 24 * 60 * 60 * 1000))} years licensed
                   </p>
                 </div>
               )}
@@ -357,7 +377,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                 <div>
                   <p className="text-xs text-gray-600">Hire Date</p>
                   <p className="text-sm text-gray-900">
-                    {new Date(agent.hire_date).toLocaleDateString()}
+                    {formatDateOnly(agent.hire_date)}
                   </p>
                 </div>
               )}
@@ -367,6 +387,10 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
                   <p className="text-sm text-gray-900">{agent.listings_at_hire}</p>
                 </div>
               )}
+              <div>
+                <p className="text-xs text-gray-600">Portal Status</p>
+                <p className="text-sm text-gray-900">{formatPortalStatus(agent.invite_status)}</p>
+              </div>
             </div>
           </div>
 

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import ComplianceChecklist from './compliance-checklist'
+import { formatPhoneNumber } from '@/lib/phone'
 
 export default async function AgencyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -120,7 +121,7 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
                 <div className="text-gray-600">Client</div>
                 <div className="font-medium">{agency.client_first_name} {agency.client_last_name}</div>
                 {agency.client_email && <div className="text-gray-600">{agency.client_email}</div>}
-                {agency.client_phone && <div className="text-gray-600">{agency.client_phone}</div>}
+                {agency.client_phone && <div className="text-gray-600">{formatPhoneNumber(agency.client_phone)}</div>}
               </div>
               <div>
                 <div className="text-gray-600">Agent</div>

@@ -35,7 +35,7 @@ export default async function TransactionsPage() {
       anticipated_closing_date,
       county,
       agent_id,
-      agents (
+      agents:agents!agent_id(
         first_name,
         last_name
       )

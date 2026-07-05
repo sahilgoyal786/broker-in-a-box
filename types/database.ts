@@ -26,6 +26,8 @@ export type TransactionStatus = 'active' | 'under_contract' | 'closed' | 'cancel
 
 export type ReceivedVia = 'gmail_watch' | 'email_submission' | 'manual_upload'
 
+export type NotificationPreference = 'real_time' | 'daily_digest' | 'exception_based' | 'dashboard_only'
+
 export interface Broker {
   id: string
   auth_user_id: string
@@ -38,6 +40,7 @@ export interface Broker {
   drive_refresh_token: string | null
   calendar_refresh_token: string | null
   submission_address: string | null
+  notification_preference: NotificationPreference
   created_at: string
 }
 
@@ -48,6 +51,15 @@ export interface Agent {
   last_name: string
   email: string
   license_number: string | null
+  license_expiration: string | null
+  ce_due_date: string | null
+  ce_completed_hours: number
+  ce_required_hours: number
+  ce_core_hours: number
+  ce_elective_hours: number
+  mandatory_course_completed: boolean
+  nar_code_of_ethics_completed: boolean
+  nar_fair_housing_completed: boolean
   created_at: string
 }
 

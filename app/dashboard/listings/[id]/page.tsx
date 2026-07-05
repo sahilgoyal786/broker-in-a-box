@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import StatusUpdater from './status-updater'
+import { formatPhoneNumber, phoneTelHref } from '@/lib/phone'
 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
@@ -180,7 +181,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
             {listing.seller_phone && (
               <div>
                 <span className="font-semibold">Phone:</span>
-                <p><a href={`tel:${listing.seller_phone}`} className="text-blue-600 hover:underline">{listing.seller_phone}</a></p>
+                <p><a href={phoneTelHref(listing.seller_phone)} className="text-blue-600 hover:underline">{formatPhoneNumber(listing.seller_phone)}</a></p>
               </div>
             )}
           </div>
@@ -201,7 +202,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
             {listing.agent.phone && (
               <div>
                 <span className="font-semibold">Phone:</span>
-                <p><a href={`tel:${listing.agent.phone}`} className="text-blue-600 hover:underline">{listing.agent.phone}</a></p>
+                <p><a href={phoneTelHref(listing.agent.phone)} className="text-blue-600 hover:underline">{formatPhoneNumber(listing.agent.phone)}</a></p>
               </div>
             )}
           </div>

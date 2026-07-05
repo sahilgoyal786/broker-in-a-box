@@ -9,8 +9,10 @@ interface FilterOptions {
 }
 
 interface Filters {
+  fileId: string
   agent: string
   client: string
+  address: string
   city: string
   county: string
   status: string
@@ -26,8 +28,10 @@ export default function AgencyFilters({
   onFilterChange: (filters: Filters) => void
 }) {
   const [filters, setFilters] = useState<Filters>({
+    fileId: '',
     agent: '',
     client: '',
+    address: '',
     city: '',
     county: '',
     status: '',
@@ -49,8 +53,10 @@ export default function AgencyFilters({
 
   const clearFilters = () => {
     setFilters({
+      fileId: '',
       agent: '',
       client: '',
+      address: '',
       city: '',
       county: '',
       status: '',
@@ -82,6 +88,18 @@ export default function AgencyFilters({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+        {/* File ID Search */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">File ID</label>
+          <input
+            type="text"
+            value={filters.fileId}
+            onChange={(e) => handleFilterChange('fileId', e.target.value)}
+            placeholder="A-2026-..."
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+          />
+        </div>
+
         {/* Agent Filter (only show for brokers) */}
         {options.showAgentFilter && (
           <div>
@@ -108,7 +126,19 @@ export default function AgencyFilters({
             type="text"
             value={filters.client}
             onChange={(e) => handleFilterChange('client', e.target.value)}
-            placeholder="Search client..."
+            placeholder="Seller or buyer name..."
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Address Filter */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Address</label>
+          <input
+            type="text"
+            value={filters.address}
+            onChange={(e) => handleFilterChange('address', e.target.value)}
+            placeholder="Street address..."
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

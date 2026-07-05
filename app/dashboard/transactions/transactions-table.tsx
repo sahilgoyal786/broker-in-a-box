@@ -62,6 +62,20 @@ export default function TransactionsTable({
     }
 
     // Apply user filters
+    if (filters.fileId) {
+      const idSearch = filters.fileId.toLowerCase()
+      filtered = filtered.filter(t =>
+        t.file_id?.toLowerCase().includes(idSearch)
+      )
+    }
+
+    if (filters.address) {
+      const addrSearch = filters.address.toLowerCase()
+      filtered = filtered.filter(t =>
+        t.property_address?.toLowerCase().includes(addrSearch)
+      )
+    }
+
     if (filters.agent) {
       filtered = filtered.filter(t => t.agent_id === filters.agent)
     }

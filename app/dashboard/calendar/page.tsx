@@ -210,10 +210,10 @@ export default function CalendarPage() {
         }
       })
 
-      // Fetch agent license/CE expirations
+      // Fetch agent license/CE dates
       const { data: agentsExpiry } = await supabase
         .from('agents')
-        .select('id, first_name, last_name, license_expiration, ce_renewal_date')
+        .select('id, first_name, last_name, license_expiration, ce_due_date')
         .eq('broker_id', broker.id)
 
       agentsExpiry?.forEach(agent => {
@@ -231,12 +231,12 @@ export default function CalendarPage() {
           })
         }
 
-        if (agent.ce_renewal_date) {
+        if (agent.ce_due_date) {
           deadlineEvents.push({
             id: `ce-${agent.id}`,
-            title: `CE Renewal: ${agentName}`,
-            start: createAllDayDate(agent.ce_renewal_date),
-            end: createAllDayDate(agent.ce_renewal_date),
+            title: `CE Due: ${agentName}`,
+            start: createAllDayDate(agent.ce_due_date),
+            end: createAllDayDate(agent.ce_due_date),
             type: 'ce',
             agentId: agent.id,
             agentName,

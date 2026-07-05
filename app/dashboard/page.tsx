@@ -86,16 +86,17 @@ export default async function DashboardPage() {
   // Agents KPIs
   const { data: allAgents } = await supabase
     .from('agents')
-    .select('id, first_name, last_name, license_expiration, mandatory_course_completed')
+    .select('id, first_name, last_name, ce_due_date, ce_completed_hours, ce_required_hours, ce_core_hours, ce_elective_hours, mandatory_course_completed')
     .eq('broker_id', userContext.brokerId)
-    .eq('active', true) as any
+    .eq('is_active', true) as any
 
   const totalAgents = allAgents?.length ?? 0
 
   const ceNeedsAttention = allAgents?.filter((agent: any) => {
+    if (((agent.ce_core_hours ?? 0) + (agent.ce_elective_hours ?? 0)) < (agent.ce_required_hours ?? 18)) return true
     if (!agent.mandatory_course_completed) return true
-    if (agent.license_expiration) {
-      const daysUntil = Math.ceil((new Date(agent.license_expiration).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    if (agent.ce_due_date) {
+      const daysUntil = Math.ceil((new Date(agent.ce_due_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
       if (daysUntil < 60) return true
     }
     return false

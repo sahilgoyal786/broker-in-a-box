@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import PhoneInput from '@/components/phone-input'
 
 export default function EditTransactionForm({ transaction, agents, isAgent }: any) {
   const router = useRouter()
@@ -299,8 +300,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
           <div>
             <label className={labelClass}>Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="buyer_phone"
               className={inputClass}
               defaultValue={transaction.buyer_phone || ''}
@@ -345,8 +345,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
           <div>
             <label className={labelClass}>Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="seller_phone"
               className={inputClass}
               defaultValue={transaction.seller_phone || ''}
@@ -384,8 +383,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
           <div>
             <label className={labelClass}>Agent Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="cooperating_agent_phone"
               className={inputClass}
               placeholder="(801) 555-1234"
@@ -531,8 +529,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
           <div>
             <label className={labelClass}>Contact Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="seller_title_contact_phone"
               className={inputClass}
               placeholder="(801) 555-1234"
@@ -577,8 +574,7 @@ export default function EditTransactionForm({ transaction, agents, isAgent }: an
           </div>
           <div>
             <label className={labelClass}>Contact Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="buyer_title_contact_phone"
               className={inputClass}
               placeholder="(801) 555-1234"

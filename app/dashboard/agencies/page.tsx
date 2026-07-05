@@ -86,7 +86,8 @@ export default async function AgenciesPage() {
         id,
         file_id,
         client_first_name,
-        client_last_name
+        client_last_name,
+        county
       )
     `)
     .order('created_at', { ascending: false })
@@ -116,7 +117,7 @@ export default async function AgenciesPage() {
     property_address: l.property_address,
     property_city: l.property_city,
     property_state: l.property_state,
-    county: l.county,
+    county: l.county || l.agency_agreement?.county || null,
     property_type: l.property_type,
     mls_number: l.mls_number,
     list_price: l.listing_price,

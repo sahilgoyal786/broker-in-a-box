@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { AlertTriangle, Mail, Calendar } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { addYearsToDateOnly, formatDateOnly } from '@/lib/date-only'
 
 interface Agent {
   id: string
@@ -22,8 +23,10 @@ interface Agent {
   closedDeals: number
   daysUntilExpiration: number | null
   nar_code_of_ethics_date: string | null
+  nar_code_of_ethics_completed: boolean
   nar_code_of_ethics_cert_url: string | null
   nar_fair_housing_date: string | null
+  nar_fair_housing_completed: boolean
   nar_fair_housing_cert_url: string | null
   nar_cycle_end: string | null
 }
@@ -75,14 +78,10 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
           continue
         }
 
-        const currentDate = new Date(agent.license_expiration)
-        const newDate = new Date(currentDate)
-        newDate.setFullYear(newDate.getFullYear() + 2)
-
         const { error } = await supabase
           .from('agents')
           .update({ 
-            license_expiration: newDate.toISOString().split('T')[0]
+            license_expiration: addYearsToDateOnly(agent.license_expiration, 2)
           })
           .eq('id', agent.id) as any
 
@@ -117,9 +116,11 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
         return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">Active</span>
       case 'invited':
         return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">Invited</span>
-      case 'pending':
+      case 'expired':
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">Expired</span>
+      case 'not_invited':
       default:
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">Pending</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">Not Invited</span>
     }
   }
 
@@ -223,9 +224,9 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
               <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Status</th>
               <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Core</th>
               <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Elective</th>
-              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Mandatory</th>
+              <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Mandatory Class</th>
               <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">NAR</th>
-              <th className="text-left px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Expires</th>
+              <th className="text-left px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">License Expires</th>
               <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Active Listings</th>
               <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">U/C Sales</th>
               <th className="text-center px-6 py-3 text-gray-600 text-xs font-semibold uppercase tracking-wider">Closed</th>
@@ -277,7 +278,7 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                     <div className="flex flex-col gap-1 text-sm items-center">
                       <div className="flex items-center gap-1">
                         <span className="text-gray-600 w-8 text-right">COE:</span>
-                        {agent.nar_code_of_ethics_date ? (
+                        {agent.nar_code_of_ethics_completed || agent.nar_code_of_ethics_date ? (
                           agent.nar_code_of_ethics_cert_url ? (
                             <a 
                               href={agent.nar_code_of_ethics_cert_url} 
@@ -296,7 +297,7 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="text-gray-600 w-8 text-right">FH:</span>
-                        {agent.nar_fair_housing_date ? (
+                        {agent.nar_fair_housing_completed || agent.nar_fair_housing_date ? (
                           agent.nar_fair_housing_cert_url ? (
                             <a 
                               href={agent.nar_fair_housing_cert_url} 
@@ -325,7 +326,7 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
                             isExpiring ? 'text-orange-600' :
                             'text-gray-700'
                           }`}>
-                            {new Date(agent.license_expiration).toLocaleDateString()}
+                            {formatDateOnly(agent.license_expiration)}
                           </p>
                           {isExpiring && agent.daysUntilExpiration! > 0 && (
                             <p className="text-xs text-orange-600">{agent.daysUntilExpiration} days</p>

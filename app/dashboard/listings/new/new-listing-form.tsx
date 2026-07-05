@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { addLeadPaintDisclosure } from '@/lib/compliance/initialize-agency-compliance'
+import PhoneInput from '@/components/phone-input'
 
 type Agent = {
   id: string
@@ -657,8 +658,7 @@ export default function NewListingForm({ role, agents, currentAgentId, agencyAgr
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Seller Phone
           </label>
-          <input
-            type="tel"
+          <PhoneInput
             name="seller_phone"
             defaultValue={agencyAgreement?.client_phone || ''}
             className="shadow border rounded w-full py-2 px-3 text-gray-700"

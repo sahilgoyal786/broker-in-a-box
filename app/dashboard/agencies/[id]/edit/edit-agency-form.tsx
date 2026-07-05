@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import PhoneInput from '@/components/phone-input'
 
 export default function EditAgencyForm({ agency, listing, agents }: any) {
   const router = useRouter()
@@ -188,8 +189,7 @@ export default function EditAgencyForm({ agency, listing, agents }: any) {
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Phone</label>
-            <input
-              type="tel"
+            <PhoneInput
               name="client_phone"
               defaultValue={agency.client_phone || ''}
               className="w-full px-3 py-2 border rounded-lg"

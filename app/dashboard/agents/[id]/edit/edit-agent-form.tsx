@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { formatPhoneNumber } from '@/lib/phone'
 
 export default function EditAgentForm({ agent }: { agent: any }) {
   const router = useRouter()
@@ -11,19 +12,23 @@ export default function EditAgentForm({ agent }: { agent: any }) {
     first_name: agent.first_name || '',
     last_name: agent.last_name || '',
     email: agent.email || '',
-    phone: agent.phone || '',
+    phone: formatPhoneNumber(agent.phone || ''),
     address: agent.address || '',
     city: agent.city || '',
     state: agent.state || 'UT',
     zip: agent.zip || '',
     license_number: agent.license_number || '',
     license_expiration: agent.license_expiration || '',
-    ce_hours_core: agent.ce_hours_core || 0,
-    ce_hours_other: agent.ce_hours_other || 0,
+    ce_due_date: agent.ce_due_date || '',
+    ce_completed_hours: agent.ce_completed_hours || 0,
+    ce_required_hours: agent.ce_required_hours || 18,
+    ce_core_hours: agent.ce_core_hours || 0,
+    ce_elective_hours: agent.ce_elective_hours || 0,
     mandatory_course_completed: agent.mandatory_course_completed || false,
     nar_code_of_ethics_date: agent.nar_code_of_ethics_date || '',
     nar_fair_housing_date: agent.nar_fair_housing_date || '',
-    nar_cycle_end: agent.nar_cycle_end || '',
+    nar_code_of_ethics_completed: agent.nar_code_of_ethics_completed || false,
+    nar_fair_housing_completed: agent.nar_fair_housing_completed || false,
     date_of_birth: agent.date_of_birth || '',
     gender: agent.gender || '',
     primary_board: agent.primary_board || '',
@@ -31,6 +36,7 @@ export default function EditAgentForm({ agent }: { agent: any }) {
     current_company: agent.current_company || '',
     hire_date: agent.hire_date || '',
     listings_at_hire: agent.listings_at_hire || 0,
+    invite_status: agent.invite_status || 'not_invited',
     payment_method: agent.payment_method || '',
     entity_name: agent.entity_name || '',
     ssn_last_4: agent.ssn_last_4 || '',
@@ -43,6 +49,8 @@ export default function EditAgentForm({ agent }: { agent: any }) {
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked
       setFormData(prev => ({ ...prev, [name]: checked }))
+    } else if (name === 'phone') {
+      setFormData(prev => ({ ...prev, phone: formatPhoneNumber(value) }))
     } else if (type === 'number') {
       setFormData(prev => ({ ...prev, [name]: value === '' ? 0 : parseFloat(value) }))
     } else {
@@ -59,13 +67,17 @@ export default function EditAgentForm({ agent }: { agent: any }) {
     // Convert empty date strings to null
     const updateData = {
       ...formData,
+      ce_completed_hours: (formData.ce_core_hours || 0) + (formData.ce_elective_hours || 0),
       date_of_birth: formData.date_of_birth || null,
       license_expiration: formData.license_expiration || null,
+      ce_due_date: formData.ce_due_date || null,
       original_license_date: formData.original_license_date || null,
       hire_date: formData.hire_date || null,
       nar_code_of_ethics_date: formData.nar_code_of_ethics_date || null,
       nar_fair_housing_date: formData.nar_fair_housing_date || null,
-      nar_cycle_end: formData.nar_cycle_end || null
+      payment_method: ['person', 'entity'].includes(formData.payment_method)
+        ? formData.payment_method
+        : null
     }
 
     const { error } = await supabase
@@ -303,18 +315,31 @@ export default function EditAgentForm({ agent }: { agent: any }) {
         </div>
       </div>
 
-      {/* CE Compliance */}
+      {/* Utah CE Compliance */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b">CE Compliance</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b">Utah CE Compliance</h2>
         <div className="grid grid-cols-3 gap-6">
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              CE Due Date
+            </label>
+            <input
+              type="date"
+              name="ce_due_date"
+              value={formData.ce_due_date}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Core Hours
+              Required Hours
             </label>
             <input
               type="number"
-              name="ce_hours_core"
-              value={formData.ce_hours_core}
+              name="ce_required_hours"
+              value={formData.ce_required_hours}
               onChange={handleChange}
               min="0"
               step="0.5"
@@ -322,14 +347,14 @@ export default function EditAgentForm({ agent }: { agent: any }) {
             />
           </div>
 
-          <div>
+          <div className="rounded-lg border border-gray-200 p-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Elective Hours
+              Core
             </label>
             <input
               type="number"
-              name="ce_hours_other"
-              value={formData.ce_hours_other}
+              name="ce_core_hours"
+              value={formData.ce_core_hours}
               onChange={handleChange}
               min="0"
               step="0.5"
@@ -337,25 +362,41 @@ export default function EditAgentForm({ agent }: { agent: any }) {
             />
           </div>
 
-          <div className="flex items-end">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="mandatory_course_completed"
-                checked={formData.mandatory_course_completed}
-                onChange={handleChange}
-                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="text-sm font-medium text-gray-700">Mandatory Course Completed</span>
+          <div className="rounded-lg border border-gray-200 p-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Elective
             </label>
+            <input
+              type="number"
+              name="ce_elective_hours"
+              value={formData.ce_elective_hours}
+              onChange={handleChange}
+              min="0"
+              step="0.5"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
+
+          <label className="flex min-h-[98px] items-center gap-3 rounded-lg border border-gray-200 p-4">
+            <input
+              type="checkbox"
+              name="mandatory_course_completed"
+              checked={formData.mandatory_course_completed}
+              onChange={handleChange}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span>
+              <span className="block text-sm font-medium text-gray-700">Mandatory</span>
+              <span className="block text-xs text-gray-500">Completed</span>
+            </span>
+          </label>
         </div>
       </div>
 
       {/* NAR Compliance */}
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b">NAR Compliance</h2>
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Code of Ethics Date
@@ -368,6 +409,19 @@ export default function EditAgentForm({ agent }: { agent: any }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-gray-500 mt-1">Required every 3 years</p>
+            <label className="mt-3 flex min-h-[70px] items-center gap-3 rounded-lg border border-gray-200 p-4">
+              <input
+                type="checkbox"
+                name="nar_code_of_ethics_completed"
+                checked={formData.nar_code_of_ethics_completed}
+                onChange={handleChange}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span>
+                <span className="block text-sm font-medium text-gray-700">Completed</span>
+                <span className="block text-xs text-gray-500">Code of Ethics</span>
+              </span>
+            </label>
           </div>
 
           <div>
@@ -382,20 +436,19 @@ export default function EditAgentForm({ agent }: { agent: any }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-gray-500 mt-1">Required every 3 years</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Current Cycle Ends
+            <label className="mt-3 flex min-h-[70px] items-center gap-3 rounded-lg border border-gray-200 p-4">
+              <input
+                type="checkbox"
+                name="nar_fair_housing_completed"
+                checked={formData.nar_fair_housing_completed}
+                onChange={handleChange}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span>
+                <span className="block text-sm font-medium text-gray-700">Completed</span>
+                <span className="block text-xs text-gray-500">Fair Housing</span>
+              </span>
             </label>
-            <input
-              type="date"
-              name="nar_cycle_end"
-              value={formData.nar_cycle_end}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <p className="text-xs text-gray-500 mt-1">3-year compliance cycle</p>
           </div>
         </div>
       </div>
@@ -443,6 +496,23 @@ export default function EditAgentForm({ agent }: { agent: any }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Portal Status
+            </label>
+            <select
+              name="invite_status"
+              value={formData.invite_status}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="not_invited">Not Invited</option>
+              <option value="invited">Invited</option>
+              <option value="active">Active</option>
+              <option value="expired">Expired</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -461,9 +531,8 @@ export default function EditAgentForm({ agent }: { agent: any }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select...</option>
-              <option value="check">Check</option>
-              <option value="direct_deposit">Direct Deposit</option>
-              <option value="wire">Wire Transfer</option>
+              <option value="person">Pay Agent Personally</option>
+              <option value="entity">Pay Agent Entity</option>
             </select>
           </div>
 

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Plus, Users, Upload } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import AgentsTable from './agents-table'
+import { daysUntilDateOnly } from '@/lib/date-only'
 
 export default async function AgentsPage() {
   const userContext = await getUserContext()
@@ -16,9 +17,9 @@ export default async function AgentsPage() {
 
   const { data: agents } = await supabase
     .from('agents')
-    .select('id, first_name, last_name, email, license_number, license_expiration, active, ce_hours_core, ce_hours_other, mandatory_course_completed, invite_status, nar_code_of_ethics_date, nar_code_of_ethics_cert_url, nar_fair_housing_date, nar_fair_housing_cert_url, nar_cycle_end')
+    .select('id, first_name, last_name, email, license_number, license_expiration, ce_due_date, ce_completed_hours, ce_required_hours, ce_core_hours, ce_elective_hours, mandatory_course_completed, invite_status, nar_member, nar_code_of_ethics_date, nar_code_of_ethics_completed, nar_code_of_ethics_cert_url, nar_fair_housing_date, nar_fair_housing_completed, nar_fair_housing_cert_url')
     .eq('broker_id', broker?.id ?? '')
-    .eq('active', true)  // Only show active agents
+    .eq('is_active', true)
     .order('last_name', { ascending: true }) as any
 
   // Get production stats for each agent
@@ -57,16 +58,13 @@ export default async function AgentsPage() {
       .eq('status', 'closed') as any
 
     // Calculate days until license expiration
-    let daysUntilExpiration = null
-    if (agent.license_expiration) {
-      const expDate = new Date(agent.license_expiration)
-      const today = new Date()
-      const diffTime = expDate.getTime() - today.getTime()
-      daysUntilExpiration = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    }
+    const daysUntilExpiration = daysUntilDateOnly(agent.license_expiration)
 
     return {
       ...agent,
+      ce_hours_core: agent.ce_core_hours ?? 0,
+      ce_hours_other: agent.ce_elective_hours ?? 0,
+      nar_cycle_end: null,
       activeListings,
       pendingSales: pendingSales ?? 0,
       closedDeals: closedDeals ?? 0,

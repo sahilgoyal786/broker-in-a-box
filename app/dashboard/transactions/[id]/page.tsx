@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import TransactionComplianceChecklist from './transaction-compliance-checklist'
+import { formatPhoneNumber } from '@/lib/phone'
 
 export default async function TransactionDetailPage({
   params,
@@ -22,7 +23,7 @@ export default async function TransactionDetailPage({
     .from('transactions')
     .select(`
       *,
-      agent:agents(first_name, last_name)
+      agent:agents!agent_id(first_name, last_name)
     `)
     .eq('id', id)
     .single() as any
@@ -177,20 +178,20 @@ export default async function TransactionDetailPage({
                 <h3 className="text-sm font-semibold text-gray-700 mb-2">Buyer</h3>
                 <p className="font-medium">{transaction.buyer_first_name} {transaction.buyer_last_name}</p>
                 {transaction.buyer_email && <p className="text-sm text-gray-600">{transaction.buyer_email}</p>}
-                {transaction.buyer_phone && <p className="text-sm text-gray-600">{transaction.buyer_phone}</p>}
+                {transaction.buyer_phone && <p className="text-sm text-gray-600">{formatPhoneNumber(transaction.buyer_phone)}</p>}
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 mb-2">Seller</h3>
                 <p className="font-medium">{transaction.seller_first_name || '—'} {transaction.seller_last_name || ''}</p>
                 {transaction.seller_email && <p className="text-sm text-gray-600">{transaction.seller_email}</p>}
-                {transaction.seller_phone && <p className="text-sm text-gray-600">{transaction.seller_phone}</p>}
+                {transaction.seller_phone && <p className="text-sm text-gray-600">{formatPhoneNumber(transaction.seller_phone)}</p>}
               </div>
               {transaction.cooperating_brokerage && (
                 <div className="col-span-2 pt-4 border-t">
                   <h3 className="text-sm font-semibold text-gray-700 mb-2">Cooperating Broker</h3>
                   <p className="font-medium">{transaction.cooperating_brokerage}</p>
                   {transaction.cooperating_agent_name && <p className="text-sm text-gray-600">{transaction.cooperating_agent_name}</p>}
-                  {transaction.cooperating_agent_phone && <p className="text-sm text-gray-600">{transaction.cooperating_agent_phone}</p>}
+                  {transaction.cooperating_agent_phone && <p className="text-sm text-gray-600">{formatPhoneNumber(transaction.cooperating_agent_phone)}</p>}
                   {transaction.cooperating_agent_email && <p className="text-sm text-gray-600">{transaction.cooperating_agent_email}</p>}
                 </div>
               )}
@@ -207,7 +208,7 @@ export default async function TransactionDetailPage({
                   <>
                     <p className="font-medium">{transaction.buyer_title_company}</p>
                     {transaction.buyer_title_contact_name && <p className="text-sm text-gray-600">{transaction.buyer_title_contact_name}</p>}
-                    {transaction.buyer_title_contact_phone && <p className="text-sm text-gray-600">{transaction.buyer_title_contact_phone}</p>}
+                    {transaction.buyer_title_contact_phone && <p className="text-sm text-gray-600">{formatPhoneNumber(transaction.buyer_title_contact_phone)}</p>}
                     {transaction.buyer_title_contact_email && <p className="text-sm text-gray-600">{transaction.buyer_title_contact_email}</p>}
                   </>
                 ) : (
@@ -220,7 +221,7 @@ export default async function TransactionDetailPage({
                   <>
                     <p className="font-medium">{transaction.seller_title_company}</p>
                     {transaction.seller_title_contact_name && <p className="text-sm text-gray-600">{transaction.seller_title_contact_name}</p>}
-                    {transaction.seller_title_contact_phone && <p className="text-sm text-gray-600">{transaction.seller_title_contact_phone}</p>}
+                    {transaction.seller_title_contact_phone && <p className="text-sm text-gray-600">{formatPhoneNumber(transaction.seller_title_contact_phone)}</p>}
                     {transaction.seller_title_contact_email && <p className="text-sm text-gray-600">{transaction.seller_title_contact_email}</p>}
                   </>
                 ) : (

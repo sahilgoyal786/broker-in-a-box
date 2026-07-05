@@ -50,6 +50,20 @@ export default function AgenciesTabs({ listings, buyerAgreements, role, agents }
     const applyFilters = (agreements: Agreement[]) => {
       let filtered = agreements
 
+      if (filters.fileId) {
+        const idSearch = filters.fileId.toLowerCase()
+        filtered = filtered.filter(a =>
+          a.file_id?.toLowerCase().includes(idSearch)
+        )
+      }
+
+      if (filters.address) {
+        const addrSearch = filters.address.toLowerCase()
+        filtered = filtered.filter(a =>
+          a.property_address?.toLowerCase().includes(addrSearch)
+        )
+      }
+
       if (filters.agent) {
         filtered = filtered.filter(a => a.agent_id === filters.agent)
       }
