@@ -31,6 +31,16 @@ interface Agent {
   nar_cycle_end: string | null
 }
 
+type InviteResult = {
+  invited?: number
+  failed?: number
+  error?: string
+  errors?: Array<{
+    email?: string
+    error?: string
+  }>
+}
+
 export default function AgentsTable({ agents }: { agents: Agent[] }) {
   const router = useRouter()
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set())
@@ -83,7 +93,7 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
           .update({ 
             license_expiration: addYearsToDateOnly(agent.license_expiration, 2)
           })
-          .eq('id', agent.id) as any
+          .eq('id', agent.id)
 
         if (error) {
           alert(`Error updating ${agent.first_name} ${agent.last_name}: ${error.message}`)
@@ -155,17 +165,23 @@ export default function AgentsTable({ agents }: { agents: Agent[] }) {
         body: JSON.stringify({ agentIds: Array.from(selectedAgents) })
       })
 
-      const data = await response.json()
+      const data = await response.json() as InviteResult
 
       if (response.ok) {
-        alert(`✅ Invited ${data.invited} agent${data.invited > 1 ? 's' : ''}!${data.failed > 0 ? `\n\n❌ Failed: ${data.failed}` : ''}`)
+        const invited = data.invited ?? 0
+        const failed = data.failed ?? 0
+        const errorDetails = data.errors
+          ?.map((item) => `${item.email || 'Unknown email'}: ${item.error || 'Unknown error'}`)
+          .join('\n')
+
+        alert(`✅ Invited ${invited} agent${invited === 1 ? '' : 's'}!${failed > 0 ? `\n\n❌ Failed: ${failed}${errorDetails ? `\n${errorDetails}` : ''}` : ''}`)
         setSelectedAgents(new Set())
         router.refresh()
       } else {
         alert(`Error: ${data.error || 'Failed to send invites'}`)
       }
-    } catch (error: any) {
-      alert(`Error: ${error.message}`)
+    } catch (error: unknown) {
+      alert(`Error: ${error instanceof Error ? error.message : 'Failed to send invites'}`)
     } finally {
       setUpdating(false)
     }
