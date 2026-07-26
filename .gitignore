@@ -17,6 +17,9 @@
 .env.test.local
 .env.production.local
 
+# local generated files
+/tmp/
+
 # debug logs
 npm-debug.log*
 yarn-debug.log*
