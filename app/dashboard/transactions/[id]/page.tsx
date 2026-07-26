@@ -283,7 +283,6 @@ export default async function TransactionDetailPage({
         <div className="col-span-1">
           <div className="sticky top-6">
             <TransactionComplianceChecklist 
-              transactionId={id}
               items={complianceItems || []}
               canEdit={true}
               userRole={userContext.role}

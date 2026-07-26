@@ -16,12 +16,10 @@ interface ComplianceItem {
 }
 
 export default function TransactionComplianceChecklist({ 
-  transactionId, 
   items, 
   canEdit,
   userRole,
 }: { 
-  transactionId: string
   items: ComplianceItem[]
   canEdit: boolean 
   userRole: 'broker' | 'agent'
