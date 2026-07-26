@@ -22,7 +22,26 @@ export type TrackingType =
   | 'inherited'
   | 'optional_any'
 
-export type TransactionStatus = 'active' | 'under_contract' | 'closed' | 'cancelled'
+export type TransactionStatus =
+  | 'active'
+  | 'pending'
+  | 'under_contract'
+  | 'pending_closure'
+  | 'pending_cancellation'
+  | 'closed'
+  | 'cancelled'
+  | 'canceled'
+  | 'failed'
+
+export type RepcCommissionType = 'dollar' | 'percent'
+
+export type LoanType =
+  | 'conventional'
+  | 'fha'
+  | 'va'
+  | 'cash'
+  | 'seller_financing'
+  | 'other'
 
 export type ReceivedVia = 'gmail_watch' | 'email_submission' | 'manual_upload'
 
@@ -60,6 +79,7 @@ export interface Agent {
   mandatory_course_completed: boolean
   nar_code_of_ethics_completed: boolean
   nar_fair_housing_completed: boolean
+  active: boolean
   created_at: string
 }
 
@@ -90,11 +110,73 @@ export interface Transaction {
   id: string
   broker_id: string
   agent_id: string | null
+  agency_agreement_id: string | null
   property_type: PropertyType
   transaction_type: TransactionType
   client_last_name: string
   client_first_name: string
   property_address: string | null
+  property_city: string | null
+  property_state: string | null
+  property_zip: string | null
+  county: string | null
+  tax_id: string | null
+  purpose: string | null
+  offer_reference_date: string | null
+  contract_date: string | null
+  purchase_price: number | string | null
+  earnest_money_amount: number | string | null
+  earnest_money_location: string | null
+  earnest_money_held_by: string | null
+  earnest_money_contact_name: string | null
+  earnest_money_contact_email: string | null
+  earnest_money_contact_phone: string | null
+  buyer_first_name: string | null
+  buyer_last_name: string | null
+  buyer_email: string | null
+  buyer_phone: string | null
+  buyer_2_first_name: string | null
+  buyer_2_last_name: string | null
+  buyer_2_email: string | null
+  buyer_2_phone: string | null
+  seller_first_name: string | null
+  seller_last_name: string | null
+  seller_email: string | null
+  seller_phone: string | null
+  seller_2_first_name: string | null
+  seller_2_last_name: string | null
+  seller_2_email: string | null
+  seller_2_phone: string | null
+  seller_concessions_amount: number | string | null
+  seller_concessions_description: string | null
+  seller_title_company: string | null
+  seller_title_contact_name: string | null
+  seller_title_contact_email: string | null
+  seller_title_contact_phone: string | null
+  buyer_title_company: string | null
+  buyer_title_contact_name: string | null
+  buyer_title_contact_email: string | null
+  buyer_title_contact_phone: string | null
+  cooperating_brokerage: string | null
+  cooperating_agent_name: string | null
+  cooperating_agent_phone: string | null
+  cooperating_agent_email: string | null
+  seller_disclosure_deadline: string | null
+  due_diligence_deadline: string | null
+  financing_appraisal_deadline: string | null
+  settlement_deadline: string | null
+  anticipated_closing_date: string | null
+  custom_deadline_1_label: string | null
+  custom_deadline_1_date: string | null
+  custom_deadline_2_label: string | null
+  custom_deadline_2_date: string | null
+  repc_commission_amount: number | string | null
+  repc_commission_type: RepcCommissionType
+  cd_commission_amount: number | string | null
+  commission_earnest_money_offset_amount: number | string | null
+  commission_notes: string | null
+  loan_type: LoanType | null
+  repc_notes: string | null
   status: TransactionStatus
   drive_folder_id: string | null
   created_at: string
@@ -114,6 +196,13 @@ export interface TransactionDocument {
   ai_identified_as: string | null
   verified: boolean
   signatures_verified: boolean
+  visible: boolean
+  visibility_status: 'active' | 'hidden' | 'restored' | 'superseded' | 'rejected'
+  hidden_by: string | null
+  hidden_at: string | null
+  hidden_reason: string | null
+  restored_by: string | null
+  restored_at: string | null
   created_at: string
 }
 
