@@ -43,6 +43,43 @@ as $$
   end
 $$;
 
+do $$
+begin
+  if exists (select 1 from pg_type where typname = 'transaction_status') then
+    alter type public.transaction_status add value if not exists 'pending_closure';
+    alter type public.transaction_status add value if not exists 'pending_cancellation';
+  end if;
+end $$;
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'transactions'
+      and column_name = 'status'
+      and data_type = 'text'
+  ) then
+    alter table public.transactions
+      drop constraint if exists transactions_status_check;
+
+    alter table public.transactions
+      add constraint transactions_status_check
+      check (status in (
+        'pending',
+        'active',
+        'under_contract',
+        'pending_closure',
+        'pending_cancellation',
+        'closed',
+        'cancelled',
+        'close_requested',
+        'cancel_requested'
+      ));
+  end if;
+end $$;
+
 alter table public.transaction_compliance_items
   add column if not exists agent_provided boolean not null default false,
   add column if not exists agent_provided_at timestamptz,
@@ -124,6 +161,19 @@ begin
     return old;
   end if;
 
+  if actor_role = 'agent' and tg_op = 'INSERT' then
+    new.verified := false;
+    new.signatures_verified := false;
+    new.ai_confidence := null;
+    new.ai_identified_as := null;
+    new.visible := true;
+    new.visibility_status := 'active';
+    new.hidden_by := null;
+    new.hidden_at := null;
+    new.restored_by := null;
+    new.restored_at := null;
+  end if;
+
   if actor_role = 'agent' and tg_op = 'UPDATE' then
     if new.transaction_id is distinct from old.transaction_id
        or new.form_identifier is distinct from old.form_identifier
@@ -149,23 +199,34 @@ begin
     end if;
 
     if new.visible = false and old.visible is distinct from false then
-      new.hidden_by := coalesce(new.hidden_by, auth.uid());
-      new.hidden_at := coalesce(new.hidden_at, now());
+      new.hidden_by := auth.uid();
+      new.hidden_at := now();
       new.visibility_status := 'hidden';
+    elsif new.hidden_by is distinct from old.hidden_by
+       or new.hidden_at is distinct from old.hidden_at then
+      raise exception 'Agents cannot change document hide audit fields';
     end if;
 
     if new.visible = true and old.visible is distinct from true then
-      new.restored_by := coalesce(new.restored_by, auth.uid());
-      new.restored_at := coalesce(new.restored_at, now());
+      new.restored_by := auth.uid();
+      new.restored_at := now();
       if old.visibility_status = 'hidden' then
         new.visibility_status := 'restored';
       end if;
+    elsif new.restored_by is distinct from old.restored_by
+       or new.restored_at is distinct from old.restored_at then
+      raise exception 'Agents cannot change document restore audit fields';
     end if;
   end if;
 
   return new;
 end;
 $$;
+
+drop trigger if exists guard_v1_transaction_document_insert on public.transaction_documents;
+create trigger guard_v1_transaction_document_insert
+  before insert on public.transaction_documents
+  for each row execute function public.guard_v1_transaction_document_write();
 
 drop trigger if exists guard_v1_transaction_document_update on public.transaction_documents;
 create trigger guard_v1_transaction_document_update
@@ -234,6 +295,8 @@ create trigger guard_v1_transaction_compliance_update
 drop policy if exists "Brokers can manage own transactions" on public.transactions;
 drop policy if exists "Users can manage transactions based on role" on public.transactions;
 drop policy if exists "users read brokerage transactions" on public.transactions;
+drop policy if exists "users insert brokerage transactions" on public.transactions;
+drop policy if exists "users update brokerage transactions" on public.transactions;
 drop policy if exists "users read authorized transactions" on public.transactions;
 drop policy if exists "users insert authorized transactions" on public.transactions;
 drop policy if exists "users update authorized transactions" on public.transactions;

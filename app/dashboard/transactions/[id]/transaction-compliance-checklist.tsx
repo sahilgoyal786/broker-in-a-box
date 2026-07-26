@@ -51,7 +51,7 @@ export default function TransactionComplianceChecklist({
 
     const { error } = await supabase
       .from('transaction_compliance_items')
-      .update(updateData)
+      .update(updateData as never)
       .eq('id', itemId)
 
     if (error) {

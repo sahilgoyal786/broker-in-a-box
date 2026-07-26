@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
       .update({
         status: nextStatus,
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq('id', transactionId)
 
     if (updateError) {
@@ -135,13 +135,16 @@ export async function POST(request: NextRequest) {
     }
 
     if (nextStatus === 'closed' || nextStatus === 'cancelled') {
-      const deleteResult = await deleteTransactionDeadlines(transactionId, admin)
-      if (!deleteResult.success) {
+      try {
+        await deleteTransactionDeadlines(transactionId, admin)
+      } catch (deadlineError) {
+        console.error('Failed to delete transaction deadlines:', deadlineError)
+        const terminalAction = nextStatus === 'closed' ? 'closed' : 'cancelled'
         return NextResponse.json(
           {
             success: true,
             status: nextStatus,
-            warning: 'Transaction was closed, but some calendar events could not be deleted.',
+            warning: `Transaction was ${terminalAction}, but some calendar events could not be deleted.`,
           },
           { status: 200 },
         )
