@@ -25,7 +25,24 @@ type SavedInvite = {
 }
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'Unknown error'
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  if (error && typeof error === 'object') {
+    const maybeMessage = 'message' in error ? error.message : undefined
+    if (typeof maybeMessage === 'string' && maybeMessage.trim()) {
+      return maybeMessage
+    }
+
+    try {
+      return JSON.stringify(error)
+    } catch {
+      return 'Unknown error'
+    }
+  }
+
+  return typeof error === 'string' && error.trim() ? error : 'Unknown error'
 }
 
 export async function POST(request: Request) {
