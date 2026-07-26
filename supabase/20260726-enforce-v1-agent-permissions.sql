@@ -248,10 +248,16 @@ declare
   actor_role text := public.current_user_role();
 begin
   if actor_role = 'agent' and tg_op = 'INSERT' then
-    if new.is_complete = true
-       or new.completed_at is not null
-       or new.broker_approval_status <> 'pending' then
-      raise exception 'Agents cannot create broker-approved compliance items';
+    new.is_complete := false;
+    new.completed_at := null;
+    new.broker_approval_status := 'pending';
+
+    if new.agent_provided = true then
+      new.agent_provided_by := auth.uid();
+      new.agent_provided_at := now();
+    else
+      new.agent_provided_by := null;
+      new.agent_provided_at := null;
     end if;
   end if;
 
@@ -268,11 +274,12 @@ begin
     end if;
 
     if new.agent_provided = true and old.agent_provided is distinct from true then
-      new.agent_provided_by := coalesce(new.agent_provided_by, auth.uid());
-      new.agent_provided_at := coalesce(new.agent_provided_at, now());
-    end if;
-
-    if new.agent_provided = false and old.agent_provided is distinct from false then
+      new.agent_provided_by := auth.uid();
+      new.agent_provided_at := now();
+    elsif new.agent_provided = true then
+      new.agent_provided_by := old.agent_provided_by;
+      new.agent_provided_at := old.agent_provided_at;
+    elsif new.agent_provided = false then
       new.agent_provided_by := null;
       new.agent_provided_at := null;
     end if;
