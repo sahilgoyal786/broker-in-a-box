@@ -10,37 +10,50 @@ interface ComplianceItem {
   is_required: boolean
   is_complete: boolean
   completed_at: string | null
+  agent_provided?: boolean
+  agent_provided_at?: string | null
+  broker_approval_status?: string
 }
 
 export default function TransactionComplianceChecklist({ 
   transactionId, 
   items, 
-  canEdit 
+  canEdit,
+  userRole,
 }: { 
   transactionId: string
   items: ComplianceItem[]
   canEdit: boolean 
+  userRole: 'broker' | 'agent'
 }) {
   const [checklist, setChecklist] = useState<ComplianceItem[]>(items)
   const [updating, setUpdating] = useState<string | null>(null)
 
   const supabase = createClient()
 
-  const completeCount = checklist.filter(item => item.is_complete).length
+  const isProvided = (item: ComplianceItem) => item.is_complete || Boolean(item.agent_provided)
+  const completeCount = checklist.filter(isProvided).length
   const totalCount = checklist.length
-  const missingRequired = checklist.filter(item => item.is_required && !item.is_complete).length
+  const missingRequired = checklist.filter(item => item.is_required && !isProvided(item)).length
 
   async function toggleItem(itemId: string, currentStatus: boolean) {
     if (!canEdit) return
     
     setUpdating(itemId)
 
+    const updateData = userRole === 'broker'
+      ? {
+          is_complete: !currentStatus,
+          completed_at: !currentStatus ? new Date().toISOString() : null,
+          broker_approval_status: !currentStatus ? 'approved' : 'pending',
+        }
+      : {
+          agent_provided: !currentStatus,
+        }
+
     const { error } = await supabase
       .from('transaction_compliance_items')
-      .update({
-        is_complete: !currentStatus,
-        completed_at: !currentStatus ? new Date().toISOString() : null
-      })
+      .update(updateData)
       .eq('id', itemId)
 
     if (error) {
@@ -52,8 +65,19 @@ export default function TransactionComplianceChecklist({
     // Update local state
     setChecklist(prev => 
       prev.map(item => 
-        item.id === itemId 
-          ? { ...item, is_complete: !currentStatus, completed_at: !currentStatus ? new Date().toISOString() : null }
+        item.id === itemId && userRole === 'broker'
+          ? {
+              ...item,
+              is_complete: !currentStatus,
+              completed_at: !currentStatus ? new Date().toISOString() : null,
+              broker_approval_status: !currentStatus ? 'approved' : 'pending',
+            }
+          : item.id === itemId
+            ? {
+                ...item,
+                agent_provided: !currentStatus,
+                agent_provided_at: !currentStatus ? new Date().toISOString() : null,
+              }
           : item
       )
     )
@@ -82,7 +106,7 @@ export default function TransactionComplianceChecklist({
             key={item.id}
             className={`
               flex items-start gap-3 p-3 rounded-lg border
-              ${item.is_complete 
+              ${isProvided(item)
                 ? 'bg-green-50 border-green-200' 
                 : item.is_required 
                   ? 'bg-red-50 border-red-200'
@@ -91,11 +115,11 @@ export default function TransactionComplianceChecklist({
               ${canEdit ? 'cursor-pointer hover:bg-opacity-80' : 'cursor-default'}
               ${updating === item.id ? 'opacity-50' : ''}
             `}
-            onClick={() => canEdit && toggleItem(item.id, item.is_complete)}
+            onClick={() => canEdit && toggleItem(item.id, userRole === 'broker' ? item.is_complete : Boolean(item.agent_provided))}
           >
             {/* Checkbox */}
             <div className="flex-shrink-0 mt-0.5">
-              {item.is_complete ? (
+              {isProvided(item) ? (
                 <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
@@ -109,12 +133,12 @@ export default function TransactionComplianceChecklist({
             {/* Form name */}
             <div className="flex-1">
               <p className={`text-sm font-medium ${
-                item.is_complete ? 'text-gray-500 line-through' : 'text-gray-900'
+                isProvided(item) ? 'text-gray-500 line-through' : 'text-gray-900'
               }`}>
                 {item.form_name}
               </p>
               
-              {item.is_required && !item.is_complete && (
+              {item.is_required && !isProvided(item) && (
                 <p className="text-xs text-red-600 mt-1">
                   🚨 Required
                 </p>
@@ -122,7 +146,13 @@ export default function TransactionComplianceChecklist({
 
               {item.is_complete && item.completed_at && (
                 <p className="text-xs text-gray-500 mt-1">
-                  Completed {new Date(item.completed_at).toLocaleDateString()}
+                  Broker approved {new Date(item.completed_at).toLocaleDateString()}
+                </p>
+              )}
+
+              {!item.is_complete && item.agent_provided && item.agent_provided_at && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Provided by agent {new Date(item.agent_provided_at).toLocaleDateString()}
                 </p>
               )}
 

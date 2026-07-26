@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react'
+import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
 
 export default function StatusUpdater({ 
   transactionId, 
@@ -17,35 +16,25 @@ export default function StatusUpdater({
   const router = useRouter()
   const [updating, setUpdating] = useState(false)
 
-  async function updateStatus(newStatus: string, confirmMessage: string) {
+  async function updateStatus(action: string, confirmMessage: string) {
     if (!confirm(confirmMessage)) return
     
     setUpdating(true)
-    const supabase = createClient()
+    const response = await fetch('/api/transactions/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transactionId, action }),
+    })
+    const result = await response.json().catch(() => ({}))
 
-    const { error } = await supabase
-      .from('transactions')
-      .update({ status: newStatus })
-      .eq('id', transactionId) as any
-
-    if (error) {
-      alert('Error updating status: ' + error.message)
+    if (!response.ok) {
+      alert('Error updating status: ' + (result.error || 'Unknown error'))
       setUpdating(false)
       return
     }
 
-    // If closing or cancelling, delete calendar events
-    if (newStatus === 'closed' || newStatus === 'cancelled') {
-      try {
-        await fetch('/api/transactions/delete-calendar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transactionId })
-        })
-      } catch (err) {
-        console.error('Failed to delete calendar events:', err)
-        // Don't block the user - calendar deletion failure is not critical
-      }
+    if (result.warning) {
+      alert(result.warning)
     }
 
     router.refresh()
@@ -56,6 +45,7 @@ export default function StatusUpdater({
   const agentButtons = [
     { 
       status: 'pending_closure', 
+      action: 'submit_clear_to_pay',
       label: 'Submit for CTP', 
       icon: CheckCircle, 
       color: 'bg-green-600 hover:bg-green-500',
@@ -64,6 +54,7 @@ export default function StatusUpdater({
     },
     { 
       status: 'pending_cancellation', 
+      action: 'submit_cancellation',
       label: 'Submit for Cancellation', 
       icon: XCircle, 
       color: 'bg-orange-600 hover:bg-orange-500',
@@ -76,6 +67,7 @@ export default function StatusUpdater({
   const officeButtons = [
     { 
       status: 'closed', 
+      action: 'approve_clear_to_pay',
       label: 'Approve - Mark Closed', 
       icon: CheckCircle, 
       color: 'bg-green-600 hover:bg-green-500',
@@ -84,6 +76,7 @@ export default function StatusUpdater({
     },
     { 
       status: 'cancelled', 
+      action: 'approve_cancellation',
       label: 'Approve - Mark Cancelled', 
       icon: XCircle, 
       color: 'bg-red-600 hover:bg-red-500',
@@ -92,7 +85,8 @@ export default function StatusUpdater({
     },
     { 
       status: 'under_contract', 
-      label: 'Reject - Return to Pending', 
+      action: currentStatus === 'pending_cancellation' ? 'return_cancellation' : 'return_clear_to_pay',
+      label: 'Reject - Return to Under Contract',
       icon: AlertTriangle, 
       color: 'bg-slate-600 hover:bg-slate-500',
       confirm: 'Reject this submission? Transaction will return to under contract status.',
@@ -126,10 +120,10 @@ export default function StatusUpdater({
       {/* Action buttons */}
       {availableButtons.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {availableButtons.map(({ status, label, icon: Icon, color, confirm }) => (
+          {availableButtons.map(({ status, action, label, icon: Icon, color, confirm }) => (
             <button
               key={status}
-              onClick={() => updateStatus(status, confirm)}
+              onClick={() => updateStatus(action, confirm)}
               disabled={updating}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-white text-sm font-medium transition-colors ${color} ${
                 updating ? 'opacity-50' : ''

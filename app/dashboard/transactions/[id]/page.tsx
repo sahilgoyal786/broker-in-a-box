@@ -286,6 +286,7 @@ export default async function TransactionDetailPage({
               transactionId={id}
               items={complianceItems || []}
               canEdit={true}
+              userRole={userContext.role}
             />
           </div>
         </div>
