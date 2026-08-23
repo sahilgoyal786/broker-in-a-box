@@ -15,19 +15,19 @@ export default async function AgentsPage() {
   const supabase = await createClient()
   const brokerId = userContext!.brokerId
 
-  const { data: agents } = await supabase
-    .from('agents')
-    .select('id, first_name, last_name, email, license_number, license_expiration, ce_due_date, ce_completed_hours, ce_required_hours, ce_core_hours, ce_elective_hours, mandatory_course_completed, invite_status, nar_member, nar_code_of_ethics_date, nar_code_of_ethics_completed, nar_code_of_ethics_cert_url, nar_fair_housing_date, nar_fair_housing_completed, nar_fair_housing_cert_url')
-    .eq('broker_id', brokerId)
-    .eq('is_active', true)
-    .order('last_name', { ascending: true }) as any
-
-  // Fetch stats for ALL agents in bulk (broker-scoped) instead of N queries per agent
+  // Fetch agents and broker-wide stats in parallel instead of waterfalling —
+  // none of these queries depend on each other, they're all scoped by brokerId.
   const [
+    { data: agents },
     { data: allListingAgreements },
     { data: listingTransactions },
     { data: allTransactions },
   ] = await Promise.all([
+    supabase.from('agents')
+      .select('id, first_name, last_name, email, license_number, license_expiration, ce_due_date, ce_completed_hours, ce_required_hours, ce_core_hours, ce_elective_hours, mandatory_course_completed, invite_status, nar_member, nar_code_of_ethics_date, nar_code_of_ethics_completed, nar_code_of_ethics_cert_url, nar_fair_housing_date, nar_fair_housing_completed, nar_fair_housing_cert_url')
+      .eq('broker_id', brokerId)
+      .eq('is_active', true)
+      .order('last_name', { ascending: true }),
     supabase.from('agency_agreements')
       .select('id, agent_id')
       .eq('broker_id', brokerId)
