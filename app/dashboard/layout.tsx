@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LayoutDashboard, FileText, Users, Settings, LogOut, Shield, User, Home, Calendar } from 'lucide-react'
-import { getUserContext } from '@/lib/supabase/get-user-role'
+import { getAuthUser, getUserContext } from '@/lib/supabase/get-user-role'
 import AgentSwitcher from './agent-switcher'
 
 export default async function DashboardLayout({
@@ -11,26 +11,14 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getAuthUser()
 
   if (!user) redirect('/')
 
-  // Get user context (role and name)
+  // Get user context (role and name) — cached per-request, so pages
+  // reusing getUserContext() below don't repeat this Supabase round trip
   const userContext = await getUserContext()
   if (!userContext) redirect('/')
-
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('id, name, email')
-    .eq('auth_user_id', user.id)
-    .single() as any
-    
-  // Get agent name if user is an agent
-  const { data: agent } = userContext.role === 'agent' ? await supabase
-    .from('agents')
-    .select('first_name, last_name')
-    .eq('id', userContext.agentId)
-    .single() as any : { data: null }
 
   // Get all agents for broker's agent switcher
   const { data: agents } = userContext.role === 'broker' ? await supabase
@@ -38,11 +26,11 @@ export default async function DashboardLayout({
     .select('id, first_name, last_name')
     .eq('broker_id', userContext.brokerId)
     .order('last_name') as any : { data: [] }
-    
-  const displayName = userContext.role === 'broker' 
-    ? (broker?.name ?? user.email)
-    : agent 
-      ? `${agent.first_name} ${agent.last_name}`
+
+  const displayName = userContext.role === 'broker'
+    ? (userContext.brokerName ?? user.email)
+    : userContext.agentFirstName
+      ? `${userContext.agentFirstName} ${userContext.agentLastName}`
       : user.email
 
   const navItems = [
