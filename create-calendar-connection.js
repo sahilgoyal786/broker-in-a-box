@@ -1,3 +1,4 @@
+require('./env-config');
 const https = require('https');
 
 const data = JSON.stringify({ app: 'google-calendar' });
@@ -7,7 +8,7 @@ const options = {
   path: '/connections',
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer ***REMOVED-MATON-API-KEY***',
+    'Authorization': `Bearer ${process.env.MATON_API_KEY}`,
     'Content-Type': 'application/json',
     'Content-Length': data.length
   }

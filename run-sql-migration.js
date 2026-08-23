@@ -1,9 +1,7 @@
+require('./env-config')
 const { Client } = require('pg')
 const fs = require('fs')
 const path = require('path')
-
-// Read environment variables
-require('dotenv').config({ path: '.env.local' })
 
 async function runMigration() {
   const client = new Client({

@@ -2,12 +2,13 @@
  * Clear existing deadline records and re-sync to rebrokerinabox@gmail.com
  */
 
+require('./env-config');
 const https = require('https');
 
-const SUPABASE_URL = 'https://jlxaeowgovscixmyviqc.supabase.co';
-const SUPABASE_SERVICE_KEY = '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***';
-const MATON_API_KEY = '***REMOVED-MATON-API-KEY***';
-const CALENDAR_CONNECTION_ID = process.env.GOOGLE_CALENDAR_CONNECTION_ID || '90a653bd-3851-4860-aa62-e9d905df9c05';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const MATON_API_KEY = process.env.MATON_API_KEY;
+const CALENDAR_CONNECTION_ID = process.env.GOOGLE_CALENDAR_CONNECTION_ID;
 
 function httpsRequest(url, options = {}) {
   return new Promise((resolve, reject) => {

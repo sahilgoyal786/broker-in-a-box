@@ -1,7 +1,8 @@
+require('./env-config')
 const https = require('https')
 
-const supabaseUrl = 'jlxaeowgovscixmyviqc.supabase.co'
-const serviceKey = '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL.replace(/^https?:\/\//, '')
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const queries = [
   `ALTER TABLE agents ADD COLUMN IF NOT EXISTS invite_token TEXT`,

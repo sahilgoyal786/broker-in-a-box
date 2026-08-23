@@ -2,11 +2,12 @@
  * Delete calendar events for cancelled transactions
  */
 
+require('./env-config');
 const https = require('https');
 
-const SUPABASE_URL = 'https://jlxaeowgovscixmyviqc.supabase.co';
-const SUPABASE_SERVICE_KEY = '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***';
-const MATON_API_KEY = '***REMOVED-MATON-API-KEY***';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const MATON_API_KEY = process.env.MATON_API_KEY;
 
 function httpsRequest(url, options = {}) {
   return new Promise((resolve, reject) => {

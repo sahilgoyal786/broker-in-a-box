@@ -8,7 +8,7 @@
 
 ### Variable 1:
 - **Name:** `MATON_API_KEY`
-- **Value:** `***REMOVED-MATON-API-KEY***`
+- **Value:** see `.env.local` (never commit the raw key to this repo)
 - **Environment:** Production, Preview, Development (check all three)
 
 ### Variable 2:

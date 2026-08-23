@@ -1,10 +1,11 @@
+require('./env-config');
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 
-const supabase = createClient(
-  'https://jlxaeowgovscixmyviqc.supabase.co',
-  '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***' // service role key
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function runMigration() {
   try {
@@ -13,12 +14,12 @@ async function runMigration() {
     // Execute the SQL
     const { data, error } = await supabase.rpc('exec_sql', { sql_query: sql }).catch(async () => {
       // If exec_sql RPC doesn't exist, try direct approach via REST
-      const response = await fetch('https://jlxaeowgovscixmyviqc.supabase.co/rest/v1/rpc/exec_sql', {
+      const response = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***',
-          'Authorization': 'Bearer ***REMOVED-SUPABASE-SERVICE-ROLE-KEY***'
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`
         },
         body: JSON.stringify({ sql_query: sql })
       });

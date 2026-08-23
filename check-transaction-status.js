@@ -2,10 +2,11 @@
  * Check transaction statuses
  */
 
+require('./env-config');
 const https = require('https');
 
-const SUPABASE_URL = 'https://jlxaeowgovscixmyviqc.supabase.co';
-const SUPABASE_SERVICE_KEY = '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function httpsRequest(url, options = {}) {
   return new Promise((resolve, reject) => {

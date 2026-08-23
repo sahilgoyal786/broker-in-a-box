@@ -1,3 +1,4 @@
+require('./env-config');
 const https = require('https');
 
 const options = {
@@ -5,7 +6,7 @@ const options = {
   path: '/connections?app=google-calendar',
   method: 'GET',
   headers: {
-    'Authorization': 'Bearer ***REMOVED-MATON-API-KEY***'
+    'Authorization': `Bearer ${process.env.MATON_API_KEY}`
   }
 };
 

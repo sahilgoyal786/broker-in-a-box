@@ -1,9 +1,9 @@
 @echo off
 echo Adding environment variables to Vercel...
 
-REM Add MATON_API_KEY
+REM Add MATON_API_KEY (set %MATON_API_KEY% in your environment first)
 echo Adding MATON_API_KEY...
-echo ***REMOVED-MATON-API-KEY*** | npx vercel env add MATON_API_KEY production
+echo %MATON_API_KEY% | npx vercel env add MATON_API_KEY production
 
 REM Add GOOGLE_CALENDAR_CONNECTION_ID
 echo Adding GOOGLE_CALENDAR_CONNECTION_ID...

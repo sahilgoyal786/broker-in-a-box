@@ -6,7 +6,7 @@
 2. Click "Add New" and add:
    
    Name: MATON_API_KEY
-   Value: ***REMOVED-MATON-API-KEY***
+   Value: see .env.local (never commit the raw key to this repo)
    ✓ Production ✓ Preview ✓ Development
 
 3. Click "Add New" again:

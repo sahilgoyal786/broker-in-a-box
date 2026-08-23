@@ -5,14 +5,15 @@
  * calendar events for each deadline.
  */
 
+require('./env-config');
 const https = require('https');
 
 // Supabase config
-const SUPABASE_URL = 'https://jlxaeowgovscixmyviqc.supabase.co';
-const SUPABASE_SERVICE_KEY = '***REMOVED-SUPABASE-SERVICE-ROLE-KEY***';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Maton API key for Google Calendar
-const MATON_API_KEY = process.env.MATON_API_KEY || '***REMOVED-MATON-API-KEY***';
+const MATON_API_KEY = process.env.MATON_API_KEY;
 
 // Deadline field mapping (database column -> event title)
 const DEADLINE_FIELDS = {

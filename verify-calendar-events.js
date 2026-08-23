@@ -2,9 +2,10 @@
  * Verify calendar events were created
  */
 
+require('./env-config');
 const https = require('https');
 
-const MATON_API_KEY = '***REMOVED-MATON-API-KEY***';
+const MATON_API_KEY = process.env.MATON_API_KEY;
 
 function httpsRequest(url, options = {}) {
   return new Promise((resolve, reject) => {

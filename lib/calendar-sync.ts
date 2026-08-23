@@ -5,7 +5,7 @@
  * when transaction deadlines change.
  */
 
-const MATON_API_KEY = process.env.MATON_API_KEY || '***REMOVED-MATON-API-KEY***';
+const MATON_API_KEY = process.env.MATON_API_KEY;
 const CALENDAR_CONNECTION_ID = process.env.GOOGLE_CALENDAR_CONNECTION_ID; // rebrokerinabox@gmail.com connection
 
 // Deadline field mapping (database column -> event title prefix)
