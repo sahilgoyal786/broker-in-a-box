@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getUserContext } from '@/lib/supabase/get-user-role'
+import { getAuthUser, getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 
 export default async function ListingsPage() {
   const supabase = await createClient()
-  
-  const { data: { user } } = await supabase.auth.getUser()
+
+  const user = await getAuthUser()
   if (!user) redirect('/auth/login')
-  
+
   const userContext = await getUserContext()
   if (!userContext) redirect('/auth/login')
   const role = userContext.role

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getUserContext } from '@/lib/supabase/get-user-role'
+import { getAuthUser, getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import AgenciesTabs from './agencies-tabs'
@@ -11,13 +11,24 @@ export const metadata: Metadata = {
 
 export default async function AgenciesPage() {
   const supabase = await createClient()
-  
-  const { data: { user } } = await supabase.auth.getUser()
+
+  const user = await getAuthUser()
   if (!user) redirect('/auth/login')
-  
+
   const userContext = await getUserContext()
   if (!userContext) redirect('/auth/login')
   const role = userContext.role
+
+  // Agents only see their own records — look up their agent id once up front
+  let agentId: string | null = null
+  if (role === 'agent') {
+    const { data: agent } = await supabase
+      .from('agents')
+      .select('id')
+      .eq('email', user.email)
+      .single()
+    agentId = agent?.id ?? null
+  }
 
   // Fetch all agency agreements
   let query = supabase
@@ -43,30 +54,9 @@ export default async function AgenciesPage() {
     `)
     .order('created_at', { ascending: false })
 
-  // Agents only see their own
-  if (role === 'agent') {
-    const { data: agent } = await supabase
-      .from('agents')
-      .select('id')
-      .eq('email', user.email)
-      .single()
-    
-    if (agent) {
-      query = query.eq('agent_id', agent.id)
-    }
+  if (agentId) {
+    query = query.eq('agent_id', agentId)
   }
-
-  const { data: allAgreements } = await query
-
-  // Fetch pending transactions to determine U/C status
-  const { data: pendingTransactions } = await supabase
-    .from('transactions')
-    .select('agency_agreement_id')
-    .eq('status', 'pending')
-
-  const underContractAgreementIds = new Set(
-    pendingTransactions?.map(t => t.agency_agreement_id).filter(Boolean) || []
-  )
 
   // Fetch listings from listings table (has county and mls_number)
   // Include transaction status to show U/C when under contract
@@ -97,19 +87,32 @@ export default async function AgenciesPage() {
     `)
     .order('created_at', { ascending: false })
 
-  if (role === 'agent') {
-    const { data: agent } = await supabase
-      .from('agents')
-      .select('id')
-      .eq('email', user.email)
-      .single()
-    
-    if (agent) {
-      listingsQuery = listingsQuery.eq('agent_id', agent.id)
-    }
+  if (agentId) {
+    listingsQuery = listingsQuery.eq('agent_id', agentId)
   }
 
-  const { data: listingsData } = await listingsQuery
+  // These three queries are independent — run them in parallel
+  const [
+    { data: allAgreements },
+    { data: pendingTransactions },
+    { data: listingsData },
+    { data: agentsList },
+  ] = await Promise.all([
+    query,
+    supabase.from('transactions').select('agency_agreement_id').eq('status', 'pending'),
+    listingsQuery,
+    role === 'broker'
+      ? supabase.from('agents')
+          .select('id, first_name, last_name')
+          .eq('broker_id', userContext.brokerId)
+          .eq('active', true)
+          .order('last_name', { ascending: true })
+      : Promise.resolve({ data: [] as any[] }),
+  ])
+
+  const underContractAgreementIds = new Set(
+    pendingTransactions?.map(t => t.agency_agreement_id).filter(Boolean) || []
+  )
 
   // Map listings data to match Agreement type
   const listings = listingsData?.map(l => ({
@@ -138,18 +141,7 @@ export default async function AgenciesPage() {
     hasUnderContractTransaction: underContractAgreementIds.has(a.id)
   })) || []
 
-  // Get list of agents for broker filter
-  let agents: any[] = []
-  if (role === 'broker') {
-    const { data: agentsList } = await supabase
-      .from('agents')
-      .select('id, first_name, last_name')
-      .eq('broker_id', userContext.brokerId)
-      .eq('active', true)
-      .order('last_name', { ascending: true })
-    
-    agents = agentsList ?? []
-  }
+  const agents = agentsList ?? []
 
   return (
     <div className="p-8">

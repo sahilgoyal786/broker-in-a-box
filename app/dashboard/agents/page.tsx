@@ -13,54 +13,48 @@ export const metadata: Metadata = {
 export default async function AgentsPage() {
   const userContext = await getUserContext()
   const supabase = await createClient()
-
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('id')
-    .eq('auth_user_id', userContext!.userId)
-    .single() as any
+  const brokerId = userContext!.brokerId
 
   const { data: agents } = await supabase
     .from('agents')
     .select('id, first_name, last_name, email, license_number, license_expiration, ce_due_date, ce_completed_hours, ce_required_hours, ce_core_hours, ce_elective_hours, mandatory_course_completed, invite_status, nar_member, nar_code_of_ethics_date, nar_code_of_ethics_completed, nar_code_of_ethics_cert_url, nar_fair_housing_date, nar_fair_housing_completed, nar_fair_housing_cert_url')
-    .eq('broker_id', broker?.id ?? '')
+    .eq('broker_id', brokerId)
     .eq('is_active', true)
     .order('last_name', { ascending: true }) as any
 
-  // Get production stats for each agent
-  const agentsWithStats = await Promise.all((agents ?? []).map(async (agent: any) => {
-    // Active listings (agency agreements with no active transaction)
-    const { data: allListings } = await supabase
-      .from('agency_agreements')
-      .select('id')
-      .eq('agent_id', agent.id)
+  // Fetch stats for ALL agents in bulk (broker-scoped) instead of N queries per agent
+  const [
+    { data: allListingAgreements },
+    { data: listingTransactions },
+    { data: allTransactions },
+  ] = await Promise.all([
+    supabase.from('agency_agreements')
+      .select('id, agent_id')
+      .eq('broker_id', brokerId)
       .eq('agreement_type', 'listing_agreement')
-      .eq('status', 'active') as any
-
-    const { data: listingsWithDeals } = await supabase
-      .from('transactions')
-      .select('agency_agreement_id')
-      .eq('agent_id', agent.id)
+      .eq('status', 'active'),
+    supabase.from('transactions')
+      .select('agency_agreement_id, agent_id')
+      .eq('broker_id', brokerId)
       .eq('transaction_type', 'listing')
       .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
-      .not('agency_agreement_id', 'is', null) as any
+      .not('agency_agreement_id', 'is', null),
+    supabase.from('transactions')
+      .select('agent_id, status')
+      .eq('broker_id', brokerId),
+  ]) as any
 
-    const listingsWithDealsSet = new Set(listingsWithDeals?.map((t: any) => t.agency_agreement_id) ?? [])
-    const activeListings = allListings?.filter((a: any) => !listingsWithDealsSet.has(a.id)).length ?? 0
+  const listingsWithDealsSet = new Set(listingTransactions?.map((t: any) => t.agency_agreement_id) ?? [])
+  const pendingStatuses = new Set(['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
 
-    // Pending sales (both buyer and seller side combined)
-    const { count: pendingSales } = await supabase
-      .from('transactions')
-      .select('*', { count: 'exact', head: true })
-      .eq('agent_id', agent.id)
-      .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation']) as any
+  // Get production stats for each agent from the bulk data
+  const agentsWithStats = (agents ?? []).map((agent: any) => {
+    const activeListings = allListingAgreements
+      ?.filter((a: any) => a.agent_id === agent.id && !listingsWithDealsSet.has(a.id)).length ?? 0
 
-    // Closed transactions (both buyer and seller side combined)
-    const { count: closedDeals } = await supabase
-      .from('transactions')
-      .select('*', { count: 'exact', head: true })
-      .eq('agent_id', agent.id)
-      .eq('status', 'closed') as any
+    const agentTransactions = allTransactions?.filter((t: any) => t.agent_id === agent.id) ?? []
+    const pendingSales = agentTransactions.filter((t: any) => pendingStatuses.has(t.status)).length
+    const closedDeals = agentTransactions.filter((t: any) => t.status === 'closed').length
 
     // Calculate days until license expiration
     const daysUntilExpiration = daysUntilDateOnly(agent.license_expiration)
@@ -71,11 +65,11 @@ export default async function AgentsPage() {
       ce_hours_other: agent.ce_elective_hours ?? 0,
       nar_cycle_end: null,
       activeListings,
-      pendingSales: pendingSales ?? 0,
-      closedDeals: closedDeals ?? 0,
+      pendingSales,
+      closedDeals,
       daysUntilExpiration
     }
-  }))
+  })
 
   return (
     <div className="p-8">

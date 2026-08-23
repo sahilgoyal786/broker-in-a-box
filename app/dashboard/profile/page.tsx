@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getUserContext } from '@/lib/supabase/get-user-role'
+import { getAuthUser, getUserContext } from '@/lib/supabase/get-user-role'
 import ProfileForm from './profile-form'
 import ChangePasswordForm from './change-password-form'
 import NARComplianceSection from './nar-compliance-section'
@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export default async function ProfilePage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  
+  const user = await getAuthUser()
+
   if (!user) redirect('/auth/login')
 
   const userContext = await getUserContext()
