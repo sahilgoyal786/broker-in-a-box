@@ -5,6 +5,11 @@ import ProfileForm from './profile-form'
 import ChangePasswordForm from './change-password-form'
 import NARComplianceSection from './nar-compliance-section'
 import { User, Mail, Phone, CreditCard, Calendar, GraduationCap } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Profile',
+}
 
 export default async function ProfilePage() {
   const supabase = await createClient()

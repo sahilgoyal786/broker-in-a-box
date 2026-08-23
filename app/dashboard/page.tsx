@@ -3,6 +3,11 @@ import Link from 'next/link'
 import { FileText, CheckCircle, Clock, Users, GraduationCap } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -10,18 +15,18 @@ export default async function DashboardPage() {
   
   if (!userContext) redirect('/auth/login')
 
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('id, name')
-    .eq('id', userContext.brokerId)
-    .single() as any
-
-  // Stats
+  // All independent queries fired in parallel instead of one at a time
   const [
     { count: listingsUnderContract },
     { count: buyersUnderContract },
     { count: listingsClosed },
-    { count: buyersClosed }
+    { count: buyersClosed },
+    { data: allListingAgreements },
+    { data: closedListings },
+    { data: allBuyerAgreements },
+    { data: closedBuyers },
+    { data: allAgents },
+    { data: allTransactions },
   ] = await Promise.all([
     // Listings pending (includes CTP review and cancellation review - still pending until approved)
     supabase.from('transactions').select('*', { count: 'exact', head: true })
@@ -43,52 +48,46 @@ export default async function DashboardPage() {
       .eq('broker_id', userContext.brokerId)
       .in('transaction_type', ['buyer_agency', 'limited_agency'])
       .eq('status', 'closed'),
-  ])
-
-  // Active listings = listing agreements without CLOSED transactions
-  const { data: allListingAgreements } = await supabase
-    .from('agency_agreements')
-    .select('id')
-    .eq('broker_id', userContext.brokerId)
-    .eq('agreement_type', 'listing_agreement')
-    .eq('status', 'active') as any
-
-  const { data: closedListings } = await supabase
-    .from('transactions')
-    .select('agency_agreement_id')
-    .eq('broker_id', userContext.brokerId)
-    .eq('transaction_type', 'listing')
-    .eq('status', 'closed')
-    .not('agency_agreement_id', 'is', null) as any
+    // Active listings = listing agreements without CLOSED transactions
+    supabase.from('agency_agreements')
+      .select('id')
+      .eq('broker_id', userContext.brokerId)
+      .eq('agreement_type', 'listing_agreement')
+      .eq('status', 'active'),
+    supabase.from('transactions')
+      .select('agency_agreement_id')
+      .eq('broker_id', userContext.brokerId)
+      .eq('transaction_type', 'listing')
+      .eq('status', 'closed')
+      .not('agency_agreement_id', 'is', null),
+    // Active buyer brokers = buyer agency agreements without CLOSED transactions
+    supabase.from('agency_agreements')
+      .select('id')
+      .eq('broker_id', userContext.brokerId)
+      .eq('agreement_type', 'buyer_agency_agreement')
+      .eq('status', 'active'),
+    supabase.from('transactions')
+      .select('agency_agreement_id')
+      .eq('broker_id', userContext.brokerId)
+      .in('transaction_type', ['buyer_agency', 'limited_agency'])
+      .eq('status', 'closed')
+      .not('agency_agreement_id', 'is', null),
+    // Agents KPIs
+    supabase.from('agents')
+      .select('id, first_name, last_name, ce_due_date, ce_completed_hours, ce_required_hours, ce_core_hours, ce_elective_hours, mandatory_course_completed')
+      .eq('broker_id', userContext.brokerId)
+      .eq('is_active', true),
+    // Transaction counts per agent
+    supabase.from('transactions')
+      .select('agent_id, status')
+      .eq('broker_id', userContext.brokerId),
+  ]) as any[]
 
   const closedListingsSet = new Set(closedListings?.map((t: any) => t.agency_agreement_id) ?? [])
   const activeListings = allListingAgreements?.filter((a: any) => !closedListingsSet.has(a.id)).length ?? 0
 
-  // Active buyer brokers = buyer agency agreements without CLOSED transactions
-  const { data: allBuyerAgreements } = await supabase
-    .from('agency_agreements')
-    .select('id')
-    .eq('broker_id', userContext.brokerId)
-    .eq('agreement_type', 'buyer_agency_agreement')
-    .eq('status', 'active') as any
-
-  const { data: closedBuyers } = await supabase
-    .from('transactions')
-    .select('agency_agreement_id')
-    .eq('broker_id', userContext.brokerId)
-    .in('transaction_type', ['buyer_agency', 'limited_agency'])
-    .eq('status', 'closed')
-    .not('agency_agreement_id', 'is', null) as any
-
   const closedBuyersSet = new Set(closedBuyers?.map((t: any) => t.agency_agreement_id) ?? [])
   const activeBuyerBrokers = allBuyerAgreements?.filter((a: any) => !closedBuyersSet.has(a.id)).length ?? 0
-
-  // Agents KPIs
-  const { data: allAgents } = await supabase
-    .from('agents')
-    .select('id, first_name, last_name, ce_due_date, ce_completed_hours, ce_required_hours, ce_core_hours, ce_elective_hours, mandatory_course_completed')
-    .eq('broker_id', userContext.brokerId)
-    .eq('is_active', true) as any
 
   const totalAgents = allAgents?.length ?? 0
 
@@ -101,12 +100,6 @@ export default async function DashboardPage() {
     }
     return false
   }).length ?? 0
-
-  // Get transaction counts per agent
-  const { data: allTransactions } = await supabase
-    .from('transactions')
-    .select('agent_id, status')
-    .eq('broker_id', userContext.brokerId) as any
 
   // Count agents with any transactions
   const agentsWithTransactionsSet = new Set(allTransactions?.map((t: any) => t.agent_id) ?? [])
@@ -173,7 +166,7 @@ export default async function DashboardPage() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome back, {broker?.name}</p>
+        <p className="text-gray-600 mt-1">Welcome back, {userContext.brokerName}</p>
       </div>
 
       {/* Stats */}

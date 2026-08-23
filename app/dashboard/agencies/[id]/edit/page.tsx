@@ -1,6 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import EditAgencyForm from './edit-agency-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Edit Agency',
+}
 
 export default async function EditAgencyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

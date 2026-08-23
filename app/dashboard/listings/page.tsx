@@ -2,6 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Listings',
+}
 
 export default async function ListingsPage() {
   const supabase = await createClient()

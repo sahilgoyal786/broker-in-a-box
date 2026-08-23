@@ -4,6 +4,11 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import EditAgentForm from './edit-agent-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Edit Agent',
+}
 
 export default async function EditAgentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

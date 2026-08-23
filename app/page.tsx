@@ -1,5 +1,10 @@
 import Link from 'next/link'
 import { FileText, Shield, CheckSquare, Calendar } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Real-Estate Compliance & Transaction Management',
+}
 
 export default function HomePage() {
   return (

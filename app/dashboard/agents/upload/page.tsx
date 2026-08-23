@@ -2,6 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import UploadAgentsForm from './upload-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Upload Agents',
+}
 
 export default async function UploadAgentsPage() {
   const userContext = await getUserContext()

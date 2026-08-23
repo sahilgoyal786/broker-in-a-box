@@ -2,6 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import TransactionsView from './transactions-view'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Transactions',
+}
 
 export default async function TransactionsPage() {
   const supabase = await createClient()

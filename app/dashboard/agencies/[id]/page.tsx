@@ -4,6 +4,11 @@ import { redirect } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import ComplianceChecklist from './compliance-checklist'
 import { formatPhoneNumber } from '@/lib/phone'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Agency Details',
+}
 
 export default async function AgencyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

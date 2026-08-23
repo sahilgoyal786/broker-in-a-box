@@ -2,6 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import NewTransactionForm from './new-transaction-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'New Transaction',
+}
 
 export default async function NewTransactionPage({
   searchParams,

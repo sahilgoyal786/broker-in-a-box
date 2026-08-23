@@ -5,6 +5,11 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import StatusUpdater from './status-updater'
 import { formatPhoneNumber, phoneTelHref } from '@/lib/phone'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Listing Details',
+}
 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()

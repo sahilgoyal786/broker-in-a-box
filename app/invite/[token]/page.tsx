@@ -1,6 +1,11 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import InviteAcceptForm from './invite-accept-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Accept Invite',
+}
 
 export default async function InviteAcceptPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params

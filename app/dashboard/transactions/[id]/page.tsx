@@ -5,6 +5,11 @@ import { ArrowLeft } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import TransactionComplianceChecklist from './transaction-compliance-checklist'
 import { formatPhoneNumber } from '@/lib/phone'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Transaction Details',
+}
 
 export default async function TransactionDetailPage({
   params,

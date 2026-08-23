@@ -4,6 +4,11 @@ import { Plus, Users, Upload } from 'lucide-react'
 import { getUserContext } from '@/lib/supabase/get-user-role'
 import AgentsTable from './agents-table'
 import { daysUntilDateOnly } from '@/lib/date-only'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Agents',
+}
 
 export default async function AgentsPage() {
   const userContext = await getUserContext()

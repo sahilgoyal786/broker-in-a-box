@@ -2,6 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import EditTransactionForm from './edit-transaction-form'
 import { getUserContext } from '@/lib/supabase/get-user-role'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Edit Transaction',
+}
 
 export default async function EditTransactionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

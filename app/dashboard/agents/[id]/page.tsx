@@ -6,6 +6,11 @@ import { ArrowLeft, Mail, Phone, Calendar, User, Shield, TrendingUp } from 'luci
 import DeactivateButton from './deactivate-button'
 import { daysUntilDateOnly, formatDateOnly, parseDateOnly } from '@/lib/date-only'
 import { formatPhoneNumber, phoneTelHref } from '@/lib/phone'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Agent Details',
+}
 
 function formatPortalStatus(status: string | null) {
   switch (status) {

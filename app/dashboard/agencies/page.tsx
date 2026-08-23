@@ -3,6 +3,11 @@ import { getUserContext } from '@/lib/supabase/get-user-role'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import AgenciesTabs from './agencies-tabs'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Agencies',
+}
 
 export default async function AgenciesPage() {
   const supabase = await createClient()
