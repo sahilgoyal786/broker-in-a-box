@@ -1,19 +1,28 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  auth_callback_failed: 'Sign-in was cancelled or the required permissions were not granted. Please try again and accept all requested permissions.',
+}
+
+function LoginForm() {
   const supabase = createClient()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState(() => {
+    const errorParam = searchParams.get('error')
+    return errorParam ? OAUTH_ERROR_MESSAGES[errorParam] ?? 'Sign-in failed. Please try again.' : ''
+  })
 
   const handleGoogleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
+    setError('')
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -24,6 +33,10 @@ export default function LoginPage() {
         ].join(' '),
       },
     })
+
+    if (error) {
+      setError(error.message || 'Failed to sign in with Google')
+    }
   }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -133,5 +146,13 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   )
 }

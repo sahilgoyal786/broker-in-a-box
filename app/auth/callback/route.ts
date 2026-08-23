@@ -50,6 +50,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // Return to home with error
-  return NextResponse.redirect(`${origin}/?error=auth_callback_failed`)
+  // Return to login with error (e.g. user denied Google consent)
+  return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_failed`)
 }
