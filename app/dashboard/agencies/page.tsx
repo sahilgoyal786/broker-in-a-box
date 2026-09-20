@@ -9,6 +9,62 @@ export const metadata: Metadata = {
   title: 'Agencies',
 }
 
+function firstRelation<T>(value: T | T[] | null | undefined): T | null {
+  if (Array.isArray(value)) return value[0] ?? null
+  return value ?? null
+}
+
+type AgentRelation = {
+  first_name: string | null
+  last_name: string | null
+}
+
+type AgreementRow = {
+  id: string
+  file_id: string | null
+  agreement_type: string | null
+  agent_id: string | null
+  client_first_name: string | null
+  client_last_name: string | null
+  property_address: string | null
+  property_city: string | null
+  property_state: string | null
+  property_zip: string | null
+  county: string | null
+  property_type: string | null
+  mls_number: string | null
+  list_price: number | null
+  status: string | null
+  agreement_date: string | null
+  expiration_date: string | null
+  agent: AgentRelation | AgentRelation[] | null
+}
+
+type ListingRow = {
+  agency_agreement_id: string | null
+  property_address: string | null
+  property_city: string | null
+  property_state: string | null
+  county: string | null
+  property_type: string | null
+  mls_number: string | null
+  listing_price: number | null
+  current_list_price: number | null
+  listing_start_date: string | null
+  listing_end_date: string | null
+  created_at: string | null
+}
+
+type TransactionRow = {
+  agency_agreement_id: string | null
+}
+
+type AgentOption = {
+  id: string
+  first_name: string | null
+  last_name: string | null
+}
+
 export default async function AgenciesPage() {
   const supabase = await createClient()
 
@@ -27,7 +83,7 @@ export default async function AgenciesPage() {
       .select('id')
       .eq('email', user.email)
       .single()
-    agentId = agent?.id ?? null
+    agentId = (agent as { id?: string } | null)?.id ?? null
   }
 
   // Fetch all agency agreements
@@ -45,6 +101,7 @@ export default async function AgenciesPage() {
       property_state,
       property_zip,
       county,
+      property_type,
       mls_number,
       list_price,
       status,
@@ -52,96 +109,113 @@ export default async function AgenciesPage() {
       expiration_date,
       agent:agents(first_name, last_name)
     `)
+    .eq('broker_id', userContext.brokerId)
     .order('created_at', { ascending: false })
 
   if (agentId) {
     query = query.eq('agent_id', agentId)
   }
 
-  // Fetch listings from listings table (has county and mls_number)
-  // Include transaction status to show U/C when under contract
-  let listingsQuery = supabase
-    .from('listings')
-    .select(`
-      id,
-      agent_id,
-      property_address,
-      property_city,
-      property_state,
-      county,
-      property_type,
-      mls_number,
-      listing_price,
-      status,
-      listing_start_date,
-      listing_end_date,
-      seller_name,
-      agent:agents(first_name, last_name),
-      agency_agreement:agency_agreements!inner(
-        id,
-        file_id,
-        client_first_name,
-        client_last_name,
-        county
-      )
-    `)
-    .order('created_at', { ascending: false })
+  let pendingTransactionsQuery = supabase
+    .from('transactions')
+    .select('agency_agreement_id')
+    .eq('broker_id', userContext.brokerId)
+    .in('status', ['pending', 'under_contract', 'pending_closure', 'pending_cancellation'])
 
   if (agentId) {
-    listingsQuery = listingsQuery.eq('agent_id', agentId)
+    pendingTransactionsQuery = pendingTransactionsQuery.eq('agent_id', agentId)
   }
 
-  // These three queries are independent — run them in parallel
+  // These queries are independent — run them in parallel
   const [
     { data: allAgreements },
     { data: pendingTransactions },
-    { data: listingsData },
     { data: agentsList },
   ] = await Promise.all([
     query,
-    supabase.from('transactions').select('agency_agreement_id').eq('status', 'pending'),
-    listingsQuery,
+    pendingTransactionsQuery,
     role === 'broker'
       ? supabase.from('agents')
           .select('id, first_name, last_name')
           .eq('broker_id', userContext.brokerId)
           .eq('active', true)
           .order('last_name', { ascending: true })
-      : Promise.resolve({ data: [] as any[] }),
+      : Promise.resolve({ data: [] }),
   ])
 
+  const agreements = (allAgreements ?? []) as unknown as AgreementRow[]
+  const transactions = (pendingTransactions ?? []) as unknown as TransactionRow[]
+
   const underContractAgreementIds = new Set(
-    pendingTransactions?.map(t => t.agency_agreement_id).filter(Boolean) || []
+    transactions.map(t => t.agency_agreement_id).filter(Boolean)
   )
 
-  // Map listings data to match Agreement type
-  const listings = listingsData?.map(l => ({
-    id: l.agency_agreement?.id || l.id,
-    file_id: l.agency_agreement?.file_id,
-    agreement_type: 'listing_agreement',
-    agent_id: l.agent_id,
-    client_first_name: l.agency_agreement?.client_first_name || '',
-    client_last_name: l.agency_agreement?.client_last_name || '',
-    property_address: l.property_address,
-    property_city: l.property_city,
-    property_state: l.property_state,
-    county: l.county || l.agency_agreement?.county || null,
-    property_type: l.property_type,
-    mls_number: l.mls_number,
-    list_price: l.listing_price,
-    status: l.status,
-    agreement_date: l.listing_start_date,
-    expiration_date: l.listing_end_date,
-    agent: l.agent,
-    hasUnderContractTransaction: underContractAgreementIds.has(l.agency_agreement?.id || l.id)
-  })) || []
+  const listingAgreements = agreements.filter(a => a.agreement_type === 'listing_agreement')
+  const listingAgreementIds = listingAgreements.map(a => a.id)
+  const { data: listingsData } = listingAgreementIds.length
+    ? await supabase
+      .from('listings')
+      .select(`
+        agency_agreement_id,
+        property_address,
+        property_city,
+        property_state,
+        county,
+        property_type,
+        mls_number,
+        listing_price,
+        current_list_price,
+        listing_start_date,
+        listing_end_date,
+        created_at
+      `)
+      .eq('broker_id', userContext.brokerId)
+      .in('agency_agreement_id', listingAgreementIds)
+      .order('created_at', { ascending: false })
+    : { data: [] }
 
-  const buyerAgreements = allAgreements?.filter(a => a.agreement_type === 'buyer_agency_agreement').map(a => ({
+  const listingRows = ((listingsData ?? []) as unknown as ListingRow[]).filter(l => l.agency_agreement_id)
+  const listingsByAgreementId = new Map<string, ListingRow>()
+  for (const listing of listingRows) {
+    if (!listingsByAgreementId.has(listing.agency_agreement_id)) {
+      listingsByAgreementId.set(listing.agency_agreement_id, listing)
+    }
+  }
+
+  const listings = listingAgreements.map(agreement => {
+    const listing = listingsByAgreementId.get(agreement.id)
+    const agent = firstRelation(agreement.agent) ?? { first_name: '', last_name: '' }
+
+    return {
+      id: agreement.id,
+      file_id: agreement.file_id,
+      agreement_type: 'listing_agreement',
+      agent_id: agreement.agent_id,
+      client_first_name: agreement.client_first_name,
+      client_last_name: agreement.client_last_name,
+      property_address: listing?.property_address ?? agreement.property_address,
+      property_city: listing?.property_city ?? agreement.property_city,
+      property_state: listing?.property_state ?? agreement.property_state,
+      property_zip: agreement.property_zip,
+      county: listing?.county ?? agreement.county,
+      property_type: listing?.property_type ?? agreement.property_type,
+      mls_number: listing?.mls_number ?? agreement.mls_number,
+      list_price: listing?.current_list_price ?? listing?.listing_price ?? agreement.list_price,
+      status: agreement.status,
+      agreement_date: agreement.agreement_date,
+      expiration_date: agreement.expiration_date,
+      agent,
+      hasUnderContractTransaction: underContractAgreementIds.has(agreement.id)
+    }
+  })
+
+  const buyerAgreements = agreements.filter(a => a.agreement_type === 'buyer_agency_agreement').map(a => ({
     ...a,
+    agent: firstRelation(a.agent) ?? { first_name: '', last_name: '' },
     hasUnderContractTransaction: underContractAgreementIds.has(a.id)
-  })) || []
+  }))
 
-  const agents = agentsList ?? []
+  const agents = (agentsList ?? []) as unknown as AgentOption[]
 
   return (
     <div className="p-8">
