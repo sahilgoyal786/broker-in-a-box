@@ -30,7 +30,7 @@ export default async function AgencyDetailPage({ params }: { params: Promise<{ i
     .from('agency_agreements')
     .select(`
       *,
-      agent:agents(first_name, last_name, email)
+      agent:agents!agency_agreements_agent_id_fkey(first_name, last_name, email)
     `)
     .eq('id', id)
     .eq('broker_id', broker.id)
