@@ -111,7 +111,7 @@ export default function CalendarPage() {
           custom_deadline_1_date,
           custom_deadline_2_label,
           custom_deadline_2_date,
-          agents(id, first_name, last_name)
+          agents:agents!transactions_agent_id_fkey(id, first_name, last_name)
         `)
         .eq('broker_id', broker.id)
         .in('status', ['pending', 'active'])
