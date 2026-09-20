@@ -107,7 +107,7 @@ export default async function AgenciesPage() {
       status,
       agreement_date,
       expiration_date,
-      agent:agents(first_name, last_name)
+      agent:agents!agency_agreements_agent_id_fkey(first_name, last_name)
     `)
     .eq('broker_id', userContext.brokerId)
     .order('created_at', { ascending: false })
