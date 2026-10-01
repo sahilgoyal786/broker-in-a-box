@@ -13,12 +13,12 @@ export default async function DashboardLayout({
   const supabase = await createClient()
   const user = await getAuthUser()
 
-  if (!user) redirect('/')
+  if (!user) redirect('/auth/login')
 
   // Get user context (role and name) — cached per-request, so pages
   // reusing getUserContext() below don't repeat this Supabase round trip
   const userContext = await getUserContext()
-  if (!userContext) redirect('/')
+  if (!userContext) redirect('/auth/login')
 
   // Get all agents for broker's agent switcher
   const { data: agents } = userContext.role === 'broker' ? await supabase
