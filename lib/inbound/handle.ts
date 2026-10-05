@@ -1,6 +1,8 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 
-export const INBOUND_DOMAIN = 'brokercommandcenter.com'
+import { INBOUND_DOMAIN } from './constants'
+
+export { INBOUND_DOMAIN }
 
 const RESERVED_HANDLES = new Set([
   'admin', 'administrator', 'support', 'help', 'info', 'contact', 'sales', 'billing',
@@ -51,7 +53,7 @@ export async function generateUniqueHandle(name: string): Promise<string> {
     .select('inbound_handle')
     .in('inbound_handle', candidates)
 
-  const used = new Set((taken ?? []).map((r: any) => r.inbound_handle))
+  const used = new Set((taken ?? []).map((r: { inbound_handle: string | null }) => r.inbound_handle))
   const free = candidates.find((c) => !used.has(c) && isValidHandle(c))
   if (!free) throw new Error('Could not allocate an inbound handle')
   return free

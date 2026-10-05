@@ -228,6 +228,14 @@ export interface IncomingEmail {
   attachment_count: number
   processed: boolean
   transaction_id: string | null
+  gmail_message_id?: string | null
+  gmail_thread_id?: string | null
+  to_candidates?: unknown | null
+  body_text?: string | null
+  attachments?: unknown | null
+  auth_results?: string | null
+  status?: string
+  error?: string | null
   created_at: string
 }
 
