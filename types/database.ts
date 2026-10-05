@@ -59,6 +59,9 @@ export interface Broker {
   drive_refresh_token: string | null
   calendar_refresh_token: string | null
   submission_address: string | null
+  brokerage_name: string | null
+  inbound_handle: string | null
+  inbound_handle_edited: boolean
   notification_preference: NotificationPreference
   created_at: string
 }
@@ -244,7 +247,7 @@ export type Database = {
     Tables: {
       brokers: {
         Row: Broker
-        Insert: Omit<Broker, 'id' | 'created_at' | 'google_drive_folder_id' | 'google_calendar_id' | 'gmail_transactions_email' | 'gmail_refresh_token' | 'drive_refresh_token' | 'calendar_refresh_token' | 'submission_address'> & {
+        Insert: Omit<Broker, 'id' | 'created_at' | 'google_drive_folder_id' | 'google_calendar_id' | 'gmail_transactions_email' | 'gmail_refresh_token' | 'drive_refresh_token' | 'calendar_refresh_token' | 'submission_address' | 'brokerage_name' | 'inbound_handle' | 'inbound_handle_edited'> & {
           id?: string
           created_at?: string
           google_drive_folder_id?: string | null
@@ -254,6 +257,9 @@ export type Database = {
           drive_refresh_token?: string | null
           calendar_refresh_token?: string | null
           submission_address?: string | null
+          brokerage_name?: string | null
+          inbound_handle?: string | null
+          inbound_handle_edited?: boolean
         }
         Update: Partial<Omit<Broker, 'id'>>
       }

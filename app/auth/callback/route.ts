@@ -18,7 +18,7 @@ export async function GET(request: Request) {
       if (user) {
         const { data: existingBroker } = await supabase
           .from('brokers')
-          .select('id, notification_preference')
+          .select('id, notification_preference, inbound_handle')
           .eq('auth_user_id', user.id)
           .single()
 
@@ -31,8 +31,8 @@ export async function GET(request: Request) {
           } as any)
           // New broker - send to onboarding
           redirectTo = '/dashboard/onboarding'
-        } else if (!existingBroker.notification_preference) {
-          // Existing broker without notification preference set - send to onboarding
+        } else if (!existingBroker.notification_preference || !existingBroker.inbound_handle) {
+          // Existing broker missing notification preference or forwarding address - send to onboarding
           redirectTo = '/dashboard/onboarding'
         }
       }
